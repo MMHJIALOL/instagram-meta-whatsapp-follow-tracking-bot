@@ -1,0 +1,5 @@
+.env
+uploads/
+admanager.log
+server.log
+.claude/

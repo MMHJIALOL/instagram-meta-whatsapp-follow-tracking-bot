@@ -1,0 +1,1622 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resin ads</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{color-scheme:light;--bg:#f7f6f2;--card:#fff;--soft:#f0eee8;--text:#1f1e1c;--muted:#6b6a65;--border:rgba(0,0,0,.1);--strong:rgba(0,0,0,.35);
+--red:#a32d2d;--red-bg:#fcebeb;--red-b:#f09595;--green:#3b6d11;--green-bg:#eaf3de;--amber:#854f0b;--amber-bg:#faeeda;--amber-b:#e8b86a;--blue:#185fa5;--blue-bg:#e6f1fb;--sw-on:#3b7d16;
+--s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#eda100;--s5:#e87ba4;--grid:#e1e0d9;--axis:#898781;--base:#c3c2b7}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){color-scheme:dark;--bg:#1c1c1b;--card:#262624;--soft:#30302e;--text:#eceae4;--muted:#a3a19a;--border:rgba(255,255,255,.12);--strong:rgba(255,255,255,.4);
+--red:#f09595;--red-bg:#501313;--red-b:#a32d2d;--green:#c0dd97;--green-bg:#27500a;--amber:#fac775;--amber-bg:#633806;--amber-b:#a8691a;--blue:#b5d4f4;--blue-bg:#0c447c;--sw-on:#4f9a24;
+--s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181;--grid:#34342f;--axis:#898781;--base:#45453f}}
+:root[data-theme=dark]{color-scheme:dark;--bg:#1c1c1b;--card:#262624;--soft:#30302e;--text:#eceae4;--muted:#a3a19a;--border:rgba(255,255,255,.12);--strong:rgba(255,255,255,.4);
+--red:#f09595;--red-bg:#501313;--red-b:#a32d2d;--green:#c0dd97;--green-bg:#27500a;--amber:#fac775;--amber-bg:#633806;--amber-b:#a8691a;--blue:#b5d4f4;--blue-bg:#0c447c;--sw-on:#4f9a24;
+--s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181;--grid:#34342f;--axis:#898781;--base:#45453f}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:16px 16px 90px}
+h1{font-size:20px;font-weight:500;margin:0}
+h2{font-size:15px;font-weight:500;margin:0 0 12px}
+h3{font-size:14px;font-weight:500;margin:0}
+.sub{color:var(--muted);font-size:12px}
+a{color:var(--blue)}
+button,.btn{font:inherit;font-size:13px;color:var(--text);background:var(--card);border:.5px solid var(--strong);border-radius:8px;padding:7px 12px;cursor:pointer;display:inline-flex;gap:6px;align-items:center;justify-content:center;text-decoration:none;min-height:34px}
+button:hover,.btn:hover{background:var(--soft)}
+button:disabled{opacity:.5;cursor:default}
+button.main{background:var(--text);color:var(--bg);border-color:var(--text)}
+button.main:hover{opacity:.88;background:var(--text)}
+button.danger{background:var(--red);color:var(--card);border-color:var(--red)}
+button.mini{font-size:12px;padding:2px 9px;min-height:26px;border-radius:6px}
+button.icon{padding:6px 8px}
+.lnk{font-size:12px;color:var(--muted);text-decoration:underline;cursor:pointer;background:none;border:0;padding:0;min-height:0}
+.lnk:hover{background:none;color:var(--text)}
+input,select,textarea{font:inherit;font-size:14px;width:100%;padding:8px 10px;border-radius:8px;border:.5px solid var(--strong);background:var(--card);color:var(--text);min-height:38px}
+textarea{resize:vertical;min-height:110px;line-height:1.45}
+input:disabled{opacity:.55}
+input[type=checkbox],input[type=radio]{width:auto;min-height:0;accent-color:var(--text)}
+label.f{display:block;margin-bottom:12px}
+label.f>span,.flabel{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}
+label.check{display:flex;gap:8px;align-items:flex-start;cursor:pointer;margin:6px 0;font-size:13px}
+label.check input{margin-top:3px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 12px}
+@media (max-width:640px){.grid2{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--card);border:.5px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+.pill{font-size:12px;padding:2px 8px;border-radius:8px;white-space:nowrap;background:var(--soft);color:var(--muted)}
+.p-green{background:var(--green-bg);color:var(--green)}.p-red{background:var(--red-bg);color:var(--red)}
+.p-amber{background:var(--amber-bg);color:var(--amber)}.p-blue{background:var(--blue-bg);color:var(--blue)}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:9px 15px;border-radius:8px;font-size:13px;display:none;z-index:50;max-width:calc(100% - 32px)}
+/* header + tabs */
+.top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:flex-start;margin-bottom:10px}
+nav.tabs{position:sticky;top:0;z-index:10;background:var(--bg);display:flex;gap:4px;padding:8px 0;margin-bottom:12px;border-bottom:.5px solid var(--border)}
+nav.tabs button{border:0;background:none;border-radius:8px;color:var(--muted);font-size:14px;padding:7px 14px}
+nav.tabs button[aria-selected=true]{background:var(--card);color:var(--text);box-shadow:0 0 0 .5px var(--strong)}
+/* banners */
+.banner{border-radius:12px;padding:10px 14px;margin-bottom:10px}
+.banner summary{cursor:pointer;list-style:none;display:flex;gap:8px;align-items:center}
+.banner summary::-webkit-details-marker{display:none}
+.banner summary>i:first-child{font-size:19px}
+.banner summary .ti-chevron-down{margin-left:auto;transition:transform .15s}
+.banner[open] summary .ti-chevron-down{transform:rotate(180deg)}
+.banner .bbody{margin:6px 0 2px 27px}
+.banner b{font-weight:500}
+.banner ul{margin:4px 0 6px;padding-left:18px}
+.b-red{background:var(--red-bg);color:var(--red);border:.5px solid var(--red-b)}
+.b-amber{background:var(--amber-bg);color:var(--amber);border:.5px solid var(--amber-b)}
+.banner .btn{background:transparent;color:inherit;border-color:currentColor;margin-top:4px}
+/* tiles */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:8px;margin-bottom:14px}
+.tile{background:var(--card);border:.5px solid var(--border);border-radius:10px;padding:10px 12px;min-width:0}
+.tile b{display:block;font-size:20px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile .sub{display:block}
+/* ads list */
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.chips{display:flex;gap:4px;flex-wrap:wrap}
+.chipbtn{border-radius:16px;padding:4px 12px;min-height:30px;font-size:13px;color:var(--muted)}
+.chipbtn.on{color:var(--text);background:var(--soft);border-color:var(--text)}
+.filters input[type=search]{flex:1;min-width:180px;width:auto}
+.head{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:10px;align-items:center}
+.head .nm{cursor:pointer;min-width:0}
+.head .nm b{font-weight:500;overflow-wrap:anywhere}
+.chev{border:0;background:none;padding:4px;min-height:0;color:var(--muted)}
+.chev i{transition:transform .15s;display:inline-block}
+.chev.open i{transform:rotate(90deg)}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px 14px;margin-top:10px;padding-top:10px;border-top:.5px solid var(--border)}
+.fact .sub{display:block}
+.fact .v{font-size:13px}
+.fact.wide{grid-column:1/-1}
+.kids{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.adset{border:.5px solid var(--border);border-radius:10px;padding:12px;background:var(--bg)}
+.adset .head{grid-template-columns:minmax(0,1fr) auto auto}
+.ads{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+.adrow{display:grid;grid-template-columns:56px minmax(0,1fr) auto auto;gap:10px;align-items:center;background:var(--card);border:.5px solid var(--border);border-radius:8px;padding:8px}
+.thumb{width:56px;height:56px;border-radius:6px;background:var(--soft);overflow:hidden;position:relative;display:grid;place-items:center;color:var(--muted)}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.thumb .vid{position:absolute;right:3px;bottom:3px;color:#fff;font-size:13px;text-shadow:0 0 3px rgba(0,0,0,.7)}
+.issues{margin-top:6px;font-size:12px;color:var(--red);background:var(--red-bg);border-radius:6px;padding:6px 8px}
+.issues div+div{margin-top:3px}
+@media (max-width:560px){
+  .head{grid-template-columns:auto minmax(0,1fr) auto}
+  .head>.pill{grid-column:2;grid-row:2;justify-self:start}
+  .adset .head{grid-template-columns:minmax(0,1fr) auto}
+  .adset .head>.pill{grid-column:1}
+  .adrow{grid-template-columns:48px minmax(0,1fr) auto}
+  .adrow>.pill{grid-column:2;grid-row:2;justify-self:start}
+  .adrow .thumb{width:48px;height:48px}
+}
+/* on/off switch */
+button.sw{width:46px;height:28px;min-height:0;border-radius:14px;background:var(--soft);border:.5px solid var(--strong);position:relative;padding:0;flex:none}
+button.sw::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.35);transition:transform .15s}
+button.sw.on{background:var(--sw-on);border-color:var(--sw-on)}
+button.sw.on::after{transform:translateX(18px)}
+button.sw:disabled{opacity:.6}
+.editbox{margin-top:10px;padding:12px;border:.5px dashed var(--strong);border-radius:8px;background:var(--card)}
+/* new ad form */
+.goals{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
+.goal{border:.5px solid var(--strong);border-radius:10px;padding:10px 12px;cursor:pointer;display:flex;gap:10px;align-items:flex-start;background:var(--card)}
+.goal i{font-size:22px;color:var(--muted)}
+.goal b{font-weight:500;display:block}
+.goal.on{border-color:var(--text);box-shadow:0 0 0 1px var(--text);background:var(--soft)}
+.goal.on i{color:var(--text)}
+.drop{border:1.5px dashed var(--strong);border-radius:10px;padding:22px 12px;text-align:center;color:var(--muted);cursor:pointer}
+.drop.over{background:var(--soft);border-color:var(--text)}
+.drop i{font-size:26px;display:block;margin-bottom:4px}
+.media{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:12px}
+.mcard{border:.5px solid var(--border);border-radius:10px;padding:6px;position:relative;background:var(--bg);min-width:0}
+.mprev{aspect-ratio:4/5;border-radius:6px;overflow:hidden;background:#000;display:grid;place-items:center}
+.mprev img,.mprev video{width:100%;height:100%;object-fit:cover}
+.mx{position:absolute;top:10px;right:10px;width:28px;height:28px;min-height:0;padding:0;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;border:0}
+.mx:hover{background:rgba(0,0,0,.8)}
+.mname{font-size:12px;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar{height:4px;border-radius:2px;background:var(--soft);margin-top:5px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--s1);border-radius:2px;transition:width .3s}
+.mst{font-size:12px;margin-top:3px}
+.mst.ok{color:var(--green)}.mst.err{color:var(--red)}
+.thumbs{display:flex;gap:4px;overflow-x:auto;margin-top:5px}
+.thumbs img{width:34px;height:42px;object-fit:cover;border-radius:4px;cursor:pointer;opacity:.6;border:2px solid transparent}
+.thumbs img.on{opacity:1;border-color:var(--text)}
+.seg{display:inline-flex;border:.5px solid var(--strong);border-radius:8px;overflow:hidden;flex-wrap:wrap}
+.seg button{border:0;border-radius:0;min-height:34px;color:var(--muted)}
+.seg button+button{border-left:.5px solid var(--border)}
+.seg button.on{background:var(--text);color:var(--bg)}
+.money{position:relative}
+.money::before{content:"₹";position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.money input{padding-left:24px}
+.est{background:var(--soft);border-radius:8px;padding:8px 10px;font-size:13px;margin-top:4px}
+.est.warn{background:var(--amber-bg);color:var(--amber)}
+.search{position:relative}
+.sugg{position:absolute;left:0;right:0;top:100%;margin-top:4px;background:var(--card);border:.5px solid var(--strong);border-radius:8px;z-index:20;max-height:280px;overflow:auto;box-shadow:0 6px 20px rgba(0,0,0,.15)}
+.sugg div{padding:8px 10px;cursor:pointer;font-size:13px}
+.sugg div:hover,.sugg div.hi{background:var(--soft)}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.tag{display:inline-flex;gap:6px;align-items:center;background:var(--soft);border-radius:16px;padding:3px 4px 3px 10px;font-size:13px}
+.tag select{width:auto;min-height:0;padding:1px 4px;font-size:12px;border-radius:6px}
+.tag button{border:0;background:none;padding:0 4px;min-height:0;color:var(--muted)}
+.createbar{position:sticky;bottom:0;z-index:9;background:var(--bg);border-top:.5px solid var(--border);padding:10px 0;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.createbar button.main{font-size:15px;padding:10px 18px}
+.steps{list-style:none;padding:0;margin:8px 0}
+.steps li{display:flex;gap:8px;align-items:center;padding:3px 0}
+.steps .done{color:var(--green)}.steps .failed{color:var(--red)}
+.okhead{display:flex;gap:10px;align-items:center;color:var(--green)}
+.okhead i{font-size:24px}
+.kv{display:grid;grid-template-columns:110px minmax(0,1fr);gap:6px 12px;margin:12px 0;font-size:13px}
+.kv>span:nth-child(odd){color:var(--muted)}
+.prevs{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
+.prevs iframe{border:0;border-radius:10px;background:var(--soft);max-width:100%}
+button.big{font-size:16px;padding:12px 22px}
+.errbox{background:var(--red-bg);color:var(--red);border:.5px solid var(--red-b);border-radius:10px;padding:10px 12px;margin:8px 0;font-size:13px}
+.errbox b{font-weight:500}
+.errbox .hint{margin-top:6px;color:var(--text)}
+.warnbox{background:var(--amber-bg);color:var(--amber);border-radius:8px;padding:8px 10px;margin-top:10px;font-size:13px}
+/* stats */
+.ctrl{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:12px}
+.ctrl select{width:auto;max-width:100%}
+.ctrl .grow{flex:1;min-width:200px}
+.charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,470px),1fr));gap:14px;margin-bottom:14px}
+.charts .card{margin:0;min-width:0}
+.cbox{position:relative;height:220px}
+.cbox.small{height:150px}
+.cbox.tall{height:300px}
+.chead{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.empty{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:13px;text-align:center;padding:10px}
+.tablewrap{overflow-x:auto;border-radius:10px;border:.5px solid var(--border);background:var(--card)}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:720px}
+th{text-align:right;font-weight:500;color:var(--muted);padding:9px 10px;border-bottom:.5px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none;background:var(--card)}
+th:first-child,td:first-child,th.l,td.l{text-align:left}
+th.sorted{color:var(--text)}
+td{padding:7px 10px;border-bottom:.5px solid var(--border);text-align:right;font-variant-numeric:tabular-nums;vertical-align:middle}
+tr:last-child td{border-bottom:0}
+td .tn{display:flex;gap:8px;align-items:center;min-width:220px}
+td .tn img{width:34px;height:34px;border-radius:4px;object-fit:cover;flex:none}
+td .tn span{white-space:normal;text-align:left}
+.best{color:var(--green);font-weight:500}
+.swatch{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:grid;place-items:center;z-index:60;padding:16px}
+.modal[hidden]{display:none}
+.modal .box{background:var(--card);border-radius:14px;padding:18px;max-width:440px;width:100%;box-shadow:0 10px 40px rgba(0,0,0,.3)}
+.modal h3{font-size:16px;margin-bottom:8px}
+.modal .actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}
+/* new ad: the form with a sticky preview beside it */
+.newgrid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:start}
+.formcol{min-width:0}
+.prevcol{position:sticky;top:60px;min-width:0}
+.prevcol .card{margin-bottom:0}
+.prevjump{display:none}
+@media (max-width:980px){.newgrid{grid-template-columns:minmax(0,1fr)}.prevcol{position:static}.prevjump{display:inline}}
+.locs{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;margin-bottom:12px}
+.dests{display:flex;flex-direction:column;gap:6px}
+.dest,.vropt{display:flex;gap:10px;align-items:flex-start;border:.5px solid var(--border);border-radius:10px;padding:8px 10px;cursor:pointer;background:var(--card)}
+.dest input,.vropt input{margin-top:4px;flex:none}
+.dest>i{font-size:20px;color:var(--muted);margin-top:1px}
+.dest b,.vropt b{font-weight:500}
+.dest b{display:block}
+.dest:has(input:checked),.vropt:has(input:checked){border-color:var(--text);background:var(--soft)}
+.dest:has(input:checked)>i{color:var(--text)}
+.vropt{margin-bottom:6px}
+.asset{display:flex;gap:8px;align-items:center;min-height:38px}
+.asset img{width:30px;height:30px;border-radius:50%;object-fit:cover;flex:none}
+.asset>i{font-size:20px}
+.qa{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:8px;margin-bottom:8px}
+.qa textarea{min-height:38px;height:38px;padding-top:8px;resize:none;overflow:hidden}
+@media (max-width:640px){.qa{grid-template-columns:minmax(0,1fr);padding-bottom:6px;border-bottom:.5px solid var(--border)}}
+.pgroup{margin-top:10px}
+.pgroup .row{gap:0 16px}
+input:indeterminate{opacity:.7}
+.vrule{border:.5px solid var(--border);border-radius:8px;padding:8px;margin-bottom:8px;background:var(--bg)}
+.vrule .row{gap:6px}
+.vrule select{width:auto}
+.chip{border-radius:14px;padding:2px 10px;font-size:12px;min-height:28px}
+.chip.on{background:var(--text);color:var(--bg);border-color:var(--text)}
+/* phone mock (drawn locally; always light, like a phone screenshot) */
+.ph,.chat{border:.5px solid var(--border);border-radius:14px;overflow:hidden;background:#fff;color:#111;font:13px/1.35 system-ui,-apple-system,"Segoe UI",sans-serif;max-width:320px;margin:0 auto}
+.ph .top,.chat .top,.vert .top{display:flex;gap:8px;align-items:center;padding:8px 10px;flex-wrap:nowrap;justify-content:flex-start;margin:0}
+.ph .top>div,.chat .top>div,.vert .top>div{min-width:0}
+.av{width:30px;height:30px;border-radius:50%;background:#ddd;flex:none;display:grid;place-items:center;color:#777;overflow:hidden}
+.av img{width:100%;height:100%;object-fit:cover}
+.ph .nm,.chat .nm,.vert .nm{font-weight:600;font-size:13px;line-height:1.2}
+.ph .sm,.chat .sm{font-size:11px;color:#737373}
+.ell{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ph .media{position:relative;background:#111;overflow:hidden;display:grid;place-items:center}
+.ph .media img,.ph .media video{width:100%;height:100%;object-fit:cover;display:block}
+.placeholder{color:#999;font-size:12px;display:grid;place-items:center;gap:4px;text-align:center;padding:30px 10px;min-height:100%;width:100%}
+.placeholder i{font-size:28px}
+.ph .ctabar{display:flex;justify-content:space-between;align-items:center;padding:9px 10px;font-weight:600;border-bottom:.5px solid #efefef;color:#0064e0}
+.ph .icons{display:flex;gap:14px;padding:8px 10px 2px;font-size:22px}
+.ph .cap{padding:4px 10px 10px;white-space:pre-wrap;overflow-wrap:anywhere}
+.more{color:#737373}
+.fbbar{display:flex;justify-content:space-between;align-items:center;gap:8px;background:#f0f2f5;padding:8px 10px}
+.fbbar .btn2{background:#e2e5e9;border-radius:6px;padding:6px 10px;font-weight:600;white-space:nowrap;font-size:12px}
+.fbact{display:flex;justify-content:space-around;color:#65676b;padding:8px;font-size:12px;border-top:.5px solid #e4e6eb}
+.vert{position:relative;aspect-ratio:9/16;background:#111;color:#fff;max-width:280px;margin:0 auto;border-radius:14px;overflow:hidden;font:13px/1.35 system-ui,-apple-system,"Segoe UI",sans-serif}
+.vert .bg{position:absolute;inset:0;filter:blur(18px) brightness(.55);transform:scale(1.2)}
+.vert .bg img{width:100%;height:100%;object-fit:cover}
+.vert .fg{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.vert .fg.cover{object-fit:cover}
+.vert .top{position:absolute;top:0;left:0;right:0;display:flex;gap:8px;align-items:center;padding:14px 10px 20px;background:linear-gradient(rgba(0,0,0,.5),transparent)}
+.vert .top .sm{font-size:11px;color:#ddd}
+.vert .bars{position:absolute;top:6px;left:8px;right:8px;height:2px;background:rgba(255,255,255,.45);border-radius:2px}
+.vert .bottom{position:absolute;left:0;right:0;bottom:0;padding:24px 10px 12px;background:linear-gradient(transparent,rgba(0,0,0,.65))}
+.vert .cap2{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px}
+.vert .pillcta{text-align:center;background:#fff;color:#111;border-radius:8px;padding:8px;font-weight:600;margin-top:8px}
+.dots{position:absolute;bottom:8px;left:0;right:0;display:flex;gap:4px;justify-content:center;pointer-events:none}
+.dots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.5)}
+.dots i.on{background:#fff}
+.vert .dots{bottom:auto;top:60px}
+button.cnext{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:30px;height:30px;min-height:0;border-radius:50%;border:0;background:rgba(255,255,255,.9);color:#111;padding:0}
+.chat{display:flex;flex-direction:column;min-height:440px}
+.chat .top{border-bottom:.5px solid #eee}
+.chat .msgs{flex:1;padding:10px;display:flex;flex-direction:column;gap:6px}
+.chat .b{max-width:82%;padding:7px 11px;border-radius:16px;white-space:pre-wrap;overflow-wrap:anywhere}
+.chat .them{background:#efefef;align-self:flex-start}
+.chat .me{align-self:flex-end;color:#fff;background:var(--chat)}
+.chat .botnote{align-self:flex-start;color:#8a8a8a;font-style:italic;font-size:11px}
+.chat .adref{align-self:center;display:flex;gap:8px;align-items:center;border:.5px solid #ddd;border-radius:10px;padding:5px 8px 5px 5px;font-size:11px;color:#737373}
+.chat .adref img{width:34px;height:34px;object-fit:cover;border-radius:6px}
+.chat .qs{display:flex;flex-direction:column;gap:6px;padding:10px;border-top:.5px solid #eee}
+.chat .qs button{border:1px solid var(--chat);color:var(--chat);background:#fff;border-radius:16px;font-size:12px;min-height:30px;justify-content:flex-start;text-align:left}
+.chat .qs .lnk{color:#737373;font-size:11px}
+.realframe{width:100%;max-width:320px;border:0;border-radius:10px;display:block;margin:0 auto;background:var(--soft)}
+.modal .box{max-height:92vh;overflow:auto}
+[hidden]{display:none!important}
+.spin{display:inline-block;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spin{animation:none}.bar i,button.sw::after,.chev i{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div><h1>Resin ads</h1><div class="sub" id="who">Loading your ad account…</div></div>
+    <div class="row">
+      <button class="icon" id="refresh" title="Refresh from Meta" aria-label="Refresh from Meta"><i class="ti ti-refresh"></i></button>
+      <button class="icon" id="theme" title="Light / dark" aria-label="Switch light or dark mode"><i class="ti ti-device-desktop"></i></button>
+    </div>
+  </div>
+  <nav class="tabs" role="tablist">
+    <button role="tab" data-tab="ads" aria-selected="true"><i class="ti ti-list-details"></i> My ads</button>
+    <button role="tab" data-tab="new" aria-selected="false"><i class="ti ti-plus"></i> New ad</button>
+    <button role="tab" data-tab="stats" aria-selected="false"><i class="ti ti-chart-bar"></i> Stats</button>
+  </nav>
+  <div id="banners"></div>
+
+  <!-- ===================== MY ADS ===================== -->
+  <section id="tab-ads">
+    <div class="tiles" id="adtiles"></div>
+    <div class="filters">
+      <div class="chips" id="adfilter">
+        <button class="chipbtn on" data-f="all">All</button><button class="chipbtn" data-f="on">On</button>
+        <button class="chipbtn" data-f="off">Off</button><button class="chipbtn" data-f="problems">Problems</button>
+      </div>
+      <input type="search" id="adq" placeholder="Search ads">
+    </div>
+    <div id="adlist"><div class="sub">Loading your ads…</div></div>
+    <div class="sub" id="adfresh"></div>
+  </section>
+
+  <!-- ===================== NEW AD ===================== -->
+  <section id="tab-new" hidden>
+   <div class="newgrid">
+    <div class="formcol">
+    <div class="card">
+      <h2>1 · What is this ad for?</h2>
+      <label class="f"><span>Ad name (only you see this)</span><input id="f-name" maxlength="200" placeholder="e.g. Diwali diya workshop · Delhi"></label>
+      <span class="flabel">Campaign objective</span>
+      <div class="goals" id="objectives" role="radiogroup" aria-label="Campaign objective">
+        <div class="goal on" data-obj="engagement" role="radio" tabindex="0" aria-checked="true"><i class="ti ti-messages"></i><div><b>Engagement</b><span class="sub">DMs and chats, likes and video views, or calls.</span></div></div>
+        <div class="goal" data-obj="traffic" role="radio" tabindex="0" aria-checked="false"><i class="ti ti-click"></i><div><b>Traffic</b><span class="sub">Send people to a website, a wa.me WhatsApp link or your Instagram profile.</span></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>2 · Where people go (conversion location)</h2>
+      <div class="locs" id="locations" role="radiogroup" aria-label="Conversion location"></div>
+      <div id="loc-messages" class="locbox">
+        <span class="flabel">Message destinations</span>
+        <div class="dests" id="dests">
+          <label class="dest"><input type="checkbox" data-dest="instagram" checked><i class="ti ti-brand-instagram"></i><span><b>Instagram</b><span class="sub" data-note="instagram"></span></span></label>
+          <label class="dest"><input type="checkbox" data-dest="messenger"><i class="ti ti-brand-messenger"></i><span><b>Messenger</b><span class="sub" data-note="messenger"></span></span></label>
+          <label class="dest"><input type="checkbox" data-dest="whatsapp"><i class="ti ti-brand-whatsapp"></i><span><b>WhatsApp</b><span class="sub" data-note="whatsapp"></span></span></label>
+        </div>
+        <div class="sub" id="multinote" hidden style="margin-top:6px">With more than one, Meta sends each person to the app they're most likely to reply in.</div>
+      </div>
+      <div id="loc-website" class="locbox" hidden>
+        <div class="grid2">
+          <label class="f"><span>Link people go to</span><input id="f-link" type="url" inputmode="url" placeholder="https://… or https://wa.me/91XXXXXXXXXX"><span class="sub">For WhatsApp: https://wa.me/ followed by the number with 91, no spaces or +.</span></label>
+          <label class="f"><span>Button</span><select id="f-button"></select></label>
+        </div>
+      </div>
+      <div id="loc-calls" class="locbox" hidden>
+        <label class="f"><span>Phone number people call</span><input id="f-phone" type="tel" inputmode="tel" placeholder="+91 98XXXXXXXX" maxlength="20"><span class="sub">The button says “Call now”. It has to be an Indian number when the ad shows in India.</span></label>
+      </div>
+      <div id="loc-profile" class="locbox sub" hidden></div>
+      <div id="loc-on_ad" class="locbox sub" hidden>No button: people like, comment, share or watch right on the ad.</div>
+      <div class="grid2" style="margin-top:12px">
+        <label class="f"><span>Performance goal</span><select id="f-perf"></select></label>
+        <label class="f"><span>Cost per result goal (optional)</span><div class="money"><input id="f-costgoal" type="number" inputmode="decimal" min="1" step="1" placeholder="Leave empty for the most results"></div><span class="sub">Empty = “highest volume”, like your main ad. With a goal, Meta tries to keep each result around this cost, and may spend less.</span></label>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>3 · Business assets</h2>
+      <div class="grid2">
+        <label class="f"><span>Facebook Page</span><select id="f-page"><option>Loading…</option></select></label>
+        <div class="f"><span class="flabel">Instagram account</span><div class="asset" id="igasset"><span class="sub">Loading…</span></div></div>
+      </div>
+      <div id="waasset" hidden><span class="flabel">WhatsApp number</span><div class="asset" id="waval"></div></div>
+      <div class="sub" id="assetnote"></div>
+    </div>
+
+    <div class="card">
+      <h2>4 · Photos &amp; videos</h2>
+      <div class="drop" id="drop" tabindex="0" role="button"><i class="ti ti-cloud-upload"></i>Drop photos or videos here, or tap to choose<div class="sub">JPG / PNG photos, MP4 / MOV videos. Several at once is fine.</div></div>
+      <input type="file" id="files" accept="image/jpeg,image/png,image/gif,video/*" multiple hidden>
+      <div class="media" id="media"></div>
+      <div id="multi" hidden style="margin-top:10px">
+        <label class="check"><input type="checkbox" id="f-carousel"> <span>Put them all in <b style="font-weight:500">one swipeable carousel</b> ad<br><span class="sub">Otherwise each photo/video becomes its own ad in the same ad set, and Meta shows the one that works best more often.</span></span></label>
+        <div class="warnbox" id="carouselwarn" hidden></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>5 · Text</h2>
+      <label class="f"><span>Caption (primary text)</span><textarea id="f-caption" maxlength="2200"></textarea><span class="sub" id="capcount"></span></label>
+      <label class="f"><span>Headline (optional, short)</span><input id="f-headline" maxlength="255"></label>
+      <div id="welcomebox">
+        <div class="flabel" style="margin-top:4px;font-size:13px;color:var(--text)">When someone opens the chat (optional)</div>
+        <label class="f"><span>Greeting</span><input id="f-greeting" maxlength="300"><span class="sub">{{user_first_name}} is swapped for their first name.</span></label>
+        <span class="flabel">Questions they can tap, and the automatic answer to each</span>
+        <div id="questions"></div>
+        <div class="sub" id="qanote"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>6 · Budget &amp; dates</h2>
+      <div class="row" style="margin-bottom:12px">
+        <div class="seg" id="btype"><button class="on" data-b="daily">Per day</button><button data-b="lifetime">Total for the whole run</button></div>
+      </div>
+      <div class="grid2">
+        <label class="f"><span id="budgetlabel">Budget per day</span><div class="money"><input id="f-budget" type="number" inputmode="decimal" min="1" step="1"></div></label>
+        <div></div>
+        <div>
+          <label class="f" style="margin-bottom:4px"><span>Start (India time)</span><input id="f-start" type="datetime-local" disabled></label>
+          <label class="check"><input type="checkbox" id="f-startnow" checked> Start as soon as I click Go live</label>
+        </div>
+        <div>
+          <label class="f" style="margin-bottom:4px"><span>End (India time)</span><input id="f-end" type="datetime-local"></label>
+          <label class="check" id="noendbox"><input type="checkbox" id="f-noend"> No end date (runs until I turn it off)</label>
+        </div>
+      </div>
+      <div class="est" id="estimate"></div>
+    </div>
+
+    <div class="card">
+      <h2>7 · Who sees it</h2>
+      <span class="flabel">Locations</span>
+      <div class="search"><input id="geoq" placeholder="Add a city, state or country, e.g. Delhi" autocomplete="off"><div class="sugg" id="geosugg" hidden></div></div>
+      <div class="tags" id="geotags"></div>
+      <div class="grid2" style="margin-top:14px">
+        <div><span class="flabel">Age</span><div class="row" style="flex-wrap:nowrap"><select id="f-agemin" aria-label="Minimum age"></select><span class="sub">to</span><select id="f-agemax" aria-label="Maximum age"></select></div></div>
+        <div><span class="flabel">Gender</span><div class="seg" id="gender"><button class="on" data-g="all">Everyone</button><button data-g="female">Women</button><button data-g="male">Men</button></div></div>
+      </div>
+      <span class="flabel" style="margin-top:14px">Interests (optional)</span>
+      <div class="search"><input id="intq" placeholder="e.g. resin, art and craft, DIY" autocomplete="off"><div class="sugg" id="intsugg" hidden></div></div>
+      <div class="tags" id="inttags"></div>
+      <label class="check" style="margin-top:12px"><input type="checkbox" id="f-advantage" checked> <span>Let Meta also find similar people (recommended, your main ad used this)<br><span class="sub">Location stays strict. Age, gender and interests become hints: Meta may show the ad to others when it expects more results there.</span></span></label>
+      <div class="est" id="audsize">Audience size: …</div>
+    </div>
+
+    <div class="card">
+      <h2>8 · Where it shows (placements)</h2>
+      <div class="seg" id="pmode" style="margin-bottom:12px"><button class="on" data-pm="manual">Manual placements</button><button data-pm="auto">Advantage+ placements</button></div>
+      <div id="autoplace" class="sub" hidden>Meta shows the ad on Facebook, Instagram, Messenger, Threads and Audience Network, wherever it expects the most results for the money.</div>
+      <div id="manualplace">
+        <div class="grid2">
+          <label class="f"><span>Devices</span><select id="f-devices"><option value="all">All devices</option><option value="mobile">Mobile only</option><option value="desktop">Computers only</option></select></label>
+        </div>
+        <span class="flabel">Platforms</span>
+        <div class="row" style="gap:2px 16px" id="plats"></div>
+        <div id="posgroups"></div>
+        <div class="warnbox" id="placewarn" hidden></div>
+        <div class="sub" id="placehist" style="margin-top:8px"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>9 · Value rules (optional)</h2>
+      <div class="sub" style="margin-bottom:10px">Tell Meta that some placements or people are worth more (or less) to you, and it bids more (or less) to reach them. Your main ad uses one. Works with “highest volume” and with a cost per result goal.</div>
+      <div id="vrlist" role="radiogroup" aria-label="Value rule set"><span class="sub">Loading…</span></div>
+      <button class="mini" id="vrnew" style="margin-top:8px"><i class="ti ti-plus"></i> New rule set</button>
+      <div id="vrbuilder" class="editbox" hidden></div>
+    </div>
+
+    <div id="createout"></div>
+    <div class="createbar">
+      <button class="main" id="create"><i class="ti ti-sparkles"></i> Create ad (paused)</button>
+      <span class="sub" id="createhint">Nothing spends yet. You'll see a summary and a Go live button.</span>
+      <button class="lnk prevjump" id="prevjump">See the preview</button>
+    </div>
+    </div>
+
+    <aside class="prevcol" id="prevcol" aria-label="Ad preview">
+      <div class="card prevcard">
+        <div class="chead"><div><h3>Preview</h3><span class="sub" id="prevsub">How the ad looks, as you fill it in</span></div></div>
+        <div class="chips" id="prevtabs" style="margin-bottom:10px"></div>
+        <div id="mock"></div>
+        <div id="prevreal" hidden></div>
+        <div class="row" style="margin-top:10px;justify-content:space-between">
+          <button class="mini" id="realprev"><i class="ti ti-brand-meta"></i> Meta's real preview</button>
+          <button class="lnk" id="mockback" hidden>Back to the quick preview</button>
+        </div>
+        <div class="sub" style="margin-top:6px" id="prevnote">The quick preview is drawn here. Meta's real preview asks Meta (it needs your photos/videos uploaded).</div>
+      </div>
+    </aside>
+   </div>
+  </section>
+
+  <!-- ===================== STATS ===================== -->
+  <section id="tab-stats" hidden>
+    <div class="ctrl">
+      <div><span class="flabel">Dates</span>
+        <div class="seg" id="range"><button data-p="today">Today</button><button data-p="yesterday">Yesterday</button><button class="on" data-p="7d">7 days</button><button data-p="30d">30 days</button><button data-p="lifetime">Lifetime</button><button data-p="custom">Custom</button></div>
+      </div>
+      <div id="customrange" class="row" hidden><input type="date" id="st-since" aria-label="From" style="width:auto"><span class="sub">to</span><input type="date" id="st-until" aria-label="To" style="width:auto"><button class="mini" id="st-apply">Show</button></div>
+    </div>
+    <div class="ctrl">
+      <div><span class="flabel">Show</span><select id="st-level"><option value="account">Whole account</option><option value="campaign">One campaign</option><option value="adset">One ad set</option><option value="ad">One ad</option></select></div>
+      <div class="grow" id="st-objbox" hidden><span class="flabel">Which one</span><select id="st-obj" style="width:100%"></select></div>
+      <div class="row"><button class="mini" id="st-refresh"><i class="ti ti-refresh"></i> Refresh</button><span class="sub" id="st-fresh"></span></div>
+    </div>
+    <div id="st-err"></div>
+    <div class="tiles" id="kpis"></div>
+
+    <div class="charts">
+      <div class="card">
+        <div class="chead"><div><h3>Spend and <span class="rlabel">DMs</span> over time</h3><span class="sub">Same days on both, so you can see what the money bought</span></div></div>
+        <span class="sub">Spent per <span class="per">day</span> (₹)</span><div class="cbox small"><canvas id="c-spend"></canvas></div>
+        <span class="sub" style="display:block;margin-top:8px"><span class="rlabel">DMs</span> per <span class="per">day</span></span><div class="cbox small"><canvas id="c-results"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="chead"><div><h3>Cost per <span class="rlabel1">DM</span> over time</h3><span class="sub">Lower is better. Gaps are days without any.</span></div></div>
+        <div class="cbox tall"><canvas id="c-cpr"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="chead"><div><h3>Reach and impressions</h3><span class="sub">Reach = different people · impressions = times shown</span></div></div>
+        <div class="cbox"><canvas id="c-reach"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="chead"><div><h3>How far people watched the video</h3><span class="sub" id="vidsub">Out of everyone who started it</span></div></div>
+        <div class="cbox"><canvas id="c-video"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="chead">
+        <div><h3>Who and where</h3><span class="sub" id="bdsub"></span></div>
+        <div class="row">
+          <select id="bd-metric" aria-label="Measure" style="width:auto"><option value="results">DMs</option><option value="spend">Spent</option><option value="cost_per_result">Cost per DM</option><option value="impressions">Impressions</option><option value="clicks">Clicks</option></select>
+          <button class="mini" id="bd-table">Table</button>
+        </div>
+      </div>
+      <div class="chips" id="bdtabs" style="margin-bottom:10px">
+        <button class="chipbtn on" data-by="age_gender">Age &amp; gender</button><button class="chipbtn" data-by="placement">Placement</button>
+        <button class="chipbtn" data-by="region">Region</button><button class="chipbtn" data-by="hour">Time of day</button>
+      </div>
+      <div class="cbox tall" id="bdchartbox"><canvas id="c-bd"></canvas></div>
+      <div id="bdtablebox" hidden></div>
+    </div>
+
+    <div class="card">
+      <div class="chead"><div><h3>Compare ads</h3><span class="sub">Click a column to sort. Tick up to 5 ads to compare them day by day.</span></div></div>
+      <div class="tablewrap"><table><thead id="adth"></thead><tbody id="adtb"></tbody></table></div>
+      <div id="comparebox" hidden style="margin-top:14px"><span class="sub"><span class="rlabel">DMs</span> per <span class="per">day</span>, ticked ads</span><div class="cbox"><canvas id="c-compare"></canvas></div></div>
+    </div>
+  </section>
+</div>
+
+<div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-labelledby="m-title">
+  <div class="box"><h3 id="m-title"></h3><div id="m-body" style="font-size:14px"></div>
+    <div class="actions"><button id="m-no">Cancel</button><button class="main" id="m-yes">OK</button></div></div>
+</div>
+<div id="toast" role="status"></div>
+
+<script>
+const H={"x-local":"1"};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const ls={get(k){try{return localStorage.getItem("ads."+k)}catch(e){return null}},set(k,v){try{localStorage.setItem("ads."+k,v)}catch(e){}}};
+const IST_MS=19800000;
+const md=s=>s?new Date(String(s).replace(/([+-]\d\d)(\d\d)$/,"$1:$2")):null;
+const fmtD=(s,time=true)=>{const d=md(s);return d?d.toLocaleString("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",...(time?{hour:"numeric",minute:"2-digit"}:{})}):"—"};
+const toInput=s=>{const d=md(s);return d?new Date(d.getTime()+IST_MS).toISOString().slice(0,16):""};
+const fromInput=v=>v?new Date(v+":00+05:30"):null;
+const istInput=d=>new Date(d.getTime()+IST_MS).toISOString().slice(0,16);
+const inr=(n,d)=>n==null||isNaN(n)?"—":"₹"+Number(n).toLocaleString("en-IN",{maximumFractionDigits:d??(Math.abs(n)<100?2:0)});
+const num=n=>n==null||isNaN(n)?"—":Number(n).toLocaleString("en-IN",{maximumFractionDigits:0});
+const big=n=>n==null?"—":n>=1e7?(n/1e7).toFixed(1).replace(/\.0$/,"")+" crore":n>=1e5?(n/1e5).toFixed(1).replace(/\.0$/,"")+" lakh":num(n);
+const pct=n=>n==null?"—":Number(n).toFixed(2)+"%";
+const pill=([l,c])=>`<span class="pill ${c}">${esc(l)}</span>`;
+const agoS=t=>{const m=Math.round((Date.now()/1000-t)/60);return m<1?"just now":m+" min ago"};
+function toast(m){const e=$("toast");e.textContent=m;e.style.display="block";clearTimeout(e._t);e._t=setTimeout(()=>e.style.display="none",3000)}
+let ACC=null,DEF=null,TREE=null,RATE_UNTIL=0;
+
+async function api(path,{method="GET",body}={}){
+  const opt={method,headers:{...H}};
+  if(body!==undefined){opt.headers["content-type"]="application/json";opt.body=JSON.stringify(body)}
+  let r;
+  try{r=await fetch(path,opt)}catch(e){throw {message:"Can't reach the ad manager. Is its window still open?"}}
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok){
+    const d=j&&j.detail;const err=d&&typeof d==="object"?d:{message:typeof d==="string"?d:"Something went wrong ("+r.status+")"};
+    if(r.status===429||err.rate_limited){RATE_UNTIL=Date.now()+90000;renderBanners()}
+    throw err;
+  }
+  return j;
+}
+function errHtml(e){
+  return `<div class="errbox"><b><i class="ti ti-alert-triangle"></i> ${esc(e.message||"Something went wrong")}</b>${e.hint?`<div class="hint">${esc(e.hint)}</div>`:""}${e.link?`<div style="margin-top:6px"><a href="${esc(e.link)}" target="_blank" rel="noopener">Open in Meta ↗</a></div>`:""}</div>`;
+}
+function showErr(e){ask("That didn't work",errHtml(e),"OK",false,true)}
+function ask(title,html,yes="Continue",danger=false,alertOnly=false){
+  return new Promise(res=>{
+    const m=$("modal"),y=$("m-yes"),n=$("m-no");
+    $("m-title").textContent=title;$("m-body").innerHTML=html;y.textContent=yes;y.className=danger?"danger":"main";n.hidden=alertOnly;m.hidden=false;y.focus();
+    const done=v=>{m.hidden=true;y.onclick=n.onclick=m.onclick=null;document.removeEventListener("keydown",key);res(v)};
+    const key=e=>{if(e.key==="Escape")done(false)};
+    document.addEventListener("keydown",key);y.onclick=()=>done(true);n.onclick=()=>done(false);m.onclick=e=>{if(e.target===m)done(false)};
+  });
+}
+
+// ---------- account, banners, theme, tabs ----------
+const NOFUNDS=()=>!!(ACC&&ACC.billing&&ACC.billing.problems.length);
+async function loadAccount(fresh){
+  try{ACC=await api("/api/account"+(fresh?"?fresh=1":""));if(ACC.rate_limited)RATE_UNTIL=Date.now()+ACC.rate_limited*1000}
+  catch(e){ACC=ACC||null;$("who").textContent=e.message;return}
+  $("who").innerHTML=`${ACC.ig.username?"@"+esc(ACC.ig.username)+" · ":""}${esc(ACC.page.name||"")} · ad account ${esc(ACC.id)}`;
+  renderBanners();
+}
+function banner(key,cls,icon,title,sig,body){
+  // collapsible; stays collapsed until what it says changes
+  const open=ls.get("banner."+key)!==sig;
+  return `<details class="banner ${cls}" data-bkey="${key}" data-sig="${esc(sig)}" ${open?"open":""}><summary><i class="ti ${icon}"></i><b>${title}</b><i class="ti ti-chevron-down"></i></summary><div class="bbody">${body}</div></details>`;
+}
+document.addEventListener("toggle",e=>{const d=e.target;if(d.matches&&d.matches("details[data-bkey]"))ls.set("banner."+d.dataset.bkey,d.open?"":d.dataset.sig)},true);
+function renderBanners(){
+  let h="";
+  if(ACC&&NOFUNDS())h+=banner("billing","b-red","ti-alert-octagon","No ads will run right now",ACC.billing.problems.join("|"),
+    `<ul>${ACC.billing.problems.map(p=>`<li>${esc(p)}</li>`).join("")}</ul>
+    <div class="sub" style="color:inherit">Fix it in Meta: add money to your balance and raise (or remove) the account spending limit. This app never changes billing.</div>
+    <a class="btn" href="${esc(ACC.billing.url)}" target="_blank" rel="noopener"><i class="ti ti-external-link"></i> Open billing &amp; payments</a>`);
+  if(ACC&&ACC.access&&ACC.access.ok===false)h+=banner("access","b-amber","ti-lock","This app can't create or change ads yet",ACC.access.message||"",
+    `<div>${esc(ACC.access.message)}</div>${ACC.access.hint?`<div style="margin-top:4px">${esc(ACC.access.hint)}</div>`:""}
+    <div class="row" style="margin-top:4px">${ACC.access.link?`<a class="btn" href="${esc(ACC.access.link)}${ACC.business_id?"?business_id="+esc(ACC.business_id):""}" target="_blank" rel="noopener"><i class="ti ti-external-link"></i> Open system users</a>`:""}<button class="btn" data-recheck><i class="ti ti-refresh"></i> I've done it, check again</button></div>`);
+  if(RATE_UNTIL>Date.now())h+=`<div class="banner b-amber"><b><i class="ti ti-hourglass"></i> Meta is limiting requests for a moment</b><div class="bbody">Too many questions in a short time. Wait about ${Math.max(1,Math.ceil((RATE_UNTIL-Date.now())/60000))} min, then refresh. Nothing is lost.</div></div>`;
+  if($("banners").dataset.h!==h){$("banners").innerHTML=h;$("banners").dataset.h=h}
+}
+const THEMES=["auto","light","dark"],TICON={auto:"ti-device-desktop",light:"ti-sun",dark:"ti-moon"};
+function applyTheme(t){
+  if(t==="auto")document.documentElement.removeAttribute("data-theme");else document.documentElement.dataset.theme=t;
+  $("theme").innerHTML=`<i class="ti ${TICON[t]}"></i>`;$("theme").title="Theme: "+t;ls.set("theme",t);redrawCharts();
+}
+$("theme").onclick=()=>applyTheme(THEMES[(THEMES.indexOf(ls.get("theme")||"auto")+1)%3]);
+matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change",redrawCharts);
+let TAB="ads";
+function show(tab){
+  if(!["ads","new","stats"].includes(tab))tab="ads";
+  TAB=tab;
+  for(const b of document.querySelectorAll("nav.tabs button"))b.setAttribute("aria-selected",b.dataset.tab===tab);
+  for(const t of ["ads","new","stats"])$("tab-"+t).hidden=t!==tab;
+  if(location.hash!=="#"+tab)history.replaceState(null,"","#"+tab);
+  if(tab==="stats")loadStats();
+}
+document.querySelector("nav.tabs").onclick=e=>{const b=e.target.closest("[data-tab]");if(b)show(b.dataset.tab)};
+$("refresh").onclick=()=>{loadAccount(true);loadTree(true);if(TAB==="stats")loadStats(true);toast("Refreshing from Meta…")};
+
+// ---------- my ads ----------
+let FILTER="all",EDIT=null;
+const OPEN=new Set(JSON.parse(ls.get("open")||"[]"));
+const OBJ_LABEL={OUTCOME_ENGAGEMENT:"Engagement / DMs",OUTCOME_TRAFFIC:"Link visits",OUTCOME_AWARENESS:"Awareness",OUTCOME_LEADS:"Leads",OUTCOME_SALES:"Sales",OUTCOME_APP_PROMOTION:"App",LINK_CLICKS:"Link clicks",POST_ENGAGEMENT:"Engagement",MESSAGES:"Messages",VIDEO_VIEWS:"Video views"};
+const GOAL_LABEL={CONVERSATIONS:"DMs",THRUPLAY:"Video views",POST_ENGAGEMENT:"Engagement",LINK_CLICKS:"Link clicks",REACH:"Reach",IMPRESSIONS:"Impressions",LANDING_PAGE_VIEWS:"Page views",QUALITY_CALL:"Calls",PROFILE_VISIT:"Profile visits",TWO_SECOND_CONTINUOUS_VIDEO_VIEWS:"2-second video plays"};
+const DEST_LABEL={INSTAGRAM_DIRECT:"Instagram DMs",MESSENGER:"Messenger",WHATSAPP:"WhatsApp",MESSAGING_INSTAGRAM_DIRECT_MESSENGER:"Instagram DMs + Messenger",MESSAGING_MESSENGER_WHATSAPP:"Messenger + WhatsApp",MESSAGING_INSTAGRAM_DIRECT_WHATSAPP:"Instagram DMs + WhatsApp",MESSAGING_INSTAGRAM_DIRECT_MESSENGER_WHATSAPP:"Instagram DMs + Messenger + WhatsApp",ON_POST:"The ad itself",ON_VIDEO:"The ad itself (video)",WEBSITE:"A website or link",INSTAGRAM_PROFILE:"Instagram profile",PHONE_CALL:"Phone calls",UNDEFINED:"—"};
+// a text selection inside the list (e.g. a double-clicked name being copied) survives background refreshes
+const selIn=el=>{const s=getSelection();return !!(s&&!s.isCollapsed&&el.contains(s.anchorNode))};
+document.addEventListener("selectionchange",()=>{if(renderAds.pending&&!selIn($("adlist")))renderAds()});
+async function loadTree(fresh,background){
+  try{TREE=await api("/api/tree"+(fresh?"?fresh=1":""));markTree();if(background&&selIn($("adlist")))renderAds.pending=true;else renderAds();fillObjects()}
+  catch(e){
+    if(!TREE)$("adlist").innerHTML=errHtml(e)+(e.rate_limited?'<div class="sub">Trying again by itself in a minute…</div>':"");
+    else toast(e.message);
+    if(e.rate_limited){clearTimeout(loadTree._t);loadTree._t=setTimeout(()=>loadTree(),60000)}
+  }
+}
+function markTree(){
+  const now=new Date();
+  for(const c of TREE.campaigns){
+    for(const s of c.adsets){
+      s._ended=!!(s.end&&md(s.end)<now);s._c=c;
+      for(const a of s.ads){a._ended=s._ended;a._s=s;a._c=c}
+    }
+    c._ended=c.adsets.length?c.adsets.every(s=>s._ended):!!(c.end&&md(c.end)<now);
+  }
+}
+function find(id){for(const c of TREE.campaigns){if(c.id===id)return [c,"campaign"];for(const s of c.adsets){if(s.id===id)return [s,"adset"];for(const a of s.ads)if(a.id===id)return [a,"ad"]}}return [null]}
+function chip(o){
+  const es=o.effective_status||"";
+  if(o.status==="PAUSED")return ["Off",""];
+  if(o._ended)return ["Ended",""];
+  if(es==="CAMPAIGN_PAUSED")return ["On · campaign is off","p-amber"];
+  if(es==="ADSET_PAUSED")return ["On · ad set is off","p-amber"];
+  if(es==="PENDING_REVIEW"||es==="IN_PROCESS")return ["In review","p-blue"];
+  if(es==="DISAPPROVED")return ["Rejected","p-red"];
+  if(es==="WITH_ISSUES")return ["Has a problem","p-red"];
+  if(es==="PENDING_BILLING_INFO")return ["Needs billing","p-red"];
+  if(es==="PREAPPROVED")return ["Approved, waiting","p-blue"];
+  if(es==="ACTIVE")return NOFUNDS()?["On · no funds, not running","p-red"]:["Active","p-green"];
+  return [es.toLowerCase().replace(/_/g," ")||"unknown",""];
+}
+const isOn=o=>o.status==="ACTIVE"&&!o._ended;
+const hasProblem=o=>(o.issues||[]).length||Object.keys((o.review||{}).global||{}).length||["DISAPPROVED","WITH_ISSUES","PENDING_BILLING_INFO"].includes(o.effective_status)||(isOn(o)&&NOFUNDS());
+function left(end){
+  if(!end)return "no end date";
+  const ms=md(end)-Date.now(),d=Math.abs(ms)/864e5;
+  if(ms<0)return d<1?"ended today":"ended "+Math.floor(d)+(Math.floor(d)===1?" day ago":" days ago");
+  return d<1?"ends today":Math.ceil(d)+" days left";
+}
+function issuesHtml(o){
+  const list=[...(o.issues||[]).map(i=>[i.error_summary,i.error_message].filter(Boolean).join(": ")),
+    ...Object.entries((o.review||{}).global||{}).map(([k,v])=>`${k}: ${v}`)].filter(Boolean);
+  return list.length?`<div class="issues">${list.map(t=>`<div><i class="ti ti-alert-circle"></i> ${esc(t)}</div>`).join("")}</div>`:"";
+}
+const sw=(o,kind)=>`<button class="sw ${o.status==="ACTIVE"?"on":""}" role="switch" aria-checked="${o.status==="ACTIVE"}" aria-label="${o.status==="ACTIVE"?"Turn off":"Turn on"} ${esc(o.name)}" title="${o.status==="ACTIVE"?"On, click to turn off":"Off, click to turn on"}" data-sw="${o.id}"></button>`;
+const fact=(label,v,cls="")=>`<div class="fact ${cls}"><span class="sub">${label}</span><span class="v">${v}</span></div>`;
+function resultFact(st){
+  st=st||{};const label=st.result_label||"Results";
+  return fact(esc(label),num(st.results)+(st.results&&st.spend?` <span class="sub">· ${inr(st.spend/st.results)} each</span>`:""));
+}
+function budgetText(o){return o.daily_budget?inr(o.daily_budget)+" a day":o.lifetime_budget?inr(o.lifetime_budget)+" total":null}
+function campHtml(c){
+  const open=OPEN.has(c.id),bt=budgetText(c),st=c.stats||{};
+  return `<div class="card">
+    <div class="head">
+      <button class="chev ${open?"open":""}" data-open="${c.id}" aria-expanded="${open}" aria-label="Show ad sets and ads"><i class="ti ti-chevron-right"></i></button>
+      <div class="nm" data-open="${c.id}"><b>${esc(c.name)}</b>${c.template?' <span class="pill" title="Your known-good DM campaign, used as the template for new ads">main</span>':""}
+        <div class="sub">Campaign · ${esc(OBJ_LABEL[c.objective]||c.objective||"")} · ${c.adsets.length} ad set${c.adsets.length===1?"":"s"}, ${c.adsets.reduce((n,s)=>n+s.ads.length,0)} ads</div></div>
+      ${pill(chip(c))}${sw(c,"campaign")}
+    </div>
+    <div class="facts">
+      ${fact("Budget",bt?`${bt} <button class="lnk" data-edit="${c.id}">edit</button>`:'<span class="sub">set on each ad set</span>')}
+      ${fact("Dates",`${fmtD(c.start,false)} → ${c.end?fmtD(c.end,false):"no end"}`)}
+      ${fact("Spent (all time)",inr(st.spend))}
+      ${resultFact(st)}
+    </div>
+    ${issuesHtml(c)}${EDIT===c.id?editForm(c,"campaign"):""}
+    ${open?`<div class="kids">${c.adsets.map(adsetHtml).join("")||'<div class="sub">No ad sets.</div>'}</div>`:""}
+  </div>`;
+}
+function adsetHtml(s){
+  const bt=budgetText(s),st=s.stats||{};
+  return `<div class="adset">
+    <div class="head"><div class="nm"><b>${esc(s.name)}</b><div class="sub">Ad set · aims for ${esc(GOAL_LABEL[s.goal]||s.goal||"")}</div></div>${pill(chip(s))}${sw(s,"adset")}</div>
+    <div class="facts">
+      ${fact("Budget",bt||'<span class="sub">campaign budget</span>')}
+      ${fact("Starts",fmtD(s.start))}
+      ${fact("Ends",`${s.end?fmtD(s.end):"no end date"} <span class="sub">· ${left(s.end)}</span>`)}
+      ${fact("Spent",inr(st.spend))}
+      ${resultFact(st)}
+      ${fact("People go to",esc(DEST_LABEL[s.destination]||s.destination||"—"))}
+      ${fact("Value rules",s.value_rule_set?esc(ruleSetName(s.value_rule_set)):'<span class="sub">none</span>')}
+      ${fact("Audience",esc(s.audience),"wide")}
+    </div>
+    <div style="margin-top:8px"><button class="mini" data-edit="${s.id}"><i class="ti ti-calendar-cog"></i> Change dates${bt?", budget":""} or value rules</button></div>
+    ${issuesHtml(s)}${EDIT===s.id?editForm(s,"adset"):""}
+    <div class="ads">${s.ads.map(adHtml).join("")||'<div class="sub">No ads.</div>'}</div>
+  </div>`;
+}
+function adHtml(a){
+  const st=a.stats||{};
+  const links=[`<button class="lnk" data-adprev="${a.id}" style="color:var(--blue)">Preview</button>`,a.preview?`<a href="${esc(a.preview)}" target="_blank" rel="noopener">Share link ↗</a>`:"",a.permalink?`<a href="${esc(a.permalink)}" target="_blank" rel="noopener">On Instagram ↗</a>`:""].filter(Boolean).join(" · ");
+  return `<div><div class="adrow">
+    <div class="thumb">${a.thumb?`<img src="${esc(a.thumb)}" alt="" loading="lazy">`:'<i class="ti ti-photo"></i>'}${a.type==="VIDEO"?'<i class="ti ti-player-play-filled vid"></i>':""}</div>
+    <div style="min-width:0"><div style="overflow-wrap:anywhere">${esc(a.name)}</div>
+      <div class="sub">${inr(st.spend)} spent · ${num(st.results)} ${esc((st.result_label||"results").toLowerCase())}${st.results&&st.spend?" · "+inr(st.spend/st.results)+" each":""}${links?" · "+links:""}</div></div>
+    ${pill(chip(a))}${sw(a,"ad")}
+  </div>${issuesHtml(a)}</div>`;
+}
+function editForm(o,kind){
+  const started=o.start&&md(o.start)<new Date(),daily=!!o.daily_budget,life=!!o.lifetime_budget;
+  return `<div class="editbox"><div class="grid2">
+    ${kind==="adset"?`<label class="f"><span>Start (India time)${started?" · already started":""}</span><input type="datetime-local" id="e-start" value="${toInput(o.start)}" ${started?"disabled":""}></label>
+    <div><label class="f" style="margin-bottom:4px"><span>End (India time)</span><input type="datetime-local" id="e-end" value="${toInput(o.end)}" ${o.end?"":"disabled"}></label>
+    ${daily?`<label class="check"><input type="checkbox" id="e-noend" ${o.end?"":"checked"}> No end date</label>`:""}</div>`:""}
+    ${daily||life?`<label class="f"><span>${daily?"Budget per day":"Total budget"}</span><div class="money"><input type="number" id="e-budget" min="1" step="1" value="${daily?o.daily_budget:o.lifetime_budget}"></div></label>`:""}
+    ${kind==="adset"&&ASSETS?`<label class="f"><span>Value rules</span><select id="e-vr"><option value="">None</option>${ASSETS.rule_sets.map(r=>`<option value="${esc(r.id)}" ${r.id===o.value_rule_set?"selected":""}>${esc(r.name)} · ${esc(r.rules.map(ruleText).join(" · "))}</option>`).join("")}${o.value_rule_set&&!ASSETS.rule_sets.some(r=>r.id===o.value_rule_set)?`<option value="${esc(o.value_rule_set)}" selected>rule set ${esc(o.value_rule_set)}</option>`:""}</select></label>`:""}
+    </div><div class="row"><button class="main" data-save="${o.id}" data-kind="${kind}">Save</button><button data-cancel>Cancel</button></div></div>`;
+}
+function renderAds(){
+  if(!TREE)return;
+  const q=$("adq").value.toLowerCase().trim();
+  const all=TREE.campaigns,ads=all.flatMap(c=>c.adsets.flatMap(s=>s.ads));
+  const spent=all.reduce((n,c)=>n+((c.stats||{}).spend||0),0),dms=all.reduce((n,c)=>n+((c.stats||{}).dms||0),0);
+  const onNow=ads.filter(a=>isOn(a)&&isOn(a._s)&&isOn(a._c)).length;
+  $("adtiles").innerHTML=[["Ads switched on",onNow,NOFUNDS()&&onNow?"but no funds, so not running":""],["Spent (all time)",inr(spent),""],["DMs (all time)",num(dms),""],["Cost per DM",dms?inr(spent/dms):"—","all campaigns shown"]]
+    .map(([l,v,s])=>`<div class="tile"><span class="sub">${l}</span><b>${v}</b>${s?`<span class="sub">${s}</span>`:""}</div>`).join("");
+  const match=o=>!q||(o.name||"").toLowerCase().includes(q);
+  const keep=o=>FILTER==="all"?true:FILTER==="on"?isOn(o):FILTER==="off"?!isOn(o):hasProblem(o);
+  const shown=all.filter(c=>{const kids=[c,...c.adsets,...c.adsets.flatMap(s=>s.ads)];return kids.some(match)&&kids.some(keep)});
+  $("adlist").innerHTML=shown.length?shown.map(campHtml).join(""):`<div class="card sub">${all.length?"Nothing matches.":"No campaigns yet. Make one in “New ad”."}</div>`;
+  $("adfresh").textContent=TREE.at?`Loaded from Meta ${agoS(TREE.at)} · spend and results are all-time totals`:"";
+}
+$("adq").oninput=renderAds;
+$("adfilter").onclick=e=>{const b=e.target.closest("[data-f]");if(!b)return;FILTER=b.dataset.f;for(const x of $("adfilter").children)x.classList.toggle("on",x===b);renderAds()};
+function dailyHint(o,kind){
+  const s=kind==="ad"?o._s:kind==="adset"?o:null,c=kind==="campaign"?o:o._c;
+  const b=(c&&c.daily_budget)||(s&&s.daily_budget);
+  if(b)return `about ${inr(b)} a day`;
+  const l=(c&&c.lifetime_budget)||(s&&s.lifetime_budget);
+  if(l)return `up to ${inr(l)} in total`;
+  if(kind==="campaign"){const sum=o.adsets.reduce((n,x)=>n+(x.daily_budget||0),0);if(sum)return `about ${inr(sum)} a day`}
+  return "its budget";
+}
+async function toggle(id){
+  const [o,kind]=find(id);if(!o)return;
+  const on=o.status!=="ACTIVE";
+  if(on){
+    const notes=[];
+    if(o._ended)notes.push("Its end date has passed, so it won't run until you change the end date.");
+    if(kind==="ad"&&o._s.status!=="ACTIVE")notes.push("Its ad set is off. Turn that on too, or it won't run.");
+    if(kind!=="campaign"&&o._c.status!=="ACTIVE")notes.push("Its campaign is off. Turn that on too, or it won't run.");
+    if(NOFUNDS())notes.push("Your account has no money available right now, so nothing actually spends until you fix billing.");
+    const ok=await ask(`Turn on “${o.name}”?`,`This can start spending <b style="font-weight:500">${dailyHint(o,kind)}</b> once Meta approves it. Continue?${notes.map(n=>`<div class="warnbox">${esc(n)}</div>`).join("")}`,"Turn on");
+    if(!ok)return;
+  }
+  const before=o.status;o.status=on?"ACTIVE":"PAUSED";renderAds();
+  try{await api("/api/status/"+id,{method:"POST",body:{status:on?"ACTIVE":"PAUSED",confirmed:on}});toast(on?"Turned on":"Turned off")}
+  catch(e){o.status=before;renderAds();showErr(e)}
+  loadTree(true);
+}
+async function saveEdit(id,kind){
+  const [o]=find(id);if(!o)return;
+  const body={kind};
+  if(kind==="adset"){
+    const st=$("e-start");if(st&&!st.disabled&&st.value&&st.value!==toInput(o.start))body.start=st.value;
+    const noend=$("e-noend")&&$("e-noend").checked,ev=$("e-end").value;
+    if(noend){if(o.end)body.end=""}
+    else if(ev&&ev!==toInput(o.end)){
+      if(fromInput(ev)<new Date()){
+        // Meta only takes future end dates; a past one means "stop it", which is the off switch
+        if(!await ask("That end date is in the past","An end date in the past means stopping this ad set now. Meta doesn't accept past dates, so the app turns it off instead (you can turn it back on later). Turn it off?","Turn it off",true))return;
+        try{await api("/api/status/"+id,{method:"POST",body:{status:"PAUSED"}});toast("Turned off");EDIT=null;loadTree(true)}catch(e){showErr(e)}
+        return;
+      }
+      body.end=ev;
+    }
+  }
+  const b=$("e-budget"),cur=o.daily_budget||o.lifetime_budget;
+  if(b&&b.value&&Number(b.value)!==cur){
+    body[o.daily_budget?"daily_budget":"lifetime_budget"]=b.value;
+    if(ACC&&o.daily_budget&&Number(b.value)<ACC.min_daily_budget){toast(`Meta's minimum is ${inr(ACC.min_daily_budget)} a day`);return}
+  }
+  const vr=$("e-vr");if(vr&&vr.value!==(o.value_rule_set||""))body.value_rule_set_id=vr.value;
+  if(Object.keys(body).length===1){EDIT=null;renderAds();return}
+  try{await api("/api/edit/"+id,{method:"POST",body});toast("Saved");EDIT=null;loadTree(true)}catch(e){showErr(e)}
+}
+
+// ---------- new ad ----------
+let OBJ="engagement",LOC="messages",BTYPE="daily",GENDER="all",PMODE="manual",VR="",MEDIA=[],GEO=[],INTS=[],MK=0,ASSETS=null,PERF_TOUCHED=false,PFMT=null,PIDX=0,CHATLOG=[],VRB=null,PHIST=null;
+const BUTTONS={INSTAGRAM_MESSAGE:"Send message",MESSAGE_PAGE:"Send message",WHATSAPP_MESSAGE:"Send WhatsApp message",CALL_NOW:"Call now",VIEW_INSTAGRAM_PROFILE:"Visit Instagram profile",LEARN_MORE:"Learn more",BOOK_NOW:"Book now",SIGN_UP:"Sign up",CONTACT_US:"Contact us",APPLY_NOW:"Apply now",GET_OFFER:"Get offer",SHOP_NOW:"Shop now",SUBSCRIBE:"Subscribe","":"No button"};
+const OBJ_NAMES={engagement:"Engagement",traffic:"Traffic"};
+const LOCS={messages:["ti-messages","Message destinations","People tap a button and chat with you on Instagram, Messenger or WhatsApp."],
+  on_ad:["ti-heart","On your ad","Likes, comments, shares and video views right on the ad."],
+  calls:["ti-phone","Calls","A “Call now” button that phones you."],
+  website:["ti-world","Website","A button that opens a link: your website or a wa.me WhatsApp link."],
+  profile:["ti-user-circle","Instagram profile","Sends people to your Instagram profile, to follow you."]};
+const LOC_ORDER={engagement:["messages","on_ad","calls"],traffic:["website","messages","profile","calls"]};
+const PERFS={CONVERSATIONS:"Most conversations (chats started)",LINK_CLICKS:"Most link clicks",POST_ENGAGEMENT:"Most likes, comments and shares",THRUPLAY:"Most ThruPlays (watched 15 s or to the end)",TWO_SECOND_CONTINUOUS_VIDEO_VIEWS:"Most 2-second video plays",REACH:"Reach the most people",IMPRESSIONS:"Most impressions",LANDING_PAGE_VIEWS:"Most landing page views",QUALITY_CALL:"Most calls",PROFILE_VISIT:"Most Instagram profile visits"};
+const DEST_NAMES={instagram:"Instagram",messenger:"Messenger",whatsapp:"WhatsApp"};
+const DEST_NOTE={instagram:p=>!p?"Chats open in Instagram DMs. Your bot replies.":p.ig?`Chats open in Instagram DMs with @${p.ig.username}. Your bot replies.`:"This Page has no Instagram account linked.",
+  messenger:()=>"Chats open in Messenger with your Facebook Page. Your bot replies there too.",
+  whatsapp:()=>"Chats open in WhatsApp. No bot answers these: you reply yourself in the WhatsApp Business app."};
+const PLAT_NAMES={facebook:"Facebook",instagram:"Instagram",messenger:"Messenger",threads:"Threads",audience_network:"Audience Network"};
+const PGROUPS=[["Feeds",[["facebook","feed","Facebook Feed"],["instagram","stream","Instagram feed"],["facebook","profile_feed","Facebook profile feed"],["instagram","profile_feed","Instagram profile feed"],["facebook","marketplace","Facebook Marketplace"],["facebook","right_hand_column","Facebook right column"],["threads","threads_stream","Threads feed"]]],
+  ["Stories, Status & Reels",[["instagram","story","Instagram Stories"],["facebook","story","Facebook Stories"],["messenger","story","Messenger Stories"],["instagram","reels","Instagram Reels"],["facebook","facebook_reels","Facebook Reels"],["instagram","profile_reels","Instagram profile reels"]]],
+  ["In-stream ads for videos & reels",[["facebook","instream_video","Facebook in-stream videos"],["facebook","facebook_reels_overlay","Ads on Facebook Reels"]]],
+  ["Search results",[["facebook","search","Facebook search results"],["instagram","ig_search","Instagram search results"]]],
+  ["Notifications",[["facebook","notification","Facebook notifications"]]],
+  ["Apps & sites",[["audience_network","classic","Audience Network: native, banner & interstitial"],["audience_network","rewarded_video","Audience Network: rewarded videos"]]]];
+const IG_PLACES={instagram:["stream","story","reels"]},FB_PLACES={facebook:["feed","story","facebook_reels"]};
+const VR_KINDS={PLACEMENT:"Placement",AGE:"Age",GENDER:"Gender",OS_TYPE:"Phone type",DEVICE_PLATFORM:"Device",LOCATION:"Location"};
+const VR_VAL={ig_feed:"Instagram feed",ig_stories:"Instagram Stories",ig_reels:"Instagram Reels",ig_explore:"Instagram Explore",fb_feed:"Facebook Feed",fb_stories:"Facebook Stories",fb_reels:"Facebook Reels",fb_marketplace:"Facebook Marketplace",fb_search:"Facebook search",fb_video:"Facebook in-stream video",audience_network:"Audience Network",male:"Men",female:"Women",android:"Android",ios:"iPhone (iOS)",mobile:"Mobile",desktop:"Computers"};
+const vrVal=v=>VR_VAL[String(v).toLowerCase()]||v;
+const FMTS={igfeed:["Instagram feed","INSTAGRAM_STANDARD"],igstory:["Instagram Stories","INSTAGRAM_STORY"],igreels:["Instagram Reels","INSTAGRAM_REELS"],fbfeed:["Facebook Feed","MOBILE_FEED_STANDARD"],fbstory:["Facebook Stories","FACEBOOK_STORY_MOBILE"],fbreels:["Facebook Reels","FACEBOOK_REELS_MOBILE"],chat:["Chat",null]};
+
+async function initForm(){
+  try{DEF=await api("/api/defaults")}catch(e){DEF={daily_budget:500,caption:"",headline:"",greeting:"Hi! Please let us know how we can help you.",questions:[],age_min:18,age_max:65,advantage_audience:true,
+    locations:{messages:{goals:{engagement:["CONVERSATIONS"]},buttons:null}},positions:{instagram:["stream","story","reels"],facebook:["feed","story","facebook_reels"]},vr_values:{},max_rule_sets:6,cost_cap_goals:[]}}
+  $("f-budget").value=Math.round(DEF.daily_budget);
+  if(DEF.caption)$("f-caption").placeholder="Like your main ad:\n\n"+DEF.caption;
+  if(DEF.headline)$("f-headline").placeholder="e.g. "+DEF.headline;
+  $("f-greeting").value=DEF.greeting||"";
+  const qs=(DEF.questions||[]).map(q=>typeof q==="string"?{q,a:""}:q);while(qs.length<4)qs.push({q:"",a:""});
+  $("questions").innerHTML=qs.slice(0,4).map((x,i)=>`<div class="qa"><input data-q value="${esc(x.q)}" maxlength="80" placeholder="Question ${i+1} (optional)" aria-label="Question ${i+1}"><textarea data-a maxlength="300" rows="1" placeholder="Automatic answer (optional)" aria-label="Automatic answer to question ${i+1}">${esc(x.a)}</textarea></div>`).join("");
+  const ages=[...Array(48)].map((_,i)=>i+18);
+  $("f-agemin").innerHTML=ages.map(a=>`<option ${a===DEF.age_min?"selected":""}>${a}</option>`).join("");
+  $("f-agemax").innerHTML=ages.map(a=>`<option value="${a}" ${a===DEF.age_max?"selected":""}>${a===65?"65+":a}</option>`).join("");
+  $("f-advantage").checked=DEF.advantage_audience!==false;
+  GEO=(DEF.countries||["IN"]).map(c=>({type:"country",key:c,name:c==="IN"?"India":c,country_code:c}));
+  const end=new Date(Date.now()+7*864e5);
+  $("f-end").value=istInput(end).slice(0,10)+"T23:00";
+  $("f-start").value=istInput(new Date(Date.now()+3600e3)).slice(0,13)+":00";
+  renderPlaceUI();setPlacements(IG_PLACES);
+  setObjective("engagement");renderGeo();renderInts();estimate();renderVR();
+  loadAssets();
+}
+// business assets (Page, Instagram account, WhatsApp number) and value rule sets
+async function loadAssets(fresh){
+  try{ASSETS=await api("/api/assets"+(fresh?"?fresh=1":""))}catch(e){ASSETS={pages:[],rule_sets:[],pages_error:e.message,rule_sets_error:e.message}}
+  const sel=$("f-page"),cur=sel.value;
+  sel.innerHTML=ASSETS.pages.map(p=>`<option value="${esc(p.id)}">${esc(p.name||p.id)}${p.ig?"":" (no Instagram account)"}</option>`).join("")||'<option value="">No Page found</option>';
+  if(cur&&ASSETS.pages.some(p=>p.id===cur))sel.value=cur;
+  // like the main ad: its rule set is the default, even when the list itself couldn't be loaded just now
+  if(!loadAssets.vrPicked&&"default_rule_set" in ASSETS&&!ASSETS.template_partial){VR=ASSETS.default_rule_set||"";loadAssets.vrPicked=true}
+  if((ASSETS.rule_sets_error||ASSETS.pages_error||ASSETS.template_partial)&&!loadAssets.retry)loadAssets.retry=setTimeout(()=>{loadAssets.retry=0;loadAssets()},90000);
+  renderAssets();renderVR();placeWarn();schedulePreview();
+  if(TREE){if(selIn($("adlist")))renderAds.pending=true;else renderAds()}  // ad sets show rule set names now
+}
+const PAGE=()=>ASSETS&&ASSETS.pages.find(p=>p.id===$("f-page").value)||null;
+function renderAssets(){
+  const p=PAGE(),ig=p&&p.ig;
+  $("igasset").innerHTML=!p?'<span class="sub">Loading…</span>':ig?`${ig.picture?`<img src="${esc(ig.picture)}" alt="">`:'<i class="ti ti-brand-instagram"></i>'}<span>@${esc(ig.username||ig.id)}</span>`:'<span class="sub">No Instagram account is linked to this Page, so its ads can only run on Facebook and Messenger.</span>';
+  $("waasset").hidden=!(LOC==="messages"&&destinations().includes("whatsapp"));
+  $("waval").innerHTML=p&&p.whatsapp?`<i class="ti ti-brand-whatsapp"></i> ${esc(p.whatsapp)}`:'<span class="sub">Meta doesn\'t show this app a WhatsApp number on this Page. If one is linked, the ad works. If not, Meta refuses it when you press Create. To link one: Facebook → your Page → Settings → Linked accounts → WhatsApp.</span>';
+  $("assetnote").textContent=ASSETS&&ASSETS.pages_error?`Couldn't load your Pages from Meta right now (${ASSETS.pages_error}). Using the Page from your settings.`:"";
+  for(const el of document.querySelectorAll("[data-note]"))el.textContent=DEST_NOTE[el.dataset.note](p);
+  $("loc-profile").textContent=ig?`The button says “Visit Instagram profile” and opens @${ig.username}.`:"This Page has no Instagram account, so pick another Page for profile visits.";
+}
+$("f-page").onchange=()=>{renderAssets();placeWarn();schedulePreview()};
+// objective → conversion location → performance goal
+function locsFor(o){return (LOC_ORDER[o]||[]).filter(l=>DEF.locations[l]&&DEF.locations[l].goals[o])}
+function setObjective(o){
+  OBJ=o;
+  for(const el of document.querySelectorAll("#objectives .goal")){const on=el.dataset.obj===o;el.classList.toggle("on",on);el.setAttribute("aria-checked",on)}
+  const list=locsFor(o);
+  $("locations").innerHTML=list.map(l=>`<div class="goal" data-loc="${l}" role="radio" tabindex="0" aria-checked="false"><i class="ti ${LOCS[l][0]}"></i><div><b>${LOCS[l][1]}</b><span class="sub">${LOCS[l][2]}</span></div></div>`).join("");
+  setLocation(list.includes(LOC)?LOC:list[0]);
+}
+function setLocation(l){
+  LOC=l;PERF_TOUCHED=false;
+  for(const el of document.querySelectorAll("#locations .goal")){const on=el.dataset.loc===l;el.classList.toggle("on",on);el.setAttribute("aria-checked",on)}
+  for(const k of Object.keys(LOCS))$("loc-"+k).hidden=k!==l;
+  const loc=DEF.locations[l]||{goals:{}},goals=loc.goals[OBJ]||[];
+  $("f-perf").innerHTML=goals.map(g=>`<option value="${g}">${PERFS[g]||g}</option>`).join("");
+  $("f-perf").disabled=goals.length<2;
+  if(l==="website")$("f-button").innerHTML=(loc.buttons||[]).map(b=>`<option value="${b}">${BUTTONS[b]??b}</option>`).join("");
+  $("welcomebox").hidden=l!=="messages";
+  autoPerf();onDestChange(false);
+}
+$("objectives").onclick=e=>{const g=e.target.closest("[data-obj]");if(g)setObjective(g.dataset.obj)};
+$("locations").onclick=e=>{const g=e.target.closest("[data-loc]");if(g)setLocation(g.dataset.loc)};
+for(const id of ["objectives","locations"])$(id).onkeydown=e=>{const g=e.target.closest("[data-obj],[data-loc]");if(g&&(e.key==="Enter"||e.key===" ")){e.preventDefault();g.click()}};
+$("f-perf").onchange=()=>{PERF_TOUCHED=true;costGoal();audienceSize()};
+function costGoal(){
+  const ok=(DEF.cost_cap_goals||[]).includes($("f-perf").value),c=$("f-costgoal");
+  c.disabled=!ok;if(!ok)c.value="";
+  c.placeholder=ok?"Leave empty for the most results":"Not available with this goal";
+}
+function autoPerf(){
+  // only videos + "On your ad": aim for full watches (what the app did before); photos can't use video goals
+  if(LOC==="on_ad"){
+    const vids=MEDIA.length&&MEDIA.every(m=>m.video)&&!($("f-carousel").checked&&MEDIA.length>1),cur=$("f-perf").value;
+    if(!PERF_TOUCHED)$("f-perf").value=vids?"THRUPLAY":"POST_ENGAGEMENT";
+    else if(!vids&&["THRUPLAY","TWO_SECOND_CONTINUOUS_VIDEO_VIEWS"].includes(cur)){$("f-perf").value="POST_ENGAGEMENT";toast("Video goals need videos only, so the goal went back to likes and comments")}
+  }
+  costGoal();
+}
+// message destinations
+const destinations=()=>LOC==="messages"?[...document.querySelectorAll("#dests input:checked")].map(c=>c.dataset.dest):[];
+$("dests").onchange=()=>onDestChange(true);
+function onDestChange(user){
+  const d=destinations();
+  $("multinote").hidden=d.length<2;
+  if(user&&PMODE==="manual"){
+    const pl=placeList();
+    if(d.join()==="messenger"&&pl.instagram.length&&!pl.facebook.length){setPlacements(FB_PLACES);toast("Placements switched to Facebook, where Messenger chats open")}
+    else if(d.includes("instagram")&&!pl.instagram.length){setPlacements({...pl,...IG_PLACES});toast("Added Instagram placements")}
+  }
+  qaNote();renderAssets();placeWarn();audienceSize();schedulePreview();
+}
+function qaNote(){
+  const d=destinations(),bot=d.some(x=>x!=="whatsapp");
+  $("qanote").textContent=`Leave an answer empty and the tap just arrives as a message${bot?" that your bot replies to":""}. With an answer, Meta sends it straight away${bot?" (on Instagram and Messenger your bot still gets the question and replies too)":""}.${d.includes("whatsapp")?" WhatsApp has no bot, so answers help most there.":""} Up to 80 characters per question, 300 per answer.`;
+}
+$("f-caption").oninput=()=>{const n=$("f-caption").value.length;$("capcount").textContent=n?`${n} characters${n>125?" · Instagram shows the first ~125, then “more”":""}`:""};
+// media
+const VID=/\.(mp4|mov|m4v|avi|wmv|mkv|webm|3gp|mpe?g)$/i;
+function addFiles(list){
+  for(const f of list){
+    const m={k:++MK,file:f,video:f.type.startsWith("video/")||VID.test(f.name),url:URL.createObjectURL(f),job:null,local:0,thumb:null,err:null};
+    MEDIA.push(m);
+    const el=document.createElement("div");el.className="mcard";el.id="m-"+m.k;
+    el.innerHTML=`<div class="mprev">${m.video?`<video src="${m.url}" muted playsinline preload="metadata"></video>`:`<img src="${m.url}" alt="">`}</div>
+      <button class="mx" data-rm="${m.k}" aria-label="Remove ${esc(f.name)}"><i class="ti ti-x"></i></button>
+      <div class="mname" title="${esc(f.name)}">${m.video?'<i class="ti ti-video"></i> ':""}${esc(f.name)}</div><div class="bar"><i style="width:0"></i></div><div class="mst sub"></div><div class="thumbs"></div>`;
+    $("media").appendChild(el);
+    upload(m);updMedia(m);
+  }
+  $("multi").hidden=MEDIA.length<2;autoPerf();schedulePreview();
+}
+function upload(m){
+  const x=new XMLHttpRequest();x.open("POST","/api/upload");
+  x.setRequestHeader("x-local","1");x.setRequestHeader("x-filename",encodeURIComponent(m.file.name));
+  x.setRequestHeader("content-type",m.file.type||"application/octet-stream");
+  x.upload.onprogress=e=>{if(e.lengthComputable){m.local=Math.round(e.loaded/e.total*100);updMedia(m)}};
+  x.onload=()=>{let j={};try{j=JSON.parse(x.responseText)}catch(e){}
+    if(x.status>=400){m.err=(j.detail&&j.detail.message)||"Upload failed";updMedia(m);return}
+    m.job=j;updMedia(m);pollMedia(m)};
+  x.onerror=()=>{m.err="Couldn't send the file to the ad manager";updMedia(m)};
+  x.send(m.file);
+}
+function pollMedia(m){
+  if(m.gone)return;
+  api("/api/job/"+m.job.id).then(j=>{m.job=j;if(j.phase==="ready"&&!m.thumb)m.thumb=j.thumb;updMedia(m);if(j.phase!=="ready"&&j.phase!=="error")setTimeout(()=>pollMedia(m),1500)})
+    .catch(e=>{m.err=e.message;updMedia(m)});
+}
+function updMedia(m){
+  const el=$("m-"+m.k);if(!el)return;
+  const j=m.job,st=el.querySelector(".mst"),bar=el.querySelector(".bar i");
+  let text,p=0,cls="sub";
+  if(m.err){text="✕ "+m.err;cls="err"}
+  else if(!j||j.phase==="receiving"){text=`Sending… ${m.local}%`;p=m.local}
+  else if(j.phase==="uploading"){text=`Uploading to Meta… ${j.pct||0}%`;p=j.pct||0}
+  else if(j.phase==="processing"){text=`Meta is processing… ${j.pct||0}%`;p=j.pct||0}
+  else if(j.phase==="ready"){text="✓ Ready";p=100;cls="ok"}
+  else if(j.phase==="error"){text="✕ "+((j.error||{}).message||"Failed");cls="err"}
+  st.className="mst "+cls;st.textContent=text;bar.style.width=p+"%";
+  bar.parentElement.hidden=cls!=="sub";
+  const th=el.querySelector(".thumbs");
+  const thumbs=j&&j.phase==="ready"&&j.thumbs&&j.thumbs.length>1?j.thumbs:[];
+  th.innerHTML=thumbs.length?thumbs.map(u=>`<img src="${esc(u)}" class="${u===m.thumb?"on":""}" data-thumb="${m.k}" data-u="${esc(u)}" alt="Cover option" title="Use as cover">`).join(""):"";
+  if(thumbs.length&&!el.querySelector(".covlabel"))th.insertAdjacentHTML("beforebegin",'<div class="sub covlabel" style="margin-top:4px">Cover picture:</div>');
+  const shape=j&&j.width&&j.height?(j.height/j.width>1.3?"vertical":j.height/j.width>1.1?"4:5":j.width/j.height>1.1?"wide":"square"):"";
+  el.querySelector(".mname").title=m.file.name+(shape?" · "+shape:"");
+  if(shape&&!el.querySelector(".shape"))el.querySelector(".mname").insertAdjacentHTML("afterend",`<div class="sub shape">${shape==="vertical"?"Vertical (Reels / Stories)":shape}</div>`);
+  carouselWarn();
+  const err=MEDIA.find(x=>x.err||(x.job&&x.job.phase==="error"));
+  if(err&&err.job&&err.job.error&&err.job.error.hint&&!$("mediaerr"))$("media").insertAdjacentHTML("afterend",`<div id="mediaerr">${errHtml(err.job.error)}</div>`);
+  const ready=!!(j&&j.phase==="ready");if(ready!==!!m.wasReady||m.err&&!m.errShown){m.wasReady=ready;m.errShown=!!m.err;schedulePreview()}
+}
+$("media").onclick=e=>{
+  const rm=e.target.closest("[data-rm]");
+  if(rm){const k=+rm.dataset.rm,i=MEDIA.findIndex(m=>m.k===k);if(i>=0){MEDIA[i].gone=true;URL.revokeObjectURL(MEDIA[i].url);MEDIA.splice(i,1)}$("m-"+k).remove();$("multi").hidden=MEDIA.length<2;$("mediaerr")?.remove();carouselWarn();PIDX=0;autoPerf();schedulePreview();return}
+  const t=e.target.closest("[data-thumb]");
+  if(t){const m=MEDIA.find(x=>x.k===+t.dataset.thumb);m.thumb=t.dataset.u;updMedia(m);schedulePreview()}
+};
+$("files").onchange=e=>{addFiles([...e.target.files]);e.target.value=""};
+function carouselWarn(){
+  const tall=MEDIA.filter(m=>m.job&&m.job.width&&m.job.height/m.job.width>1.3),w=$("carouselwarn");
+  w.hidden=!($("f-carousel").checked&&tall.length);
+  w.textContent=`Instagram carousels only take square or 4:5 photos/videos. ${tall.map(m=>m.file.name).join(", ")} ${tall.length===1?"is":"are"} vertical, so Meta would refuse this carousel. Untick it to make separate ads instead.`;
+}
+$("f-carousel").onchange=()=>{carouselWarn();PIDX=0;autoPerf();schedulePreview()};
+const dr=$("drop");
+dr.onclick=()=>$("files").click();dr.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();$("files").click()}};
+dr.ondragover=e=>{e.preventDefault();dr.classList.add("over")};dr.ondragleave=()=>dr.classList.remove("over");
+dr.ondrop=e=>{e.preventDefault();dr.classList.remove("over");addFiles([...e.dataTransfer.files])};
+// budget & dates
+$("btype").onclick=e=>{const b=e.target.closest("[data-b]");if(!b)return;BTYPE=b.dataset.b;for(const x of $("btype").children)x.classList.toggle("on",x===b);
+  $("budgetlabel").textContent=BTYPE==="daily"?"Budget per day":"Total budget for the whole run";
+  $("noendbox").hidden=BTYPE!=="daily";if(BTYPE!=="daily"){$("f-noend").checked=false;$("f-end").disabled=false}estimate()};
+$("f-startnow").onchange=()=>{$("f-start").disabled=$("f-startnow").checked;estimate()};
+$("f-noend").onchange=()=>{$("f-end").disabled=$("f-noend").checked;estimate()};
+for(const id of ["f-budget","f-start","f-end"])$(id).oninput=estimate;
+function runDays(){
+  const start=$("f-startnow").checked?new Date():fromInput($("f-start").value);
+  const end=$("f-noend").checked?null:fromInput($("f-end").value);
+  return {start,end,days:start&&end?Math.max(1,Math.round((end-start)/864e5)):null};
+}
+function estimate(){
+  const b=Number($("f-budget").value)||0,{start,end,days}=runDays(),e=$("estimate");
+  let t,warn=false;
+  if(end&&start&&end<=start){t="The end is before the start.";warn=true}
+  else if(BTYPE==="daily")t=end?`≈ <b style="font-weight:500">${inr(b*days)}</b> in total for ${days} day${days===1?"":"s"} (${inr(b)} a day)`:`${inr(b)} a day with no end date: it keeps spending until you turn it off.`;
+  else if(!end){t="A total budget needs an end date.";warn=true}
+  else t=`${inr(b)} spread over ${days} day${days===1?"":"s"} (≈ ${inr(b/days)} a day)`;
+  const min=ACC&&ACC.min_daily_budget;
+  if(min&&(BTYPE==="daily"?b<min:days&&b/days<min)){t+=`<br>Meta's minimum for your account is ${inr(min)} a day.`;warn=true}
+  e.innerHTML=t;e.classList.toggle("warn",warn);
+}
+// audience
+function debounce(fn,ms){let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),ms)}}
+function suggest(input,box,url,row,pick){
+  let items=[],hi=-1;
+  const close=()=>{box.hidden=true;hi=-1};
+  const draw=()=>{box.innerHTML=items.map((it,i)=>`<div data-i="${i}" class="${i===hi?"hi":""}">${row(it)}</div>`).join("")||`<div class="sub">${input.id==="intq"?"Nothing Meta still offers for this. Try a broader word (DIY, handicraft, art, painting).":"Nothing found"}</div>`;box.hidden=false};
+  input.oninput=debounce(async()=>{const q=input.value.trim();if(q.length<2){close();return}
+    try{items=(await api(url+encodeURIComponent(q))).data;hi=-1;draw()}catch(e){box.innerHTML=`<div class="sub">${esc(e.message)}</div>`;box.hidden=false}},300);
+  input.onkeydown=e=>{if(box.hidden)return;
+    if(e.key==="ArrowDown"){hi=Math.min(items.length-1,hi+1);draw();e.preventDefault()}
+    else if(e.key==="ArrowUp"){hi=Math.max(0,hi-1);draw();e.preventDefault()}
+    else if(e.key==="Enter"&&hi>=0){pick(items[hi]);input.value="";close();e.preventDefault()}
+    else if(e.key==="Escape")close()};
+  box.onmousedown=e=>{const d=e.target.closest("[data-i]");if(d){e.preventDefault();pick(items[+d.dataset.i]);input.value="";close()}};
+  input.onblur=()=>setTimeout(close,150);
+}
+const TYPE={city:"city",region:"state",country:"country"};
+const geoRow=g=>`<b style="font-weight:500">${esc(g.name)}</b> <span class="sub">${TYPE[g.type]||g.type}${g.region?" · "+esc(g.region):""}${g.country?" · "+esc(g.country):""}</span>`;
+suggest($("geoq"),$("geosugg"),"/api/search/geo?q=",geoRow,g=>{
+  if(GEO.some(x=>x.type===g.type&&String(x.key)===String(g.key)))return;
+  // a city or state inside a country you already picked would overlap it, which Meta rejects
+  if(g.type!=="country"){const before=GEO.length;GEO=GEO.filter(x=>!(x.type==="country"&&x.key===g.country_code));if(GEO.length<before)toast(`Swapped ${g.country} for ${g.name}`)}
+  GEO.push({type:g.type,key:g.key,name:g.name+(g.type==="city"&&g.region?", "+g.region:""),radius:g.type==="city"?25:undefined,country_code:g.country_code});
+  renderGeo();audienceSize();
+});
+function renderGeo(){
+  $("geotags").innerHTML=GEO.map((g,i)=>`<span class="tag"><i class="ti ti-map-pin"></i> ${esc(g.name)}${g.type==="city"?` <select data-rad="${i}" aria-label="Distance around ${esc(g.name)}">${[17,25,40,50,80].map(r=>`<option value="${r}" ${r===g.radius?"selected":""}>+${r} km</option>`).join("")}</select>`:` <span class="sub">${TYPE[g.type]}</span>`}<button data-rmgeo="${i}" aria-label="Remove ${esc(g.name)}"><i class="ti ti-x"></i></button></span>`).join("")||'<span class="sub">No location yet: add at least one.</span>';
+}
+$("geotags").onclick=e=>{const b=e.target.closest("[data-rmgeo]");if(b){GEO.splice(+b.dataset.rmgeo,1);renderGeo();audienceSize()}};
+$("geotags").onchange=e=>{const s=e.target.closest("[data-rad]");if(s){GEO[+s.dataset.rad].radius=+s.value;audienceSize()}};
+suggest($("intq"),$("intsugg"),"/api/search/interest?q=",i=>`${esc(i.name)} <span class="sub">${i.topic?esc(i.topic)+" · ":""}${i.size?big(i.size)+" people":""}</span>`,i=>{if(!INTS.some(x=>x.id===i.id)){INTS.push({id:i.id,name:i.name});renderInts();audienceSize()}});
+function renderInts(){$("inttags").innerHTML=INTS.map((x,i)=>`<span class="tag">${esc(x.name)}<button data-rmint="${i}" aria-label="Remove ${esc(x.name)}"><i class="ti ti-x"></i></button></span>`).join("")}
+$("inttags").onclick=e=>{const b=e.target.closest("[data-rmint]");if(b){INTS.splice(+b.dataset.rmint,1);renderInts();audienceSize()}};
+$("gender").onclick=e=>{const b=e.target.closest("[data-g]");if(!b)return;GENDER=b.dataset.g;for(const x of $("gender").children)x.classList.toggle("on",x===b);audienceSize()};
+for(const id of ["f-agemin","f-agemax","f-advantage"])$(id).onchange=()=>audienceSize();
+// placements
+function renderPlaceUI(){
+  $("plats").innerHTML=Object.keys(PLAT_NAMES).map(k=>`<label class="check"><input type="checkbox" data-plat="${k}"> ${PLAT_NAMES[k]}</label>`).join("");
+  $("posgroups").innerHTML=PGROUPS.map(([g,items])=>{const ok=items.filter(([p,pos])=>(DEF.positions[p]||[]).includes(pos));
+    return ok.length?`<div class="pgroup"><span class="flabel">${g}</span><div class="row">${ok.map(([p,pos,l])=>`<label class="check"><input type="checkbox" data-p="${p}" data-pos="${pos}"> ${l}</label>`).join("")}</div></div>`:""}).join("");
+}
+function placeList(){const o={};for(const k of Object.keys(PLAT_NAMES))o[k]=[];for(const c of document.querySelectorAll("#posgroups input:checked"))o[c.dataset.p].push(c.dataset.pos);return o}
+function setPlacements(map){for(const c of document.querySelectorAll("#posgroups input"))c.checked=(map[c.dataset.p]||[]).includes(c.dataset.pos);syncPlats()}
+function syncPlats(){const l=placeList();for(const c of document.querySelectorAll("#plats input")){const all=document.querySelectorAll(`#posgroups input[data-p="${c.dataset.plat}"]`).length,n=l[c.dataset.plat].length;c.checked=n>0;c.indeterminate=n>0&&n<all}}
+$("plats").onchange=e=>{const c=e.target.closest("[data-plat]");if(!c)return;for(const x of document.querySelectorAll(`#posgroups input[data-p="${c.dataset.plat}"]`))x.checked=c.checked;placeChanged()};
+$("posgroups").onchange=placeChanged;
+$("f-devices").onchange=placeChanged;
+function placeChanged(){syncPlats();placeWarn();audienceSize();schedulePreview()}
+$("pmode").onclick=e=>{const b=e.target.closest("[data-pm]");if(!b)return;PMODE=b.dataset.pm;for(const x of $("pmode").children)x.classList.toggle("on",x===b);$("manualplace").hidden=PMODE!=="manual";$("autoplace").hidden=PMODE!=="auto";placeWarn();audienceSize();schedulePreview()};
+const placements=()=>({auto:PMODE==="auto",devices:$("f-devices").value,...placeList()});
+function placeProblem(){
+  // the same checks the server makes, so the problem shows while ticking
+  const p=placements();if(p.auto)return "";
+  const fb=p.facebook,ig=p.instagram,pg=PAGE();
+  if(!Object.values(placeList()).some(a=>a.length))return "Pick at least one place to show the ad.";
+  if(p.audience_network.length&&!["facebook","instagram","messenger","threads"].some(k=>p[k].length))return "Audience Network can't be the only placement. Tick a Facebook or Instagram place too.";
+  if(fb.some(x=>["marketplace","search","profile_feed","notification"].includes(x))&&!fb.includes("feed"))return "Facebook Marketplace, search results, profile feed and notifications only run with Facebook Feed. Tick Facebook Feed too.";
+  if(fb.includes("story")&&!fb.includes("feed")&&!ig.includes("story"))return "Facebook Stories needs Facebook Feed or Instagram Stories ticked too.";
+  if(p.messenger.length&&!fb.includes("feed")&&!ig.includes("story"))return "Messenger Stories needs Facebook Feed or Instagram Stories ticked too.";
+  if(p.threads.length&&!ig.includes("stream"))return "Threads only runs together with the Instagram feed. Tick Instagram feed too.";
+  if((ig.length||p.threads.length)&&pg&&!pg.ig)return "This Page has no Instagram account, so untick the Instagram and Threads places.";
+  if(destinations().join()==="instagram"&&!ig.length)return "Instagram DM ads need at least one Instagram place. For Facebook, add Messenger as a message destination.";
+  if(LOC==="profile"&&!ig.length)return "Instagram profile visits need at least one Instagram place.";
+  return "";
+}
+function placeWarn(){const t=placeProblem(),w=$("placewarn");w.hidden=!t;w.textContent=t;placeHistory()}
+async function placeHistory(){
+  // what Facebook vs Instagram placements cost per DM on this account so far, shown while they're being picked
+  const p=placements(),el=$("placehist");
+  if(!(destinations().includes("instagram")&&(p.auto||p.facebook.length||p.audience_network.length||p.messenger.length||p.threads.length))){el.innerHTML="";return}
+  if(!PHIST){if(placeHistory.busy)return;placeHistory.busy=true;
+    try{const r=await api("/api/insights/breakdown?by=placement&level=account&preset=lifetime"),by={};for(const x of r.rows){const k=x.platform;by[k]=by[k]||{spend:0,dms:0};by[k].spend+=x.spend||0;by[k].dms+=x.dms||0}PHIST=by}catch(e){PHIST={}}
+    placeHistory.busy=false;return placeHistory()}
+  const parts=Object.entries(PHIST).filter(([,v])=>v.spend>0).sort((a,b)=>b[1].spend-a[1].spend).map(([k,v])=>`${esc(PLAT[k]||k)} ${v.dms?inr(v.spend/v.dms)+" per DM":"no DMs for "+inr(v.spend)}`);
+  el.innerHTML=parts.length?`<i class="ti ti-history"></i> Your DM ads so far (all time): ${parts.join(" · ")}. Facebook users get sent over to Instagram to DM, so they cost much more.`:"";
+}
+function audienceSpec(){return {objective:OBJ,location:LOC,perf:$("f-perf").value,geo:GEO,age_min:+$("f-agemin").value,age_max:+$("f-agemax").value,gender:GENDER,interests:INTS,advantage:$("f-advantage").checked,placements:placements()}}
+const audienceSize=debounce(async()=>{
+  const e=$("audsize");
+  if(+$("f-agemin").value>+$("f-agemax").value){e.textContent="The minimum age is above the maximum.";e.classList.add("warn");return}
+  if(!GEO.length){e.textContent="Add a location to see how many people this reaches.";return}
+  e.classList.remove("warn");e.innerHTML='<i class="ti ti-loader-2 spin"></i> Asking Meta how many people this reaches…';
+  const p=placements(),apps=p.auto?"Meta's apps":Object.entries(placeList()).filter(([,v])=>v.length).map(([k])=>PLAT_NAMES[k]).join(" / ")||"Instagram";
+  try{const r=await api("/api/audience_size",{method:"POST",body:audienceSpec()});
+    e.innerHTML=r.lower?`About <b style="font-weight:500">${big(r.lower)} – ${big(r.upper)}</b> people on ${esc(apps)} in this audience each month`:r.error?esc(r.error):"Meta didn't give an estimate.";
+    if(r.lower&&r.upper<100000){e.innerHTML+=" · quite small, results may cost more";e.classList.add("warn")}}
+  catch(err){e.textContent=err.message}
+},700);
+// value rules
+function ruleText(r){return r.criteria.map(c=>c.type==="LOCATION"?`${c.values.length} place${c.values.length===1?"":"s"}`:c.values.map(vrVal).join(", ")).join(" & ")+` ${r.sign==="DECREASE"?"−":"+"}${r.value}%`}
+const ruleSetName=id=>{const s=ASSETS&&ASSETS.rule_sets.find(r=>r.id===id);return s?s.name:"rule set "+id};
+function renderVR(){
+  const sets=[...((ASSETS&&ASSETS.rule_sets)||[])];
+  if(VR&&!sets.some(s=>s.id===VR))sets.push({id:VR,name:"Rule set "+VR,rules:[]});  // picked, but its details didn't load
+  $("vrlist").innerHTML=`<label class="vropt"><input type="radio" name="vr" value="" ${VR===""?"checked":""}><span><b>Don't use value rules</b><span class="sub" style="display:block">Meta bids the same for everyone in the audience.</span></span></label>`+
+    sets.map(s=>`<label class="vropt"><input type="radio" name="vr" value="${esc(s.id)}" ${VR===s.id?"checked":""}><span><b>${esc(s.name)}</b>${s.id===ASSETS.default_rule_set?' <span class="pill">your main ad uses this</span>':""}<span class="sub" style="display:block">${esc(s.rules.map(ruleText).join(" · ")||"details load when Meta allows it")}</span></span></label>`).join("")+
+    (!ASSETS?'<span class="sub">Loading your rule sets…</span>':ASSETS.rule_sets_error?`<div class="sub">Couldn't load your rule sets: ${esc(ASSETS.rule_sets_error)}</div>`:"");
+  const full=sets.length>=(DEF&&DEF.max_rule_sets||6);
+  $("vrnew").disabled=full;$("vrnew").title=full?"Meta allows 6 rule sets per ad account":"";
+}
+$("vrlist").onchange=e=>{if(e.target.name==="vr"){VR=e.target.value;loadAssets.vrPicked=true}};
+const newRule=()=>({type:"PLACEMENT",values:[],places:[],sign:"INCREASE",pct:20});
+$("vrnew").onclick=()=>{VRB={name:"",rules:[{...newRule(),values:["ig_reels"]}]};renderVRB();$("vrbuilder").hidden=false;$("vrb-name").focus()};
+function renderVRB(){
+  const vals=DEF.vr_values||{};
+  $("vrbuilder").innerHTML=`<label class="f"><span>Rule set name</span><input id="vrb-name" maxlength="100" value="${esc(VRB.name)}" placeholder="e.g. Reels first"></label>
+   ${VRB.rules.map((r,i)=>`<div class="vrule" data-r="${i}">
+     <div class="row">
+       <select data-rtype aria-label="What rule ${i+1} is about">${Object.keys(VR_KINDS).filter(k=>k in vals).map(k=>`<option value="${k}" ${k===r.type?"selected":""}>${VR_KINDS[k]}</option>`).join("")}</select>
+       <select data-rsign aria-label="Bid more or less"><option value="INCREASE" ${r.sign==="INCREASE"?"selected":""}>Bid more by</option><option value="DECREASE" ${r.sign==="DECREASE"?"selected":""}>Bid less by</option></select>
+       <span class="row" style="gap:4px;flex-wrap:nowrap"><input data-rpct type="number" min="1" max="${r.sign==="DECREASE"?90:1000}" value="${r.pct}" style="width:84px" aria-label="Percent"><span class="sub">%</span></span>
+       <button class="mini icon" data-rdel aria-label="Remove rule ${i+1}" style="margin-left:auto"><i class="ti ti-trash"></i></button>
+     </div>
+     ${r.type==="LOCATION"?`<div class="search" style="margin-top:8px"><input data-rgeo placeholder="Add a city, state or country" autocomplete="off" aria-label="Add a place to rule ${i+1}"><div class="sugg" hidden></div></div><div class="tags">${r.places.map((p,j)=>`<span class="tag">${esc(p.name)}<button data-rplace="${j}" aria-label="Remove ${esc(p.name)}"><i class="ti ti-x"></i></button></span>`).join("")}</div>`:
+       `<div class="chips" style="margin-top:8px">${(vals[r.type]||[]).map(v=>`<button class="chip ${r.values.includes(v)?"on":""}" data-rval="${esc(v)}" aria-pressed="${r.values.includes(v)}">${esc(vrVal(v))}</button>`).join("")}</div>`}
+   </div>`).join("")}
+   <div class="row"><button class="mini" data-radd ${VRB.rules.length>=10?"disabled":""}><i class="ti ti-plus"></i> Add a rule</button><span class="sub">If someone matches several rules, the first one counts.</span></div>
+   <div id="vrb-err"></div>
+   <div class="row" style="margin-top:12px"><button class="main" data-rsave>Save rule set in Meta</button><button data-rcancel>Cancel</button></div>`;
+  for(const inp of $("vrbuilder").querySelectorAll("[data-rgeo]")){const r=VRB.rules[+inp.closest("[data-r]").dataset.r];
+    suggest(inp,inp.nextElementSibling,"/api/search/geo?q=",geoRow,g=>{if(!r.places.some(p=>String(p.key)===String(g.key)))r.places.push({key:g.key,type:g.type,name:g.name});renderVRB()})}
+}
+$("vrbuilder").addEventListener("click",e=>{
+  const t=e.target,ri=t.closest("[data-r]"),r=ri&&VRB.rules[+ri.dataset.r];
+  const v=t.closest("[data-rval]");if(v){r.values=r.values.includes(v.dataset.rval)?r.values.filter(x=>x!==v.dataset.rval):[...r.values,v.dataset.rval];renderVRB();return}
+  const pl=t.closest("[data-rplace]");if(pl){r.places.splice(+pl.dataset.rplace,1);renderVRB();return}
+  if(t.closest("[data-rdel]")){VRB.rules.splice(+ri.dataset.r,1);if(!VRB.rules.length)VRB.rules.push(newRule());renderVRB();return}
+  if(t.closest("[data-radd]")){VRB.rules.push(newRule());renderVRB();return}
+  if(t.closest("[data-rcancel]")){VRB=null;$("vrbuilder").hidden=true;$("vrbuilder").innerHTML="";return}
+  if(t.closest("[data-rsave]"))saveVR();
+});
+$("vrbuilder").addEventListener("change",e=>{const t=e.target,ri=t.closest("[data-r]");if(!ri)return;const r=VRB.rules[+ri.dataset.r];
+  if(t.matches("[data-rtype]")){r.type=t.value;r.values=[];r.places=[];renderVRB()}
+  else if(t.matches("[data-rsign]")){r.sign=t.value;if(r.sign==="DECREASE"&&r.pct>90)r.pct=90;renderVRB()}});
+$("vrbuilder").addEventListener("input",e=>{const t=e.target;if(t.id==="vrb-name")VRB.name=t.value;else if(t.matches("[data-rpct]"))VRB.rules[+t.closest("[data-r]").dataset.r].pct=+t.value});
+const ruleLabel=r=>`${r.type==="LOCATION"?r.places.map(p=>p.name).join(", "):r.values.map(vrVal).join(", ")} (${r.sign==="DECREASE"?"-":"+"}${r.pct}%)`.slice(0,100);
+async function saveVR(){
+  const btn=$("vrbuilder").querySelector("[data-rsave]");btn.disabled=true;
+  const body={name:VRB.name.trim(),rules:VRB.rules.map(r=>({type:r.type,values:r.values,places:r.places,sign:r.sign,pct:r.pct,label:ruleLabel(r)}))};
+  try{const res=await api("/api/value_rules",{method:"POST",body});ASSETS.rule_sets=res.rule_sets;VR=res.id;loadAssets.vrPicked=true;VRB=null;$("vrbuilder").hidden=true;$("vrbuilder").innerHTML="";renderVR();toast("Rule set saved in Meta and picked for this ad")}
+  catch(e){$("vrb-err").innerHTML=errHtml(e);btn.disabled=false}
+}
+// live preview: drawn here from the form (instant, no calls to Meta); "Meta's real preview" asks Meta
+function formatsFor(p,loc){
+  const out=[],ig=p.auto?["stream","story","reels"]:p.instagram||[],fb=p.auto?["feed","story","facebook_reels"]:p.facebook||[];
+  if(ig.some(x=>["stream","profile_feed","ig_search"].includes(x))||(p.threads||[]).length)out.push("igfeed");
+  if(ig.includes("story"))out.push("igstory");
+  if(ig.some(x=>["reels","profile_reels"].includes(x)))out.push("igreels");
+  if(fb.some(x=>["feed","profile_feed","marketplace","right_hand_column","search","notification","instream_video"].includes(x))||(!p.auto&&(p.audience_network||[]).length))out.push("fbfeed");
+  if(fb.includes("story")||(!p.auto&&(p.messenger||[]).length))out.push("fbstory");
+  if(fb.some(x=>["facebook_reels","facebook_reels_overlay"].includes(x)))out.push("fbreels");
+  if(!out.length)out.push("igfeed");
+  if(loc==="messages")out.push("chat");
+  return out;
+}
+let PREV_T=0;function schedulePreview(){clearTimeout(PREV_T);PREV_T=setTimeout(renderPreview,150)}
+function renderPreview(){
+  if(!DEF)return;
+  const f=formatsFor(placements(),LOC);if(!f.includes(PFMT))PFMT=f[0];
+  $("prevtabs").innerHTML=f.map(k=>`<button class="chipbtn ${k===PFMT?"on":""}" data-pfmt="${k}" aria-pressed="${k===PFMT}">${FMTS[k][0]}</button>`).join("");
+  $("realprev").hidden=PFMT==="chat";
+  // keep videos playing where they were instead of restarting on every keystroke
+  const times=[...$("mock").querySelectorAll("video")].map(v=>v.currentTime);
+  $("mock").innerHTML=PFMT==="chat"?chatMock():PFMT==="igfeed"?igFeedMock():PFMT==="fbfeed"?fbFeedMock():vertMock();
+  [...$("mock").querySelectorAll("video")].forEach((v,i)=>{if(times[i])v.currentTime=times[i]});
+}
+$("prevtabs").onclick=e=>{const b=e.target.closest("[data-pfmt]");if(!b)return;PFMT=b.dataset.pfmt;PIDX=0;showMock();renderPreview()};
+function ident(fb){
+  const p=PAGE(),ig=p&&p.ig;
+  if(!fb&&ig)return {name:ig.username||"instagram",pic:ig.picture||(ACC&&ACC.ig&&ACC.ig.picture)};
+  return {name:(p&&p.name)||(ACC&&ACC.page&&ACC.page.name)||"Your Page",pic:p&&p.picture};
+}
+const avatar=i=>`<span class="av">${i.pic?`<img src="${esc(i.pic)}" alt="">`:'<i class="ti ti-user"></i>'}</span>`;
+function ctaLabel(){
+  if(LOC==="messages")return destinations().join()==="whatsapp"?"Send WhatsApp message":"Send message";
+  if(LOC==="calls")return "Call now";
+  if(LOC==="profile")return "Visit Instagram profile";
+  if(LOC==="website")return BUTTONS[$("f-button").value]||"Learn more";
+  return "";
+}
+function mediaItems(){const ok=MEDIA.filter(m=>!m.err&&!(m.job&&m.job.phase==="error"));return $("f-carousel").checked&&ok.length>1?ok:ok.slice(0,1)}
+const ratio=m=>{const j=m&&m.job;return j&&j.width&&j.height?j.width/j.height:1};
+function mediaEl(m,cls="",still=false){
+  if(!m)return `<div class="placeholder"><i class="ti ti-photo"></i>Your photo or video shows here</div>`;
+  if(m.video)return still?(m.thumb?`<img class="${cls}" src="${esc(m.thumb)}" alt="">`:""):`<video class="${cls}" src="${m.url}" muted autoplay loop playsinline></video>`;
+  return `<img class="${cls}" src="${m.url}" alt="">`;
+}
+function capHtml(text,n){const t=text.trim();if(!t)return '<span class="more">Your caption shows here</span>';return t.length>n?esc(t.slice(0,n).trimEnd())+'<span class="more">… more</span>':esc(t)}
+function carouselNav(items){if(items.length<2)return "";return `<button class="cnext" data-cnext aria-label="Next card"><i class="ti ti-chevron-right"></i></button><div class="dots">${items.map((_,i)=>`<i class="${i===PIDX?"on":""}"></i>`).join("")}</div>`}
+const curItem=items=>items[Math.min(PIDX,items.length-1)]||null;
+function igFeedMock(){
+  const items=mediaItems(),m=curItem(items),id=ident(false),cta=ctaLabel(),ar=Math.min(1.91,Math.max(.8,ratio(m)));
+  return `<div class="ph">
+    <div class="top">${avatar(id)}<div style="flex:1;min-width:0"><div class="nm">${esc(id.name)}</div><div class="sm">Sponsored</div></div><i class="ti ti-dots"></i></div>
+    <div class="media" style="aspect-ratio:${ar}">${mediaEl(m)}${carouselNav(items)}</div>
+    ${cta?`<div class="ctabar"><span>${esc(cta)}</span><i class="ti ti-chevron-right"></i></div>`:""}
+    <div class="icons"><i class="ti ti-heart"></i><i class="ti ti-message-circle"></i><i class="ti ti-send"></i><span style="flex:1"></span><i class="ti ti-bookmark"></i></div>
+    <div class="cap"><b>${esc(id.name)}</b> ${capHtml($("f-caption").value,125)}</div>
+  </div>`;
+}
+function fbDomain(){
+  if(LOC==="website"){try{return new URL($("f-link").value).hostname.replace(/^www\./,"").toUpperCase()}catch(e){return "YOUR LINK"}}
+  if(LOC==="messages"){const d=destinations();return d.join()==="whatsapp"?"WHATSAPP":d.includes("messenger")?"MESSENGER":"INSTAGRAM"}
+  return LOC==="calls"?"CALL":LOC==="profile"?"INSTAGRAM":"";
+}
+function fbFeedMock(){
+  const items=mediaItems(),m=curItem(items),id=ident(true),cta=ctaLabel(),head=$("f-headline").value.trim(),ar=Math.min(1.91,Math.max(.8,ratio(m)));
+  return `<div class="ph">
+    <div class="top">${avatar(id)}<div style="flex:1;min-width:0"><div class="nm">${esc(id.name)}</div><div class="sm">Sponsored · <i class="ti ti-world"></i></div></div><i class="ti ti-dots"></i></div>
+    <div class="cap" style="padding-top:0">${capHtml($("f-caption").value,180)}</div>
+    <div class="media" style="aspect-ratio:${ar}">${mediaEl(m)}${carouselNav(items)}</div>
+    ${cta||head?`<div class="fbbar"><div style="min-width:0"><div class="sm">${esc(fbDomain())}</div><div class="nm ell">${esc(head)}</div></div>${cta?`<span class="btn2">${esc(cta)}</span>`:""}</div>`:""}
+    <div class="fbact"><span><i class="ti ti-thumb-up"></i> Like</span><span><i class="ti ti-message-circle"></i> Comment</span><span><i class="ti ti-share-3"></i> Share</span></div>
+  </div>`;
+}
+function vertMock(){
+  const fb=PFMT.startsWith("fb"),reels=PFMT.endsWith("reels"),items=mediaItems(),m=curItem(items),id=ident(fb),cta=ctaLabel(),tall=m&&ratio(m)<.7;
+  return `<div class="vert">
+    ${m&&!tall?`<div class="bg">${mediaEl(m,"",true)}</div>`:""}
+    ${m?mediaEl(m,"fg"+(tall?" cover":"")):`<div class="fg">${mediaEl(null)}</div>`}
+    ${reels?"":'<div class="bars"></div>'}
+    <div class="top">${avatar(id)}<div><div class="nm">${esc(id.name)}</div><div class="sm">Sponsored</div></div></div>
+    ${carouselNav(items)}
+    <div class="bottom">${reels?`<div class="cap2"><b>${esc(id.name)}</b> ${capHtml($("f-caption").value,70)}</div>`:""}${cta?`<div class="pillcta">${reels?"":'<i class="ti ti-chevron-up"></i> '}${esc(cta)}</div>`:""}</div>
+  </div>`;
+}
+const chatQs=()=>[...document.querySelectorAll("#questions .qa")].map(r=>({q:r.querySelector("[data-q]").value.trim(),a:r.querySelector("[data-a]").value.trim()})).filter(x=>x.q);
+function chatMock(){
+  const d=destinations(),app=d.length===1?d[0]:d.includes("messenger")?"messenger":d[0]||"instagram",color={instagram:"#3797f0",messenger:"#0a7cff",whatsapp:"#1fa855"}[app];
+  const id=ident(app!=="instagram"),bot=app!=="whatsapp",m=mediaItems()[0]||null;
+  const greet=($("f-greeting").value.trim()||"Hi! Please let us know how we can help you.").replace(/\{\{user_first_name\}\}/g,"Priya").replace(/\{\{user_last_name\}\}/g,"Sharma").replace(/\{\{user_full_name\}\}/g,"Priya Sharma").replace(/\{\{page_name\}\}/g,id.name);
+  const qs=chatQs();
+  return `<div class="chat" style="--chat:${color}">
+    <div class="top">${avatar(id)}<div><div class="nm">${esc(id.name)}</div><div class="sm">${DEST_NAMES[app]}${d.length>1?` · Meta picks ${d.map(x=>DEST_NAMES[x]).join(" or ")} for each person`:""}</div></div></div>
+    <div class="msgs">
+      <div class="adref">${mediaEl(m,"",true)}<span>Started from your ad</span></div>
+      <div class="b them">${esc(greet)}</div>
+      ${CHATLOG.map(x=>`<div class="b me">${esc(x.q)}</div>${x.a?`<div class="b them">${esc(x.a)}</div>`:""}<div class="botnote">${bot?(x.a?"Your bot also replies to this":"Your bot replies to this"):(x.a?"":"You reply to this in the WhatsApp Business app")}</div>`).join("")}
+    </div>
+    ${qs.length?`<div class="qs"><div class="sm">Tap a question to try it${CHATLOG.length?' · <button class="lnk" data-chatreset>start again</button>':""}</div>${qs.map((x,i)=>`<button data-chatq="${i}">${esc(x.q)}</button>`).join("")}</div>`:'<div class="qs sm">No questions yet: people type their own first message.</div>'}
+  </div>`;
+}
+$("mock").onclick=e=>{
+  if(e.target.closest("[data-cnext]")){PIDX=(PIDX+1)%Math.max(1,mediaItems().length);renderPreview();return}
+  if(e.target.closest("[data-chatreset]")){CHATLOG=[];renderPreview();return}
+  const q=e.target.closest("[data-chatq]");if(q){const x=chatQs()[+q.dataset.chatq];if(x){CHATLOG=[...CHATLOG,x].slice(-3);renderPreview()}}
+};
+function showMock(){$("prevreal").hidden=true;$("prevreal").innerHTML="";$("mock").hidden=false;$("mockback").hidden=true}
+$("mockback").onclick=showMock;
+$("realprev").onclick=async()=>{
+  if(!MEDIA.length){toast("Add a photo or video first");return}
+  if(MEDIA.some(m=>!m.err&&(!m.job||m.job.phase!=="ready"))){toast("Wait until every photo/video says Ready");return}
+  const fmt=FMTS[PFMT][1],box=$("prevreal");
+  box.hidden=false;$("mock").hidden=true;$("mockback").hidden=false;
+  box.innerHTML='<span class="sub"><i class="ti ti-loader-2 spin"></i> Asking Meta for its preview…</span>';
+  try{const r=await api("/api/preview_draft",{method:"POST",body:{...collect(),fmt}});
+    box.innerHTML=r.src?`<iframe src="${esc(r.src)}" title="Meta's preview" class="realframe" style="height:${["INSTAGRAM_STANDARD","MOBILE_FEED_STANDARD"].includes(fmt)?600:660}px"></iframe>`:'<span class="sub">Meta has no preview for this format.</span>'}
+  catch(e){box.innerHTML=errHtml(e)}
+};
+$("prevjump").onclick=()=>$("prevcol").scrollIntoView({behavior:"smooth",block:"start"});
+const grow=t=>{t.style.height="auto";t.style.height=Math.max(38,t.scrollHeight+1)+"px"};
+$("tab-new").addEventListener("input",e=>{if(e.target.closest("#prevcol,#vrbuilder"))return;if(e.target.matches("[data-a]"))grow(e.target);if(e.target.matches("[data-q],[data-a]"))CHATLOG=[];if(!$("prevreal").hidden)showMock();schedulePreview()});
+$("tab-new").addEventListener("change",e=>{if(e.target.closest("#prevcol,#vrbuilder"))return;schedulePreview()});
+// create
+function collect(){
+  const thumbs={};for(const m of MEDIA)if(m.job&&m.thumb)thumbs[m.job.id]=m.thumb;
+  return {name:$("f-name").value,objective:OBJ,location:LOC,perf:$("f-perf").value,cost_goal:$("f-costgoal").value,destinations:destinations(),page_id:$("f-page").value,
+    media:MEDIA.filter(m=>m.job).map(m=>m.job.id),thumbs,carousel:$("f-carousel").checked&&MEDIA.length>1,
+    caption:$("f-caption").value,headline:$("f-headline").value,button:LOC==="website"?$("f-button").value:"",link:$("f-link").value,phone:$("f-phone").value,
+    budget_type:BTYPE,budget:$("f-budget").value,start:$("f-startnow").checked?null:$("f-start").value,end:$("f-noend").checked?null:$("f-end").value,
+    ...audienceSpec(),greeting:$("f-greeting").value,questions:chatQs(),value_rule_set_id:VR};
+}
+$("create").onclick=async()=>{
+  const out=$("createout");
+  if(MEDIA.some(m=>!m.err&&(!m.job||!["ready","error"].includes(m.job.phase)))){toast("Wait until every photo/video says Ready");return}
+  if(MEDIA.some(m=>m.err||(m.job&&m.job.phase==="error"))){toast("Remove the files that failed first");return}
+  const pp=placeProblem();if(pp){toast(pp);$("placewarn").scrollIntoView({behavior:"smooth",block:"center"});return}
+  if(VRB&&!await ask("Your new rule set isn't saved","The value rule set you started isn't saved in Meta, so this ad won't use it. Create the ad anyway?","Create anyway"))return;
+  const btn=$("create");btn.disabled=true;
+  out.innerHTML=`<div class="card"><h2>Creating your ad…</h2><ul class="steps" id="steps"><li><i class="ti ti-loader-2 spin"></i> Checking the details</li></ul></div>`;
+  out.scrollIntoView({behavior:"smooth",block:"start"});
+  try{const job=await api("/api/create",{method:"POST",body:collect()});pollCreate(job.id)}
+  catch(e){out.innerHTML=`<div class="card">${errHtml(e)}</div>`;btn.disabled=false;out.scrollIntoView({behavior:"smooth",block:"start"})}
+};
+function stepsHtml(steps){return steps.map(s=>`<li class="${s.state}"><i class="ti ${s.state==="done"?"ti-check":s.state==="failed"?"ti-x":"ti-loader-2 spin"}"></i> ${esc(s.text)}</li>`).join("")}
+async function pollCreate(id){
+  let j;
+  try{j=await api("/api/job/"+id)}catch(e){$("createout").innerHTML=`<div class="card">${errHtml(e)}</div>`;$("create").disabled=false;return}
+  if(j.state==="running"){if($("steps"))$("steps").innerHTML=stepsHtml(j.steps);setTimeout(()=>pollCreate(id),800);return}
+  $("create").disabled=false;
+  if(j.state==="error"){
+    const cl=j.cleanup||[];
+    $("createout").innerHTML=`<div class="card"><h2>Couldn't create the ad</h2><ul class="steps">${stepsHtml(j.steps)}</ul>${errHtml(j.error)}
+      ${cl.length?`<div class="sub" style="margin-top:8px">Cleaned up what was half-made: ${cl.map(c=>`${c.kind} ${esc(c.id)} ${c.deleted?"deleted":"<b style='color:var(--red)'>NOT deleted ("+esc(c.why||"")+") — delete it in Ads Manager</b>"}`).join(", ")}.</div>`:'<div class="sub">Nothing was created in Meta.</div>'}
+      <div class="sub" style="margin-top:6px">Your photos/videos are still uploaded, so you can fix it and press Create again.</div></div>`;
+    loadTree(true);return;
+  }
+  summary(j.result);loadTree(true);
+}
+function summary(r){
+  const per=r.daily?`${inr(r.daily)} a day`:`${inr(r.budget)} in total`;
+  const fmts=formatsFor(r.placements||{auto:true},"").filter(k=>k!=="chat");
+  $("createout").innerHTML=`<div class="card" id="summary">
+    <div class="okhead"><i class="ti ti-circle-check"></i><div><h2 style="margin:0;color:var(--text)">Created and paused</h2><span class="sub">Nothing is spending yet.</span></div></div>
+    <div class="kv">
+      <span>Name</span><span>${esc(r.name)}</span>
+      <span>Goal</span><span>${esc(OBJ_NAMES[r.objective]||r.objective)} · ${esc((LOCS[r.location]||[])[1]||r.location)}${(r.destinations||[]).length?" ("+r.destinations.map(d=>DEST_NAMES[d]).join(" + ")+")":""} · ${esc(PERFS[r.perf]||r.perf)}${r.cost_goal?` · aiming for ${inr(r.cost_goal)} per result`:""}</span>
+      <span>Shown as</span><span>${esc(r.page||"")}${r.ig?" · @"+esc(r.ig):""}</span>
+      <span>Budget</span><span>${per}${r.days?` · ${r.days} day${r.days===1?"":"s"}`:" · no end date"}${r.total?` · <b style="font-weight:500">≈ ${inr(r.total)} total</b>`:""}</span>
+      <span>Dates</span><span>${r.start?fmtD(r.start):"Starts when you go live"} → ${r.end?fmtD(r.end):"no end"}</span>
+      <span>Audience</span><span>${esc(r.audience)}</span>
+      <span>Value rules</span><span>${r.value_rules?esc(r.value_rules):"none"}</span>
+      <span>Ads</span><span>${r.ads.length}${r.carousel?" (carousel)":""}</span>
+    </div>
+    ${r.ads.map(a=>`<div class="adrow" style="margin-bottom:6px;grid-template-columns:56px minmax(0,1fr)">
+      <div class="thumb">${a.thumb?`<img src="${esc(a.thumb)}" alt="">`:'<i class="ti ti-photo"></i>'}</div>
+      <div><div>${esc(a.name)}</div><div class="row" style="gap:6px;margin-top:4px">
+        ${fmts.map(k=>`<button class="mini" data-prev="${a.id}" data-fmt="${FMTS[k][1]}" data-box="prev-${a.id}">${FMTS[k][0]}</button>`).join("")}
+        ${a.preview?`<a class="sub" href="${esc(a.preview)}" target="_blank" rel="noopener">Share link ↗</a>`:""}</div>
+        <div class="prevs" id="prev-${a.id}"></div></div></div>`).join("")}
+    ${NOFUNDS()?`<div class="warnbox">Your account has no money available or hit its spending limit, so even after Go live nothing runs until billing is fixed.</div>`:""}
+    <div class="row" style="margin-top:14px">
+      <button class="main big" data-golive="${r.campaign_id}"><i class="ti ti-player-play"></i> Go live</button>
+      <button data-discard="${r.campaign_id}"><i class="ti ti-trash"></i> Delete this draft</button>
+      <button class="lnk" data-tab-go="ads">See it in My ads</button>
+    </div></div>`;
+  $("summary")._r=r;
+  $("createout").scrollIntoView({behavior:"smooth",block:"start"});
+}
+async function goLive(cid){
+  const r=$("summary")._r;
+  const per=r.daily?`about ${inr(r.daily)} a day`:`up to ${inr(r.budget)} in total`;
+  const ok=await ask("Go live?",`This will start spending <b style="font-weight:500">${per}</b>${r.daily&&r.total?` (≈ ${inr(r.total)} over ${r.days} days)`:""}. Continue?<div class="sub" style="margin-top:8px">Meta reviews new ads first (usually minutes to a few hours).</div>${NOFUNDS()?`<div class="warnbox">Billing isn't fixed yet, so nothing will actually run until it is.</div>`:""}`,"Yes, go live");
+  if(!ok)return;
+  try{await api("/api/golive/"+cid,{method:"POST",body:{confirmed:true}});toast("It's live (after Meta's review)");
+    $("summary").querySelector(".okhead").innerHTML='<i class="ti ti-broadcast"></i><div><h2 style="margin:0;color:var(--text)">Live</h2><span class="sub">Turned on. Meta reviews it, then it starts showing. Turn it off any time in My ads.</span></div>';
+    $("summary").querySelector("[data-golive]").remove();$("summary").querySelector("[data-discard]")?.remove();loadTree(true)}
+  catch(e){showErr(e)}
+}
+async function discard(cid){
+  if(!await ask("Delete this draft?","The campaign, ad set and ads you just made are deleted from Meta. Your uploaded photos/videos stay in your ad library.","Delete",true))return;
+  try{await api("/api/campaign/"+cid,{method:"DELETE"});toast("Draft deleted");$("createout").innerHTML="";loadTree(true)}catch(e){showErr(e)}
+}
+async function preview(ad,fmt,boxId){
+  const box=$(boxId||"prev-"+ad);if(!box)return;
+  box.innerHTML='<span class="sub"><i class="ti ti-loader-2 spin"></i> Loading preview…</span>';
+  try{const r=await api(`/api/previews/${ad}?fmt=${fmt}`);box.innerHTML=r.src?`<iframe src="${esc(r.src)}" width="320" height="${["INSTAGRAM_STANDARD","MOBILE_FEED_STANDARD"].includes(fmt)?580:640}" loading="lazy" title="Ad preview"></iframe>`:'<span class="sub">Meta has no preview for this one.</span>'}
+  catch(e){box.innerHTML=errHtml(e)}
+}
+function adPreview(id){
+  const [a]=find(id);if(!a)return;
+  const fmts=formatsFor(a._s.placements||{auto:true},"").filter(k=>k!=="chat");
+  ask("Preview",`<div class="sub" style="margin-bottom:8px">${esc(a.name)}</div><div class="chips">${fmts.map((k,i)=>`<button class="chipbtn ${i?"":"on"}" data-prev="${id}" data-fmt="${FMTS[k][1]}" data-box="mprev">${FMTS[k][0]}</button>`).join("")}</div><div class="prevs" id="mprev"></div>`,"Close",false,true);
+  preview(id,FMTS[fmts[0]][1],"mprev");
+}
+
+// ---------- stats ----------
+let ST={preset:ls.get("preset")||"7d",level:"account",id:"",since:"",until:""},BY="age_gender",CH={},LAST={ins:null,ads:null,bd:null},COMPARE=new Set(),SORT={k:"cost_per_dm",dir:1},BDTABLE=false;
+function q(extra={}){return new URLSearchParams({level:ST.level,id:ST.id,preset:ST.preset,since:ST.since,until:ST.until,...extra})}
+function fillObjects(){
+  if(!TREE)return;
+  const sel=$("st-obj"),L=ST.level,opts=[];
+  for(const c of TREE.campaigns){
+    if(L==="campaign")opts.push([c.id,c.name]);
+    for(const s of c.adsets){if(L==="adset")opts.push([s.id,`${c.name} › ${s.name}`]);for(const a of s.ads)if(L==="ad")opts.push([a.id,`${a.name} (${c.name})`])}
+  }
+  sel.innerHTML=opts.map(([id,n])=>`<option value="${id}" ${id===ST.id?"selected":""}>${esc(n)}</option>`).join("");
+  $("st-objbox").hidden=L==="account";
+  if(L!=="account"&&!opts.some(o=>o[0]===ST.id))ST.id=opts[0]?opts[0][0]:"";
+}
+$("range").onclick=e=>{const b=e.target.closest("[data-p]");if(!b)return;for(const x of $("range").children)x.classList.toggle("on",x===b);
+  $("customrange").hidden=b.dataset.p!=="custom";
+  if(b.dataset.p==="custom"){if(!$("st-since").value){$("st-since").value=istInput(new Date(Date.now()-13*864e5)).slice(0,10);$("st-until").value=istInput(new Date()).slice(0,10)}return}
+  ST.preset=b.dataset.p;ls.set("preset",ST.preset);loadStats()};
+$("st-apply").onclick=()=>{ST.preset="custom";ST.since=$("st-since").value;ST.until=$("st-until").value;loadStats()};
+$("st-level").onchange=()=>{ST.level=$("st-level").value;ST.id="";fillObjects();loadStats()};
+$("st-obj").onchange=()=>{ST.id=$("st-obj").value;loadStats()};
+$("st-refresh").onclick=()=>loadStats(true);
+addEventListener("hashchange",()=>show(location.hash.slice(1)));
+$("bdtabs").onclick=e=>{const b=e.target.closest("[data-by]");if(!b)return;BY=b.dataset.by;for(const x of $("bdtabs").children)x.classList.toggle("on",x===b);loadBreakdown()};
+$("bd-metric").onchange=drawBreakdown;
+$("bd-table").onclick=()=>{BDTABLE=!BDTABLE;$("bd-table").textContent=BDTABLE?"Chart":"Table";$("bdchartbox").hidden=BDTABLE;$("bdtablebox").hidden=!BDTABLE;drawBreakdown()};
+let statsSeq=0;
+async function loadStats(fresh){
+  if(ST.level!=="account"&&!ST.id){fillObjects();if(!ST.id){$("st-err").innerHTML='<div class="card sub">Nothing to pick at this level yet.</div>';return}}
+  const seq=++statsSeq,extra=fresh?{fresh:1}:{};
+  $("st-err").innerHTML="";$("st-fresh").innerHTML='<i class="ti ti-loader-2 spin"></i> Loading…';
+  const [ins,ads]=await Promise.allSettled([api("/api/insights?"+q(extra)),api("/api/insights/ads?"+q(extra))]);
+  if(seq!==statsSeq)return;
+  if(ins.status==="rejected"){$("st-err").innerHTML=errHtml(ins.reason);$("st-fresh").textContent="";return}
+  LAST.ins=ins.value;LAST.ads=ads.status==="fulfilled"?ads.value:null;
+  $("st-fresh").textContent=`Numbers from ${agoS(LAST.ins.at)} · kept for 5 min`;
+  renderKpis();drawMain();renderAdTable();loadBreakdown(fresh);
+}
+async function loadBreakdown(fresh){
+  const seq=statsSeq;
+  $("bdsub").textContent="Loading…";
+  try{const r=await api("/api/insights/breakdown?"+q({by:BY,...(fresh?{fresh:1}:{})}));if(seq!==statsSeq)return;LAST.bd=r;drawBreakdown()}
+  catch(e){$("bdsub").textContent=e.message;LAST.bd=null;drawBreakdown()}
+}
+function rlabel(){return (LAST.ins&&LAST.ins.totals.result_label)||"DMs started"}
+function renderKpis(){
+  const t=LAST.ins.totals,lab=rlabel(),isDm=!t.result_label||t.result_label==="DMs started";
+  const short=isDm?"DMs":lab;
+  for(const e of document.querySelectorAll(".rlabel"))e.textContent=short;
+  for(const e of document.querySelectorAll(".rlabel1"))e.textContent=isDm?"DM":"result";
+  $("bd-metric").options[0].textContent=short;$("bd-metric").options[2].textContent=isDm?"Cost per DM":"Cost per result";
+  const T=[["Spent",inr(t.spend)],
+    ...(isDm?[["DMs started",num(t.dms)],["Cost per DM",inr(t.cost_per_dm)]]:[[lab,num(t.results)],["Cost per result",inr(t.cost_per_result)],["DMs started",t.dms?num(t.dms):null]]),
+    ["People reached",num(t.reach)],["Impressions",num(t.impressions)],["Times each person saw it",t.frequency?t.frequency.toFixed(2):"—"],
+    ["Clicks",num(t.clicks)],["Click rate (CTR)",pct(t.ctr)],["Cost per 1,000 impressions (CPM)",inr(t.cpm)],["Cost per click",inr(t.cpc)],
+    ["Video plays",t.video_plays!=null?num(t.video_plays):null],["3-second views",t.views_3s!=null?num(t.views_3s):null],["ThruPlays (15 s or full)",t.thruplays!=null?num(t.thruplays):null],
+    ["Average watch time",t.avg_watch!=null?t.avg_watch+" s":null],["Profile visits",t.profile_visits!=null?num(t.profile_visits):null],["Follows",t.follows!=null?num(t.follows):null],
+    ["Replied in DM",t.conversations_replied!=null?num(t.conversations_replied):null],["Comments",t.comments!=null?num(t.comments):null],["Saves",t.saves!=null?num(t.saves):null]]
+    .filter(x=>x[1]!==null);
+  $("kpis").innerHTML=T.map(([l,v])=>`<div class="tile"><span class="sub">${l}</span><b>${v}</b></div>`).join("");
+}
+// charts
+function C(){const cs=getComputedStyle(document.documentElement),v=n=>cs.getPropertyValue(n).trim();
+  return {s:[v("--s1"),v("--s2"),v("--s3"),v("--s4"),v("--s5")],grid:v("--grid"),axis:v("--axis"),base:v("--base"),text:v("--text"),card:v("--card")}}
+function chart(id,cfg,empty){
+  if(CH[id]){CH[id].destroy();delete CH[id]}
+  const el=$(id);if(!el)return;
+  const box=el.parentElement;box.querySelector(".empty")?.remove();
+  if(empty){box.insertAdjacentHTML("beforeend",`<div class="empty">${empty}</div>`);return}
+  if(!window.Chart){box.insertAdjacentHTML("beforeend",'<div class="empty">Charts need the internet (Chart.js didn\'t load).</div>');return}
+  cfg.type=cfg.type||(cfg.data.datasets[0]||{}).type||"bar";
+  CH[id]=new Chart(el,cfg);
+}
+function opts(c,{y=v=>num(v),x,horizontal,legend,stacked}={}){
+  const val=horizontal?"x":"y",cat=horizontal?"y":"x";
+  return {responsive:true,maintainAspectRatio:false,animation:{duration:250},indexAxis:horizontal?"y":"x",
+    interaction:{mode:"index",intersect:false},
+    plugins:{legend:{display:!!legend,position:"top",align:"start",labels:{color:c.axis,boxWidth:10,boxHeight:10,usePointStyle:true,pointStyle:"rectRounded",padding:12}},
+      tooltip:{callbacks:{label:ctx=>` ${ctx.dataset.label}: ${ctx.parsed[val]==null?"—":y(ctx.parsed[val])}`}}},
+    scales:{[cat]:{stacked,grid:{display:false},border:{color:c.base},ticks:{color:c.axis,maxRotation:0,autoSkip:true,autoSkipPadding:10,...(x?{callback(v){return x(this.getLabelForValue(v))}}:{})}},
+      [val]:{stacked,beginAtZero:true,grid:{color:c.grid},border:{display:false},ticks:{color:c.axis,maxTicksLimit:5,callback:v=>y(v)}}}};
+}
+const bar=(label,data,color,extra={})=>({type:"bar",label,data,backgroundColor:color,hoverBackgroundColor:color,borderRadius:4,borderSkipped:"start",maxBarThickness:24,categoryPercentage:.8,barPercentage:.9,...extra});
+const line=(label,data,color,extra={})=>({type:"line",label,data,borderColor:color,backgroundColor:color,borderWidth:2,pointRadius:0,pointHoverRadius:5,pointHoverBorderWidth:2,pointHoverBorderColor:C().card,borderJoinStyle:"round",borderCapStyle:"round",spanGaps:false,...extra});
+const day=s=>{const d=new Date(s+"T00:00:00"),i=LAST.ins;return i&&i.bucket==="month"?d.toLocaleDateString("en-IN",{month:"short",year:"numeric"}):d.toLocaleDateString("en-IN",{day:"numeric",month:"short",...(i&&i.since&&i.until&&i.since.slice(0,4)!==i.until.slice(0,4)?{year:"2-digit"}:{})})};
+const BLANK={spend:0,reach:0,impressions:0,clicks:0,results:0,dms:0,cost_per_result:null,cost_per_dm:null};
+function filled(rows){
+  // Meta leaves out days (or months) with nothing; put them back as zeros so the time axis is honest
+  const i=LAST.ins;if(!i||!i.since||!i.until)return rows;
+  const month=i.bucket==="month",key=d=>month?d.slice(0,7):d,by={};
+  for(const r of rows)by[key(r.date)]=r;
+  const out=[],end=new Date(i.until+"T00:00:00Z");let d=new Date(i.since+"T00:00:00Z");
+  if(month)d=new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),1));
+  while(d<=end&&out.length<800){const k=d.toISOString().slice(0,10);out.push(by[key(k)]||{date:k,...BLANK});month?d.setUTCMonth(d.getUTCMonth()+1):d.setUTCDate(d.getUTCDate()+1)}
+  return out;
+}
+const short=n=>n>=1e7?(n/1e7).toFixed(1).replace(/\.0$/,"")+"Cr":n>=1e5?(n/1e5).toFixed(1).replace(/\.0$/,"")+"L":n>=1e3?(n/1e3).toFixed(1).replace(/\.0$/,"")+"K":num(n);
+function drawMain(){
+  if(!LAST.ins)return;
+  const c=C(),d=filled(LAST.ins.daily),lab=d.map(r=>r.date),none=LAST.ins.daily.length?null:"No spend in this period.";
+  for(const e of document.querySelectorAll(".per"))e.textContent=LAST.ins.bucket==="month"?"month":"day";
+  const isDm=rlabel()==="DMs started",res=r=>isDm?r.dms:r.results,cpr=r=>isDm?r.cost_per_dm:r.cost_per_result;
+  chart("c-spend",{data:{labels:lab,datasets:[bar("Spent",d.map(r=>r.spend),c.s[0])]},options:opts(c,{y:v=>inr(v),x:day})},none);
+  chart("c-results",{data:{labels:lab,datasets:[bar(isDm?"DMs":rlabel(),d.map(res),c.s[1])]},options:opts(c,{x:day})},none);
+  const cp=d.map(r=>cpr(r)??null);
+  chart("c-cpr",{data:{labels:lab,datasets:[line(isDm?"Cost per DM":"Cost per result",cp,c.s[0],{pointRadius:d.length<=31?3:0})]},options:opts(c,{y:v=>inr(v),x:day})},cp.some(v=>v!=null)?null:"No days with results in this period.");
+  chart("c-reach",{data:{labels:lab,datasets:[line("Reach",d.map(r=>r.reach),c.s[0]),line("Impressions",d.map(r=>r.impressions),c.s[1])]},options:opts(c,{y:short,x:day,legend:true})},none);
+  const t=LAST.ins.totals,plays=t.video_plays;
+  const vals=[plays,t.p25,t.p50,t.p75,t.p95,t.p100];
+  $("vidsub").textContent=plays?`Out of ${num(plays)} plays · average watch ${t.avg_watch??"—"} s`:"Out of everyone who started it";
+  chart("c-video",{data:{labels:["Started","25%","50%","75%","95%","Finished"],datasets:[bar("People",vals,c.s[0])]},
+    options:{...opts(c),plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${num(ctx.parsed.y)} people${plays?" · "+Math.round(ctx.parsed.y/plays*100)+"% of plays":""}`}}}}},
+    plays?null:"No video plays in this period.");
+}
+const POS={feed:"feed",instagram_stories:"Stories",instagram_reels:"Reels",instagram_explore:"Explore",instagram_explore_grid_home:"Explore home",instagram_profile_feed:"profile feed",instagram_search:"search",instagram_profile_reels:"profile reels",facebook_reels:"Reels",facebook_stories:"Stories",facebook_profile_feed:"profile feed",story:"Stories",marketplace:"Marketplace",video_feeds:"video feeds",search:"search",right_hand_column:"right column",instream_video:"in-stream video",an_classic:"apps",rewarded_video:"rewarded video",notification:"notifications",reels_overlay:"Reels overlay",messenger_inbox:"inbox",messenger_stories:"Stories"};
+const PLAT={instagram:"Instagram",facebook:"Facebook",audience_network:"Other apps",messenger:"Messenger",threads:"Threads"};
+const hourLabel=h=>h===0?"12am":h<12?h+"am":h===12?"12pm":(h-12)+"pm";
+function drawBreakdown(){
+  const c=C(),isDm=rlabel()==="DMs started",rows0=LAST.bd?LAST.bd.rows:[];
+  let m=$("bd-metric").value,note="";
+  // Meta doesn't split DMs (or most results) by state or hour: show clicks there instead of an empty chart
+  if((m==="results"||m==="cost_per_result")&&rows0.length&&rows0.every(r=>!(isDm?r.dms:r.results))){
+    note=` · Meta doesn't report ${isDm?"DMs":"results"} by ${BY==="hour"?"hour":BY==="region"?"state":"this"}, so this shows clicks`;m="clicks"}
+  const pick=r=>m==="results"?(isDm?r.dms:r.results):m==="cost_per_result"?(isDm?r.cost_per_dm:r.cost_per_result):r[m];
+  const fmt=m==="spend"||m==="cost_per_result"?v=>inr(v):num;
+  const mname=note?"Clicks":$("bd-metric").selectedOptions[0].textContent;
+  const rows=rows0;
+  $("bdsub").textContent=rows.length?`${mname} by ${({age_gender:"age and gender",placement:"where the ad was shown",region:"state",hour:"hour of the day (India time)"})[BY]}`+(m==="cost_per_result"?" · lower is better":"")+note:"";
+  const box=$("bdchartbox");box.style.height="";
+  let labels=[],sets=[],table=[];
+  if(BY==="age_gender"){
+    const ages=[...new Set(rows.map(r=>r.age))].sort();
+    const genders=[["female","Women"],["male","Men"],["unknown","Unknown"]].filter(([g])=>rows.some(r=>r.gender===g));
+    labels=ages;
+    sets=genders.map(([g,l],i)=>bar(l,ages.map(a=>{const r=rows.find(x=>x.age===a&&x.gender===g);return r?pick(r)??null:null}),c.s[i]));
+    table=rows.map(r=>[`${r.age} · ${({female:"women",male:"men",unknown:"unknown"})[r.gender]||r.gender}`,r]);
+  }else{
+    let list=rows.map(r=>[BY==="placement"?`${PLAT[r.platform]||r.platform} ${POS[r.position]||String(r.position||"").replace(/_/g," ")}`:BY==="region"?r.region:hourLabel(r.hour),r]);
+    if(BY!=="hour"){
+      list=list.filter(([,r])=>pick(r)!=null).sort((a,b)=>m==="cost_per_result"?pick(a[1])-pick(b[1]):pick(b[1])-pick(a[1]));
+      if(BY==="region")list=list.slice(0,12);
+      box.style.height=Math.max(160,list.length*30+40)+"px";
+    }
+    labels=list.map(x=>x[0]);sets=[bar(mname,list.map(x=>pick(x[1])),c.s[0])];table=list;
+  }
+  const empty=!rows.length?(LAST.bd?"No data in this period.":"Couldn't load this breakdown."):sets.every(s=>s.data.every(v=>!v))?`Nothing to show for “${mname}” in this period.`:null;
+  chart("c-bd",{data:{labels,datasets:sets},options:opts(c,{y:fmt,horizontal:BY==="placement"||BY==="region",legend:sets.length>1})},empty);
+  if(BDTABLE)$("bdtablebox").innerHTML=`<div class="tablewrap"><table style="min-width:520px"><thead><tr><th class="l">${({age_gender:"Age · gender",placement:"Placement",region:"State",hour:"Hour"})[BY]}</th><th>Spent</th><th>Impressions</th><th>Clicks</th><th>${isDm?"DMs":"Results"}</th><th>${isDm?"Cost per DM":"Cost per result"}</th></tr></thead><tbody>${
+    table.map(([l,r])=>`<tr><td class="l">${esc(l)}</td><td>${inr(r.spend)}</td><td>${num(r.impressions)}</td><td>${num(r.clicks)}</td><td>${num(isDm?r.dms:r.results)}</td><td>${inr(isDm?r.cost_per_dm:r.cost_per_result)}</td></tr>`).join("")}</tbody></table></div>`;
+}
+const COLS=[["name","Ad","l"],["spend","Spent"],["impressions","Impressions"],["reach","Reach"],["clicks","Clicks"],["ctr","CTR"],["dms","DMs"],["cost_per_dm","Cost per DM"],["results","Results"],["cost_per_result","Cost per result"]];
+function renderAdTable(){
+  const ads=LAST.ads?LAST.ads.ads:[],isDm=rlabel()==="DMs started";
+  const cols=COLS.filter(([k])=>isDm?!["results","cost_per_result"].includes(k):true);
+  const v=(a,k)=>a[k]??null;
+  const sorted=[...ads].sort((a,b)=>{const x=v(a,SORT.k),y=v(b,SORT.k);if(x==null&&y==null)return 0;if(x==null)return 1;if(y==null)return -1;return(typeof x==="string"?x.localeCompare(y):x-y)*SORT.dir});
+  const bestK=isDm?"cost_per_dm":"cost_per_result",best=Math.min(...ads.map(a=>a[bestK]).filter(x=>x!=null&&ads.length>1));
+  $("adth").innerHTML=`<tr><th class="l" style="width:30px" title="Tick to compare">⇄</th>${cols.map(([k,l,cl])=>`<th class="${cl||""} ${SORT.k===k?"sorted":""}" data-sort="${k}">${l}${SORT.k===k?(SORT.dir>0?" ↑":" ↓"):""}</th>`).join("")}</tr>`;
+  const fmtc={spend:inr,impressions:num,reach:num,clicks:num,ctr:pct,dms:num,cost_per_dm:inr,results:num,cost_per_result:inr};
+  const ci=[...COMPARE];
+  $("adtb").innerHTML=sorted.length?sorted.map(a=>`<tr><td class="l"><input type="checkbox" data-cmp="${a.id}" ${COMPARE.has(a.id)?"checked":""} aria-label="Compare ${esc(a.name)}">${COMPARE.has(a.id)?`<span class="swatch" style="background:${C().s[ci.indexOf(a.id)]}"></span>`:""}</td>${cols.map(([k,,cl])=>k==="name"?
+    `<td class="l"><div class="tn">${a.thumb?`<img src="${esc(a.thumb)}" alt="">`:""}<span>${esc(a.name)}<br><span class="sub">${esc(a.campaign||"")}</span></span></div></td>`:
+    `<td class="${k===bestK&&a[k]===best?"best":""}">${fmtc[k](a[k])}</td>`).join("")}</tr>`).join(""):`<tr><td colspan="${cols.length+1}" class="l sub">No ads spent anything in this period.</td></tr>`;
+  drawCompare();
+}
+$("adth").onclick=e=>{const th=e.target.closest("[data-sort]");if(!th)return;const k=th.dataset.sort;SORT=SORT.k===k?{k,dir:-SORT.dir}:{k,dir:k.startsWith("cost")||k==="name"?1:-1};renderAdTable()};
+$("adtb").onchange=e=>{const cb=e.target.closest("[data-cmp]");if(!cb)return;
+  if(cb.checked){if(COMPARE.size>=5){cb.checked=false;toast("Compare up to 5 at a time");return}COMPARE.add(cb.dataset.cmp)}else COMPARE.delete(cb.dataset.cmp);renderAdTable()};
+function drawCompare(){
+  const ads=(LAST.ads?LAST.ads.ads:[]).filter(a=>COMPARE.has(a.id));
+  $("comparebox").hidden=!ads.length;if(!ads.length){if(CH["c-compare"]){CH["c-compare"].destroy();delete CH["c-compare"]}return}
+  const c=C(),isDm=rlabel()==="DMs started",month=LAST.ins&&LAST.ins.bucket==="month",key=d=>month?d.slice(0,7):d;
+  const dates=filled([]).map(r=>r.date);
+  const ci=[...COMPARE];
+  chart("c-compare",{data:{labels:dates,datasets:ads.map(a=>{const by=Object.fromEntries(a.daily.map(d=>[key(d.date),isDm?d.dms:d.results]));
+    return line(a.name.length>40?a.name.slice(0,38)+"…":a.name,dates.map(d=>by[key(d)]??0),c.s[ci.indexOf(a.id)],{pointRadius:dates.length<=31?3:0})})},options:opts(c,{x:day,legend:true})});
+}
+function redrawCharts(){if(LAST.ins){drawMain();drawBreakdown();drawCompare()}}
+
+// ---------- clicks ----------
+let OPEN_T=0,DOWN=[0,0];
+function toggleOpen(id){OPEN.has(id)?OPEN.delete(id):OPEN.add(id);ls.set("open",JSON.stringify([...OPEN]));renderAds()}
+document.addEventListener("mousedown",e=>{DOWN=[e.clientX,e.clientY]},true);
+document.addEventListener("click",e=>{
+  const t=e.target;
+  const o=t.closest("[data-open]");if(o){
+    clearTimeout(OPEN_T);
+    if(!t.closest(".nm")){toggleOpen(o.dataset.open);return}
+    // clicking the name opens it, but a double click (or dragging across the text) selects the words instead
+    if(e.detail>1||Math.hypot(e.clientX-DOWN[0],e.clientY-DOWN[1])>4)return;
+    OPEN_T=setTimeout(()=>toggleOpen(o.dataset.open),320);return}
+  const ap=t.closest("[data-adprev]");if(ap){adPreview(ap.dataset.adprev);return}
+  const s=t.closest("[data-sw]");if(s&&!s.disabled){toggle(s.dataset.sw);return}
+  const ed=t.closest("[data-edit]");if(ed){EDIT=EDIT===ed.dataset.edit?null:ed.dataset.edit;renderAds();return}
+  const sv=t.closest("[data-save]");if(sv){saveEdit(sv.dataset.save,sv.dataset.kind);return}
+  if(t.closest("[data-cancel]")){EDIT=null;renderAds();return}
+  const gl=t.closest("[data-golive]");if(gl){goLive(gl.dataset.golive);return}
+  const dc=t.closest("[data-discard]");if(dc){discard(dc.dataset.discard);return}
+  const pv=t.closest("[data-prev]");if(pv){for(const b of pv.parentElement.querySelectorAll("[data-prev]"))b.classList.toggle("on",b===pv);preview(pv.dataset.prev,pv.dataset.fmt,pv.dataset.box);return}
+  const tg=t.closest("[data-tab-go]");if(tg){show(tg.dataset.tabGo);return}
+  if(t.closest("[data-recheck]")){toast("Checking with Meta…");loadAccount(true);return}
+});
+document.addEventListener("change",e=>{if(e.target.id==="e-noend")$("e-end").disabled=e.target.checked});
+
+applyTheme(ls.get("theme")||"auto");
+show((location.hash||"#ads").slice(1));
+for(const b of $("range").children)b.classList.toggle("on",b.dataset.p===ST.preset);
+loadAccount().then(()=>{estimate()});
+loadTree();initForm();
+// background refresh: every 5 min, only while the page is in front (Meta limits how often we may ask)
+setInterval(()=>{if(document.visibilityState!=="visible")return;loadAccount();if(TAB==="ads"&&!EDIT)loadTree(false,true)},300000);
+setInterval(renderBanners,30000);
+</script>
+</body>
+</html>

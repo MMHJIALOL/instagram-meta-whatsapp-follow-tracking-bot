@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resin members</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--bg:#f7f6f2;--card:#fff;--soft:#f0eee8;--text:#1f1e1c;--muted:#6b6a65;--border:rgba(0,0,0,.1);--strong:rgba(0,0,0,.35);
+--red:#a32d2d;--red-bg:#fcebeb;--red-b:#f09595;--green:#3b6d11;--green-bg:#eaf3de;--amber:#854f0b;--amber-bg:#faeeda;--blue:#185fa5;--blue-bg:#e6f1fb}
+@media (prefers-color-scheme:dark){:root{--bg:#1c1c1b;--card:#262624;--soft:#30302e;--text:#eceae4;--muted:#a3a19a;--border:rgba(255,255,255,.12);--strong:rgba(255,255,255,.4);
+--red:#f09595;--red-bg:#501313;--red-b:#a32d2d;--green:#c0dd97;--green-bg:#27500a;--amber:#fac775;--amber-bg:#633806;--blue:#b5d4f4;--blue-bg:#0c447c}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:20px;font-weight:500;margin:0}
+.sub{color:var(--muted);font-size:12px}
+button,.btn{font:inherit;font-size:13px;color:var(--text);background:var(--card);border:.5px solid var(--strong);border-radius:8px;padding:6px 12px;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+button:hover,.btn:hover{background:var(--soft)}
+input[type=search]{font:inherit;width:100%;padding:8px 10px;border-radius:8px;border:.5px solid var(--strong);background:var(--card);color:var(--text)}
+.card{background:var(--card);border:.5px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:8px;margin-bottom:14px}
+.tile{background:var(--card);border:.5px solid var(--border);border-radius:8px;padding:9px 12px;cursor:pointer}
+.tile.on{border-color:var(--strong);outline:1px solid var(--strong)}
+.tile b{display:block;font-size:20px;font-weight:500}
+.pill{font-size:12px;padding:2px 8px;border-radius:8px;white-space:nowrap;background:var(--soft);color:var(--muted)}
+.p-green{background:var(--green-bg);color:var(--green)}.p-red{background:var(--red-bg);color:var(--red)}
+.p-amber{background:var(--amber-bg);color:var(--amber)}.p-blue{background:var(--blue-bg);color:var(--blue)}
+.tablewrap{overflow-x:auto;background:var(--card);border:.5px solid var(--border);border-radius:12px}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:760px}
+th{text-align:left;font-weight:500;color:var(--muted);padding:9px 10px;border-bottom:.5px solid var(--border);position:sticky;top:0;background:var(--card)}
+td{padding:8px 10px;border-bottom:.5px solid var(--border);vertical-align:top}
+tr.rm td{background:var(--red-bg)}
+tr.old td{opacity:.6}
+tr.wsline td{border-top:2px solid var(--text);border-bottom:2px solid var(--text);background:var(--soft);color:var(--muted);font-size:12px;text-align:center;cursor:pointer;padding:9px}
+tr.wsline td:hover{color:var(--text)}
+.rmrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:7px 0;border-top:.5px solid var(--border)}
+.copy{cursor:pointer;color:var(--muted)}
+.drop{border:1px dashed var(--strong);border-radius:8px;padding:10px 12px;text-align:center;color:var(--muted);font-size:13px;cursor:pointer}
+.drop.over{background:var(--soft)}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:8px 14px;border-radius:8px;font-size:13px;display:none}
+.row2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+@media (max-width:760px){.row2{grid-template-columns:minmax(0,1fr)}}
+.opt{padding:3px 0;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.opt+.opt{border-top:.5px dashed var(--border)}
+button.mini{font-size:12px;padding:1px 8px;border-radius:6px}
+.lnk{font-size:12px;color:var(--muted);text-decoration:underline;cursor:pointer;background:none;border:0;padding:0}
+.lnk:hover{background:none;color:var(--text)}
+button:disabled{opacity:.55;cursor:default}
+button.main{background:var(--text);color:var(--bg);border-color:var(--text)}
+button.main:hover{background:var(--text);opacity:.88}
+.hook{border-top:.5px solid var(--border);margin-top:12px;padding-top:10px}
+.hook.warn{border:.5px solid var(--red-b);background:var(--red-bg);border-radius:8px;padding:10px 12px}
+.kv{display:grid;grid-template-columns:92px minmax(0,1fr) auto;gap:8px;align-items:center;padding:3px 0}
+code{font:12px/1.4 ui-monospace,Consolas,monospace;overflow-wrap:anywhere}
+.miss{display:flex;gap:8px;align-items:baseline;padding:3px 0;font-size:13px}
+.miss .sub{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:flex-start;margin-bottom:14px">
+    <div><h1>Resin members</h1><div class="sub" id="fresh"></div></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <label class="btn"><i class="ti ti-upload"></i> Upload export<input type="file" id="file" accept=".zip,.txt" hidden></label>
+      <button id="recheck"><i class="ti ti-refresh"></i> <span>Re-check follows</span></button>
+    </div>
+  </div>
+
+  <div class="card" id="botcard"><span class="sub">Checking the Instagram bot…</span></div>
+
+  <div class="card" id="awakecard"><span class="sub">Checking keep-awake…</span></div>
+
+  <div class="card" id="rmcard" style="border-color:var(--red-b)">
+    <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap">
+      <b style="font-weight:500;color:var(--red)"><i class="ti ti-user-minus"></i> To remove · <span id="rmcount">0</span></b>
+      <span class="sub">Unfollowed on Instagram, still in WhatsApp</span>
+    </div>
+    <div id="rmlist"></div>
+  </div>
+
+  <div class="row2">
+    <div class="card" id="wacard"></div>
+    <div class="card">
+      <div class="drop" id="drop"><i class="ti ti-file-zip"></i> Drop a WhatsApp chat export (.zip) here</div>
+      <div class="sub" id="exportinfo" style="margin-top:8px"></div>
+    </div>
+  </div>
+
+  <div class="tiles" id="tiles"></div>
+  <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px">
+    <input type="search" id="q" placeholder="Search username, number or name">
+    <span class="sub" id="cnt" style="white-space:nowrap"></span>
+  </div>
+  <div class="tablewrap"><table><thead id="thead"></thead><tbody id="rows"></tbody></table></div>
+</div>
+<div id="toast"></div>
+<script>
+const H={"x-local":"1"};
+const FOLLOW={following:["Following","p-green"],unfollowed:["Unfollowed","p-red"],no_link:["Follows, no link","p-amber"],dm_only:["DM only",""],unknown:["Not checked",""]};
+const GROUP={in:"In group",left:"Left",none:"Not joined"};
+const CONF={confirmed:["Confirmed","p-blue"],sure:["Sure","p-green"],maybe:["Check","p-amber"]};
+const pct=p=>p>=0.99&&p<1?(Math.floor(p*1000)/10)+"%":Math.round(p*100)+"%";
+let D=null,filter="all",lastQr="";
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const t=s=>s?new Date(s).toLocaleString("en-IN",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit",second:"2-digit"}):"";
+const ago=s=>{if(!s)return"never";const m=Math.round((Date.now()-new Date(s))/60000);return m<1?"just now":m<60?m+" min ago":m<1440?Math.round(m/60)+" h ago":Math.round(m/1440)+" d ago"};
+const pill=([l,c])=>`<span class="pill ${c}">${l}</span>`;
+function toast(m){const e=$("toast");e.textContent=m;e.style.display="block";clearTimeout(e._t);e._t=setTimeout(()=>e.style.display="none",2500)}
+function copy(v,label){navigator.clipboard.writeText(v).then(()=>toast("Copied "+(label||v)))}
+const name=r=>r.username?"@"+esc(r.username):`<span class="sub">${esc(r.igsid)}</span>`;
+const num=(who,wa)=>`${esc(who)} ${who.startsWith("+")?`<i class="ti ti-copy copy" data-copy="${esc(who)}" title="Copy"></i>`:""}${wa?` <span class="sub">~${esc(wa)}</span>`:""}`;
+const fix=(verdict,ig,who,label,cls="mini")=>`<button class="${cls}" data-fix="${verdict}" data-ig="${esc(ig)}" data-who="${esc(who||"")}">${label}</button>`;
+// a "Check" match: each number it could be, how likely, who else fits it, and buttons to settle it
+function options(r){
+  return r.options.map(o=>`<div class="opt"><span>${num(o.who,o.wa_name)}</span><b style="font-weight:500">${pct(o.p)}</b>
+    ${fix("yes",r.igsid,o.who,'<i class="ti ti-check"></i> This one')}${fix("no",r.igsid,o.who,"Not them")}
+    ${o.others.length?`<span class="sub" style="flex-basis:100%">also fits ${o.others.map(x=>"@"+esc(x.name)+" "+pct(x.p)).join(", ")}</span>`:""}</div>`).join("")
+    +(r.p_none>=0.02?`<div class="opt"><span class="sub">${pct(r.p_none)} chance they didn't join</span>${fix("no",r.igsid,"","Didn't join")}</div>`:"");
+}
+function matchCell(r){
+  if(r.conf==="confirmed")return pill(CONF.confirmed)+` <span class="sub">by you</span> ${fix("clear",r.igsid,"","undo","lnk")}`;
+  if(r.conf==="sure")return `${pill(CONF.sure)} <span class="sub">${pct(r.p)}</span> ${fix("no",r.igsid,r.who,"wrong?","lnk")}`;
+  if(r.conf==="maybe")return pill(CONF.maybe)+`<div class="sub" style="margin-top:3px">timing fits more than one way</div>`;
+  return r.clicked_at?'<span class="sub">no join after the tap</span>':"";
+}
+
+async function load(){
+  try{const r=await fetch("/api/data",{headers:H});D=await r.json();render()}catch(e){$("fresh").textContent="Can't reach the dashboard server"}
+}
+function counts(){
+  const c={all:D.rows.length,to_remove:0,check:0,following:0,unfollowed:0,no_link:0,dm_only:0,unknown:0,in:0,left:0,clicked:0,wa_only:D.wa_only.length};
+  for(const r of D.rows){c[r.follow]++;if(r.to_remove||r.to_check)c.to_remove++;if(r.conf==="maybe")c.check++;if(r.group==="in")c.in++;if(r.group==="left")c.left++;if(r.clicked_at)c.clicked++}
+  return c;
+}
+function render(){
+  const ex=D.export,rc=D.recheck;
+  $("fresh").textContent=`Clicks live · follows re-checked every ${D.audit_every_h} h · last export ${ex?ago(ex.uploaded_at):"never"}`;
+  $("exportinfo").innerHTML=ex?`Last export uploaded ${ago(ex.uploaded_at)} · covers up to ${t(ex.latest)} · ${ex.found} joins/leaves, ${ex.added} new`:"No export uploaded yet. Group → Export chat → Without media, then drop the zip here.";
+  const b=$("recheck").querySelector("span");
+  b.textContent=rc&&rc.running?`Checking ${rc.done}/${rc.total}`:"Re-check follows";
+  renderWa();
+  const todo=D.rows.filter(r=>r.to_remove||r.to_check).sort((a,b)=>b.to_remove-a.to_remove);
+  $("rmcount").textContent=todo.length;
+  $("rmlist").innerHTML=todo.length?todo.map(r=>r.to_remove?`<div class="rmrow">
+    <span style="flex:1;min-width:160px">${name(r)} <span class="sub">unfollowed ${ago(r.unfollowed_at)}</span></span>
+    <span>${num(r.who,r.wa_name)}</span>${pill(CONF[r.conf])}
+    <label class="sub" style="display:flex;gap:4px;align-items:center;cursor:pointer"><input type="checkbox" data-removed="${esc(r.igsid)}"> Removed</label></div>`
+    :`<div class="rmrow"><span style="flex:1;min-width:160px">${name(r)} <span class="sub">unfollowed ${ago(r.unfollowed_at)} · not sure which number, pick one before removing</span></span>
+    ${pill(CONF.maybe)}<div style="flex-basis:100%">${options(r)}</div></div>`).join("")
+    :`<div class="sub" style="padding-top:6px">Nobody right now. People show up here once they've joined through their personal link and then unfollowed.</div>`;
+  const c=counts();
+  const T=[["all","All"],["to_remove","To remove"],["check","Check matches"],["following","Following"],["unfollowed","Unfollowed"],["no_link","Follows, no link"],["dm_only","DM only"],["unknown","Not checked"],["clicked","Tapped link"],["in","In group"],["left","Left"],["wa_only","WhatsApp only"]];
+  $("tiles").innerHTML=T.map(([k,l])=>`<div class="tile ${filter===k?"on":""}" data-k="${k}"><span class="sub">${l}</span><b style="${k==="to_remove"&&c[k]?"color:var(--red)":""}">${c[k]}</b></div>`).join("");
+  renderRows();
+}
+function renderWa(){
+  const w=D.wa,el=$("wacard");
+  const st={ready:["Live","p-green"],qr:["Scan to link","p-amber"],authenticated:["Connecting","p-blue"],disconnected:["Disconnected","p-red"],auth_failure:["Link failed","p-red"]}[w.state]||["Not running",""];
+  let body=`<div style="display:flex;justify-content:space-between;gap:8px"><b style="font-weight:500"><i class="ti ti-brand-whatsapp"></i> WhatsApp live tracking</b>${pill(st)}</div>`;
+  if(w.state==="ready")body+=`<div class="sub" style="margin-top:6px">Linked as ${esc(w.me||"admin")} · watching “${esc(w.group||"")}” · joins and leaves appear within seconds</div>`;
+  else if(w.state==="qr")body+=`<div class="sub" style="margin:6px 0 10px">On the admin phone: WhatsApp → Settings → Linked devices → Link a device, then scan</div><div id="qr" style="background:#fff;padding:10px;display:inline-block;border-radius:8px"></div>`;
+  else body+=`<div class="sub" style="margin-top:6px">${esc(w.detail||"The listener isn't running. Uploading an export still works.")}${w.at?" · "+ago(w.at):""}</div>`;
+  if(w.state!=="qr")lastQr="";
+  if(el.dataset.html!==body){el.innerHTML=body;el.dataset.html=body;lastQr=""}
+  if(w.state==="qr"&&w.qr&&w.qr!==lastQr&&window.QRCode){$("qr").innerHTML="";new QRCode($("qr"),{text:w.qr,width:200,height:200});lastQr=w.qr}
+}
+function renderRows(){
+  const q=$("q").value.toLowerCase().trim();
+  if(filter==="wa_only"){
+    $("thead").innerHTML="<tr><th>WhatsApp number / contact</th><th>In group</th><th>Last join or leave</th></tr>";
+    const r=D.wa_only.filter(w=>(w.who+w.wa_name).toLowerCase().includes(q)).sort((a,b)=>b.at.localeCompare(a.at));
+    $("cnt").textContent=r.length+" shown";
+    $("rows").innerHTML=r.map(w=>`<tr><td>${num(w.who,w.wa_name)}</td><td>${GROUP[w.group]}</td><td>${t(w.at)}</td></tr>`).join("");
+    return;
+  }
+  $("thead").innerHTML="<tr><th>Instagram</th><th>Follows</th><th>Tapped link</th><th>Joined WhatsApp</th><th>Number</th><th>Match</th></tr>";
+  const keep=r=>filter==="all"||(filter==="to_remove"?r.to_remove||r.to_check:filter==="check"?r.conf==="maybe":filter==="clicked"?!!r.clicked_at:filter==="in"||filter==="left"?r.group===filter:r.follow===filter);
+  const rows=D.rows.filter(r=>keep(r)&&((r.username||"")+r.igsid+(r.who||"")+r.options.map(o=>o.who).join(" ")).toLowerCase().includes(q))
+    .sort((a,b)=>(b.to_remove-a.to_remove)||(b.to_check-a.to_check)||((b.clicked_at||b.link_sent_at||b.first_seen||"").localeCompare(a.clicked_at||a.link_sent_at||a.first_seen||"")));
+  const rowHtml=r=>`<tr class="${r.to_remove?"rm":r.current?"":"old"}">
+    <td>${name(r)}<div class="sub">${r.link_sent_at?"link sent "+t(r.link_sent_at):"first seen "+t(r.first_seen)}</div></td>
+    <td>${pill(FOLLOW[r.follow])}<div class="sub" style="margin-top:3px">${r.unfollowed_at?"unfollowed "+t(r.unfollowed_at):r.checked_at?"checked "+ago(r.checked_at):""}</div></td>
+    <td>${r.clicked_at?t(r.clicked_at):'<span class="sub">—</span>'}</td>
+    <td>${r.joined_at?t(r.joined_at):r.conf==="maybe"?t(r.options[0].joined)+" ?":r.clicked_at?'<span class="sub">not yet</span>':'<span class="sub">—</span>'}<div class="sub">${r.group==="left"?"left "+t(r.left_at):r.removed_at&&r.group==="in"?"marked removed":""}</div></td>
+    <td>${r.who?num(r.who,r.wa_name):r.conf==="maybe"?options(r):'<span class="sub">—</span>'}</td>
+    <td>${matchCell(r)}</td></tr>`;
+  // current workshop above the line; previous workshop below it, hidden until opened
+  const now=rows.filter(r=>r.current), before=rows.filter(r=>!r.current);
+  $("cnt").textContent=now.length+" shown"+(before.length?` · ${before.length} from the previous workshop`:"");
+  const line=`<tr class="wsline"><td colspan="6" onclick="showOld=!showOld;renderRows()">${showOld?"▲ Hide previous workshop":"▼ Previous workshop (ended) · "+before.length+" people"}</td></tr>`;
+  $("rows").innerHTML=now.slice(0,600).map(rowHtml).join("")+(before.length?line+(showOld?before.slice(0,600).map(rowHtml).join(""):""):"");
+}
+let showOld=false;
+// ---------- Instagram bot card ----------
+let B=null;
+const BOT={checking:["Checking",""],live:["Live","p-green"],verified:["Connected","p-green"],meta:["Meta has old link","p-red"],tunnel:["Link dead","p-red"],down:["Down","p-red"]};
+async function loadBot(){try{const r=await fetch("/api/bot",{headers:H});B=await r.json();renderBot()}catch(e){}}
+function renderBot(){
+  const b=B,f=b.fix,m=b.missed,c=b.catchup,bad=["meta","tunnel","down"].includes(b.state);
+  const msg={checking:"Checking the bot…",
+    live:`Instagram is reaching the bot · last DM or comment ${ago(b.last_webhook)}`,
+    verified:`Meta accepted the link ${ago(b.verified)} · turns Live with the next DM or comment`,
+    meta:`The bot is running, but Meta is still sending to an old link (this link started ${t(b.url_since)}). Copy both into Meta below.`,
+    tunnel:"The bot is running, but its link is dead, so Instagram can't reach it. Tap Make bot active.",
+    down:"The bot isn't running. Tap Make bot active."}[b.state];
+  let h=`<div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center">
+    <b style="font-weight:500"><i class="ti ti-robot"></i> Instagram bot</b>${pill(BOT[b.state])}</div>
+    <div class="sub" style="margin-top:4px;${bad?"color:var(--red)":""}">${esc(msg)}</div>`;
+  if(b.rejected&&b.state==="meta")h+=`<div class="sub" style="color:var(--amber)">Meta tried ${ago(b.rejected)} but the Verify token didn't match. Copy it again below.</div>`;
+  h+=`<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px">
+    <button class="${bad?"main":""}" data-bot="fix" ${f&&f.running?"disabled":""}><i class="ti ti-player-play"></i> Make bot active</button>
+    ${f?`<span class="sub">${esc(f.step)}${f.running?"…":" · "+ago(f.at)}</span>`:""}</div>`;
+  h+=`<div class="hook ${b.state==="meta"?"warn":""}">
+    <div class="sub" style="margin-bottom:6px">For Meta: your app → Instagram → API setup with Instagram login → Configure webhooks → paste both → Verify and save</div>
+    <div class="kv"><span class="sub">Callback URL</span><code>${esc(b.url||"—")}</code><button class="mini" data-copy="${esc(b.url)}" data-label="Callback URL"><i class="ti ti-copy"></i> Copy</button></div>
+    <div class="kv"><span class="sub">Verify token</span><code>••••••••••••</code><button class="mini" data-copy="${esc(b.verify_token)}" data-label="Verify token"><i class="ti ti-copy"></i> Copy</button></div>
+    <div style="display:flex;gap:14px;margin-top:6px;flex-wrap:wrap"><a class="lnk" href="https://developers.facebook.com/apps/" target="_blank" rel="noopener">Open Meta apps ↗</a><button class="lnk" data-bot="newlink">Make a new link</button></div></div>`;
+  h+=`<div class="hook"><div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+    <button class="mini" data-bot="missed" ${(m&&m.running)||(c&&c.running)?"disabled":""}><i class="ti ti-message-search"></i> Check missed DMs</button>
+    <span class="sub">${c&&c.running?`Replying… ${c.done}/${c.total}`:m&&m.running?"Looking through the inbox…":c?`Replied to ${c.sent} ${c.sent===1?"person":"people"}`:"People who DMed while the bot was down (last 23 h)"}</span></div>`;
+  if(m&&m.error)h+=`<div class="sub" style="color:var(--red);margin-top:6px">${esc(m.error)}</div>`;
+  if(m&&m.people&&!(c&&c.running)){
+    h+=m.people.length?`<div style="margin-top:8px">${m.people.map(p=>`<div class="miss"><span style="white-space:nowrap">${p.username?"@"+esc(p.username):esc(p.igsid)}</span><span class="sub">${esc(p.texts.join(" · "))}</span>${p.has_link?'<span class="pill">has link</span>':""}</div>`).join("")}</div>
+      <button class="main" style="margin-top:8px" data-bot="catchup"><i class="ti ti-send"></i> Reply to ${m.people.length} ${m.people.length===1?"person":"people"}</button>`
+      :`<div class="sub" style="margin-top:6px">Nobody is waiting. Every DM from the last 23 h reached the bot · checked ${ago(m.at)}</div>`;
+  }
+  h+="</div>";
+  const el=$("botcard");
+  el.style.borderColor=bad?"var(--red-b)":"";
+  if(el.dataset.html!==h){el.innerHTML=h;el.dataset.html=h}
+}
+async function botAction(a){
+  if(a==="newlink"&&!confirm("Make a new link? The current one stops working, and you'll have to paste the new one in Meta."))return;
+  if(a==="catchup"&&!confirm(`Send the bot's reply to ${B.missed.people.length} people now?`))return;
+  const url={fix:"/api/bot/fix",newlink:"/api/bot/fix?new_link=true",missed:"/api/bot/missed",catchup:"/api/bot/catchup"}[a];
+  const r=await(await fetch(url,{method:"POST",headers:H})).json();
+  toast(r.started?{fix:"Fixing the bot…",newlink:"Making a new link…",missed:"Checking the inbox…",catchup:"Replying…"}[a]:"Already running");
+  loadBot();
+}
+
+// ---------- Keep laptop awake card ----------
+let AW=null,AW_TEST="",AW_BUSY=false;
+const inMin=s=>{const m=Math.ceil((new Date(s)-Date.now())/60000);return m<=0?"any moment":"in "+m+" min"};
+async function loadAwake(){try{AW=await(await fetch("/api/awake",{headers:H})).json();renderAwake()}catch(e){}}
+function renderAwake(){
+  const a=AW,on=a.running;
+  let h=`<div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center">
+    <b style="font-weight:500"><i class="ti ti-bulb"></i> Keep laptop awake</b>${pill(on?["On","p-green"]:["Off",""])}</div>
+    <div class="sub" style="margin-top:4px">${on?`Presses Ctrl 4 times every 30 min so Windows never sees the laptop as idle · last press ${ago(a.last_press)} · next ${a.next_press?inMin(a.next_press):"soon"}`:"Off. Turn it on and it presses Ctrl 4 times every 30 min (and once straight away)."}</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px">
+      <button class="${on?"":"main"}" data-awake="${on?"stop":"start"}" ${AW_BUSY?"disabled":""}><i class="ti ti-${on?"player-stop":"player-play"}"></i> ${on?"Turn off":"Turn on"}</button>
+      <button class="mini" data-awake="test" ${AW_BUSY?"disabled":""}><i class="ti ti-keyboard"></i> Test now</button>
+      ${AW_TEST?`<span class="sub">${esc(AW_TEST)}</span>`:""}</div>`;
+  const el=$("awakecard");if(el.dataset.html!==h){el.innerHTML=h;el.dataset.html=h}
+}
+async function awakeAction(a){
+  AW_BUSY=true;if(a==="test")AW_TEST="Pressing Ctrl 4 times…";if(AW)renderAwake();
+  try{
+    const r=await(await fetch("/api/awake/"+a,{method:"POST",headers:H})).json();
+    if(a==="test"){
+      AW_TEST=r.idle_after<3?(r.idle_before<3?"Ctrl pressed 4 times · Windows saw it (you're using the laptop, so the idle timer was already low)":`Ctrl pressed 4 times · Windows saw it: idle timer went ${r.idle_before} s → ${r.idle_after} s`)
+        :`Ctrl pressed, but Windows didn't register it (idle timer still ${r.idle_after} s). The dashboard may be running outside your desktop session.`;
+    }else{
+      toast(a==="start"?(r.started?"Keep-awake turned on":"Already on"):"Keep-awake turned off");
+      if(a==="start")await new Promise(r=>setTimeout(r,2500)); // the script needs a moment to write its first state
+    }
+  }catch(e){AW_TEST="Couldn't reach the dashboard"}
+  AW_BUSY=false;loadAwake();
+}
+
+document.addEventListener("click",async e=>{
+  const aw=e.target.closest("[data-awake]");if(aw&&!aw.disabled)awakeAction(aw.dataset.awake);
+  const ba=e.target.closest("[data-bot]");if(ba&&!ba.disabled)botAction(ba.dataset.bot);
+  const c=e.target.closest("[data-copy]");if(c&&c.dataset.copy)copy(c.dataset.copy,c.dataset.label);
+  const f=e.target.closest("[data-fix]");
+  if(f){
+    const {fix:verdict,ig,who}=f.dataset;
+    if(verdict==="no"&&who&&!confirm(`${who} is not this person?`))return;
+    await fetch("/api/match",{method:"POST",headers:{...H,"content-type":"application/json"},body:JSON.stringify({igsid:ig,who,verdict})});
+    toast(verdict==="yes"?"Saved: "+who:verdict==="clear"?"Back to automatic matching":who?"Ruled out "+who:"Marked as not joined");load();
+  }
+  const tl=e.target.closest(".tile");if(tl){filter=tl.dataset.k;render()}
+});
+document.addEventListener("change",async e=>{
+  const ig=e.target.dataset&&e.target.dataset.removed;
+  if(ig){await fetch("/api/removed/"+encodeURIComponent(ig),{method:"POST",headers:H});toast("Marked as removed");load()}
+});
+$("q").oninput=()=>D&&renderRows();
+$("recheck").onclick=async()=>{const r=await fetch("/api/recheck",{method:"POST",headers:H});toast((await r.json()).started?"Checking everyone's follow status…":"Already checking");load()};
+async function upload(f){
+  if(!f)return;toast("Reading "+f.name+"…");
+  const r=await fetch("/api/upload",{method:"POST",headers:{...H,"x-filename":encodeURIComponent(f.name)},body:f});
+  const j=await r.json();toast(r.ok?`${j.found} joins/leaves read, ${j.added} new`:(j.detail||"Upload failed"));load();
+}
+$("file").onchange=e=>upload(e.target.files[0]);
+const dr=$("drop");dr.onclick=()=>$("file").click();
+dr.ondragover=e=>{e.preventDefault();dr.classList.add("over")};dr.ondragleave=()=>dr.classList.remove("over");
+dr.ondrop=e=>{e.preventDefault();dr.classList.remove("over");upload(e.dataTransfer.files[0])};
+load();setInterval(load,5000);
+loadBot();setInterval(loadBot,3000);
+loadAwake();setInterval(loadAwake,3000);
+</script>
+</body>
+</html>

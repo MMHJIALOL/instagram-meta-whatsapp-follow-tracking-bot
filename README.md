@@ -1,4 +1,4 @@
-# Resin workshop bot
+# Meta ecosystem workshop bot
 
 Instagram / Facebook DM bot built for a resin art online workshop (Karva Chauth pooja thali batch).
 

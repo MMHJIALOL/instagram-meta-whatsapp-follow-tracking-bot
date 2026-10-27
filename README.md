@@ -18,3 +18,13 @@ Copy `.env.example` to `.env`, fill in your Meta app credentials, then:
 pip install -r requirements.txt
 uvicorn main:app --port 8000
 ```
+
+WhatsApp community history sharing runs through `members_keepalive.py` at Windows logon.
+The current workshop is read from the dashboard. Join events trigger an immediate
+share; membership reconciliation every 15 seconds catches community joins that
+WhatsApp does not emit as events, including eligible missed joins after downtime.
+Pending shares are stored in `wa/history-jobs.json` and retried with backoff up to
+five minutes. WhatsApp eligibility and already-received checks remain in force.
+The PC must be awake, online, and linked to WhatsApp. The supervisor prevents duplicate
+launches and clears orphaned browsers belonging only to the listener's profile.
+Run `node --test wa/history_queue.test.js` to check retry and restart behavior.

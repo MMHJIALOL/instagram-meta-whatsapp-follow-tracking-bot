@@ -3,6 +3,7 @@ Started at logon from the Startup folder (no window), separately from keepalive.
 never touches the bot or the Cloudflare tunnel.
 """
 import subprocess
+import ctypes
 import time
 from pathlib import Path
 
@@ -10,6 +11,13 @@ HERE = Path(__file__).resolve().parent
 PY = str(HERE / ".venv" / "Scripts" / "python.exe")
 NODE = r"C:\Program Files\nodejs\node.exe"
 NO_WINDOW = subprocess.CREATE_NO_WINDOW
+
+# Repeated Startup/manual launches must never compete for the saved WA profile.
+kernel = ctypes.windll.kernel32
+kernel.CreateMutexW.restype = ctypes.c_void_p
+mutex = kernel.CreateMutexW(None, False, "Local\\ResinMembersDashboard8001")
+if not mutex or kernel.GetLastError() == 183:
+    raise SystemExit(0)
 
 
 def start_dashboard():
@@ -19,6 +27,14 @@ def start_dashboard():
 
 
 def start_listener():
+    # A crashed Node process can leave its dedicated headless browser behind.
+    # Match only this listener's exact profile; personal browsers are unaffected.
+    profile = str(HERE / "wa" / ".wwebjs_auth" / "session").replace("'", "''")
+    script = ("Get-CimInstance Win32_Process | Where-Object { $_.Name -eq 'msedge.exe' "
+              "-and $_.CommandLine.Contains('" + profile + "') } | "
+              "ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }")
+    subprocess.run(["powershell", "-NoProfile", "-Command", script], creationflags=NO_WINDOW,
+                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=30)
     log = open(HERE / "wa" / "listener.log", "ab")
     return subprocess.Popen([NODE, "listener.js"], cwd=HERE / "wa", stdout=log, stderr=log, creationflags=NO_WINDOW)
 

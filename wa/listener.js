@@ -36,7 +36,7 @@ const log = (...a) => console.log(new Date().toISOString(), ...a);
 async function post(route, body) {
   try {
     await fetch(DASHBOARD + route, {
-      method: 'POST', headers: { 'content-type': 'application/json', 'x-local': '1' }, body: JSON.stringify(body),
+      method: 'POST', headers: { 'content-type': 'application/json', 'x-local': '1' }, body: JSON.stringify(body), signal: AbortSignal.timeout(10000),
     });
   } catch (e) {
     log('dashboard unreachable:', e.message);
@@ -203,38 +203,48 @@ const WHY = {
   already_received: 'already has it', window_expired: 'joined too long ago', no_available_messages: 'no recent messages to share',
   bot: 'a bot', ineligible: 'WhatsApp says not eligible', not_accepted: "WhatsApp didn't accept it",
 };
-let sending = Promise.resolve(); // one at a time: each send uploads a file
-const offered = new Set(); // group+person already handled since start
-let notEnabledSaid = false;
-function shareHistory(chatId, chat, id, who, t, catchUp) {
-  const key = chatId + ' ' + id;
-  // after a restart: only joins from while it was off, not everyone the phone didn't share with days ago
-  if (offered.has(key) || (catchUp && Date.now() / 1000 - t > 2 * 3600)) return;
-  offered.add(key);
-  sending = sending.then(async () => {
-    let r;
-    for (let i = 0; i < 6; i++) { // the member list can lag the join notice by a few seconds
-      try {
-        r = await sendHistory(chatId, id, t);
-      } catch (e) {
-        r = { result: 'failed', why: e.message };
-      }
-      if (r.result !== 'wait') break;
-      await new Promise((res) => setTimeout(res, 5000));
-    }
-    if (r.result === 'wait') r.result = 'skip';
-    if (catchUp && r.result === 'skip') return; // old joins: being too late, or done on the phone already, is normal
-    if (r.why === 'not_enabled') { // said once at start; it switches itself on when WhatsApp turns it on
-      if (!notEnabledSaid) log('history not shared (not on in WhatsApp Web yet); tap it on the phone for now');
-      notEnabledSaid = true;
-      return;
-    }
-    notEnabledSaid = false;
+const { HistoryQueue } = require('./history_queue');
+const historyQueue = new HistoryQueue(path.join(__dirname, 'history-jobs.json'),
+  (job) => sendHistory(job.chatId, job.id, job.t),
+  async (job, r) => {
     const why = WHY[r.why] || r.why;
-    log(`history ${r.result}:`, who, `"${chat}"`, r.result === 'sent' ? `${r.count} messages` : why);
-    if (r.why !== 'already_received') await post('/api/wa/history', { who, chat, result: r.result, count: r.count, why });
+    log(`history ${r.result}:`, job.who, `"${job.chat}"`, r.result === 'sent' ? `${r.count} messages` : why);
+    if (r.why !== 'already_received') await post('/api/wa/history', { who: job.who, chat: job.chat, ...r, why });
   });
+function shareHistory(chatId, chat, id, who, t, catchUp) {
+  if (catchUp && Date.now() / 1000 - t > 2 * 3600) return;
+  historyQueue.add({ chatId, chat, id, who, t: Number(t) });
+  historyQueue.run().catch(e => log('history queue:', e.message));
 }
+
+// Reconcile current members as well as join notices: community announcements can
+// update membership without emitting a group_join notification on this device.
+let scanning = false;
+async function reconcileHistory() {
+  if (scanning || status.state !== 'ready') return;
+  scanning = true;
+  try {
+    const members = await client.pupPage.evaluate((main) => {
+      const C = window.require('WAWebCollections');
+      return C.Chat.getModelsArray().filter(c => main && (c.formattedTitle || c.name || '').toLowerCase().includes(main))
+        .flatMap(c => (c.groupMetadata?.participants?.getModelsArray() || []).map(p => ({
+          chatId: c.id._serialized, chat: c.formattedTitle || c.name,
+          id: p.id?._serialized, t: Number(p.joinTime),
+        })));
+    }, MAIN);
+    for (const p of members) {
+      if (p.id && p.t > 0 && Date.now() / 1000 - p.t < 30 * 86400) {
+        historyQueue.add({ ...p, who: p.id });
+      }
+    }
+    await historyQueue.run();
+  } catch (e) { log('history reconciliation:', e.message); }
+  finally { scanning = false; }
+}
+setInterval(reconcileHistory, 15000);
+setInterval(() => {
+  if (status.state === 'ready') historyQueue.run().catch(e => log('history queue:', e.message));
+}, 5000);
 
 // WhatsApp profile names of group members, for the dashboard's name check. WhatsApp Web only knows them for
 // people who've posted something; read from its memory, no extra requests to WhatsApp.
@@ -313,6 +323,7 @@ client.on('ready', async () => {
       log('catch-up failed for', name, e.message);
     }
   }
+  await reconcileHistory();
   await postNames();
   await freeMemory();
 });

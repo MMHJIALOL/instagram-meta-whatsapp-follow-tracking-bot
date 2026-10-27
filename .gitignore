@@ -26,3 +26,5 @@ reel/*.mp3
 reel/*.m4a
 wa_dm/data/
 wa_dm/assets/
+
+wa/history-jobs.json*

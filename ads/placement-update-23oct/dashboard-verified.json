@@ -1,0 +1,17 @@
+{
+  "ad_id": "120255290411990581",
+  "name": "25 Oct Shubh-Labh Rs99 - WhatsApp 9211664301",
+  "status": "ACTIVE",
+  "effective_status": "IN_PROCESS",
+  "issues": [],
+  "daily_budget_rupees": 300.0,
+  "destination": "WHATSAPP",
+  "start": "2026-10-23T00:35:30+0530",
+  "end": "2026-10-25T14:00:00+0530",
+  "assets": {
+    "feed": "1440 x 1800 (4:5)",
+    "reels_and_stories": "1440 x 2560 (9:16)",
+    "other_placements_fallback": "1440 x 1440 (1:1)"
+  },
+  "creative_id": "3030431073970235"
+}

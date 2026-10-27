@@ -1,0 +1,68 @@
+{
+  "workshops": [
+    {
+      "id": 1,
+      "name": "11 Oct workshop",
+      "date": "2026-10-11",
+      "started_at": "2026-09-30T11:30:00+05:30",
+      "closed_at": "2026-10-12T17:50:00+05:30",
+      "wa_group": "",
+      "wa_link": "",
+      "meet_url": "",
+      "past_offer": 0,
+      "stats": null
+    },
+    {
+      "id": 2,
+      "name": "18 Oct workshop",
+      "date": "2026-10-18",
+      "started_at": "2026-10-12T17:50:00+05:30",
+      "closed_at": "2026-10-18T22:17:00+05:30",
+      "wa_group": "Karwa Chauth special worshop 18th Oct",
+      "wa_link": "",
+      "meet_url": "",
+      "past_offer": 0,
+      "stats": null
+    },
+    {
+      "id": 3,
+      "name": "22 Oct workshop",
+      "date": "2026-10-22",
+      "started_at": "2026-10-18T22:17:00+05:30",
+      "closed_at": "2026-10-22T05:52:55.090388+00:00",
+      "wa_group": "22 Oct Karwachauth special workshop",
+      "wa_link": "https://chat.whatsapp.com/DKos2eGkqVO6xRA30DUTw9",
+      "meet_url": "",
+      "past_offer": 1,
+      "stats": {
+        "people": 940,
+        "links": 580,
+        "tapped": 466,
+        "joined": 354,
+        "in_group": 328,
+        "unfollowed": 40,
+        "removed": 0,
+        "warned": 20
+      }
+    },
+    {
+      "id": 4,
+      "name": "31 Oct Diwali Special FREE workshop",
+      "date": "2026-10-31",
+      "started_at": "2026-10-26T23:55:17+05:30",
+      "closed_at": null,
+      "wa_group": "31st Diwali Special Workshop",
+      "wa_link": "https://chat.whatsapp.com/G4qhKSQw3yP9mWyvah36bP",
+      "meet_url": "",
+      "past_offer": 0,
+      "stats": null
+    }
+  ],
+  "running_id": 4,
+  "settings": {
+    "keyword": "*",
+    "contact": "+91 98996 76862",
+    "start_after": "2026-10-02T21:42:56+05:30",
+    "ignore_media": 1
+  }
+}

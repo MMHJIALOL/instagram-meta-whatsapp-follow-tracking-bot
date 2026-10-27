@@ -1,0 +1,535 @@
+{
+  "id": "120255227520700581",
+  "name": "22nd oct karwa chauth free",
+  "status": "PAUSED",
+  "objective": "OUTCOME_ENGAGEMENT",
+  "buying_type": "AUCTION",
+  "special_ad_categories": [],
+  "adsets": {
+    "data": [
+      {
+        "id": "120255227520910581",
+        "name": "22nd oct karwa chauth free · audience",
+        "status": "PAUSED",
+        "daily_budget": "40000",
+        "lifetime_budget": "0",
+        "targeting": {
+          "age_max": 65,
+          "age_min": 18,
+          "geo_locations": {
+            "countries": [
+              "IN"
+            ],
+            "location_types": [
+              "frequently_in",
+              "home",
+              "recent"
+            ]
+          },
+          "targeting_automation": {
+            "advantage_audience": 1
+          },
+          "publisher_platforms": [
+            "instagram"
+          ],
+          "instagram_positions": [
+            "stream",
+            "story",
+            "reels",
+            "profile_feed",
+            "ig_search"
+          ]
+        },
+        "optimization_goal": "CONVERSATIONS",
+        "billing_event": "IMPRESSIONS",
+        "bid_strategy": "LOWEST_COST_WITHOUT_CAP",
+        "destination_type": "INSTAGRAM_DIRECT",
+        "promoted_object": {
+          "page_id": "432667730092416",
+          "smart_pse_enabled": false
+        },
+        "value_rules_applied": false,
+        "start_time": "2026-10-19T15:02:21+0530",
+        "end_time": "2026-10-22T11:00:00+0530"
+      }
+    ],
+    "paging": {
+      "cursors": {
+        "before": "QVFIVEhWbWkwUnh0bE5XOEhjQy1obVdvei1TSXFZAVEVqbURLT1BiaHY3ZA1ZAwc0ctVXpHaU9MVS11eDhwYmVEQ29sZADIzSm9nVnhoVFdyTmhrM0N5bkh1TVdR",
+        "after": "QVFIVEhWbWkwUnh0bE5XOEhjQy1obVdvei1TSXFZAVEVqbURLT1BiaHY3ZA1ZAwc0ctVXpHaU9MVS11eDhwYmVEQ29sZADIzSm9nVnhoVFdyTmhrM0N5bkh1TVdR"
+      }
+    }
+  },
+  "ads": {
+    "data": [
+      {
+        "id": "120255227526050581",
+        "name": "22nd oct karwa chauth free",
+        "status": "PAUSED",
+        "creative": {
+          "id": "2359952894741075",
+          "name": "22nd oct karwa chauth free 2026-10-19-5cef0616a47642d60b4e4fcb1b103183",
+          "object_story_spec": {
+            "page_id": "432667730092416",
+            "instagram_user_id": "17841460786142951",
+            "link_data": {
+              "link": "https://www.instagram.com/",
+              "message": "🪔 FREE Resin Pooja Thali workshop Karwa Chauth Special\n22 October (Thursday), subah 11 baje se, 3 ghante. Online, kahin se bhi join karo. Recording bhi milegi 🎥\nDetails aur link ke liye neeche message karo",
+              "name": "FREE Resin Pooja Thali Workshop 22nd Oct",
+              "image_hash": "2c38ef653a54f577afe67ed1db0a1704",
+              "call_to_action": {
+                "type": "INSTAGRAM_MESSAGE",
+                "value": {
+                  "app_destination": "INSTAGRAM_DIRECT"
+                }
+              },
+              "page_welcome_message": "{\"type\": \"VISUAL_EDITOR\", \"version\": 2, \"landing_screen_type\": \"welcome_message\", \"media_type\": \"text\", \"text_format\": {\"customer_action_type\": \"ice_breakers\", \"message\": {\"ice_breakers\": [{\"title\": \"Workshop kab hai?\"}, {\"title\": \"Kya ye free hai?\"}, {\"title\": \"Material kya lagega?\"}], \"quick_replies\": [], \"text\": \"Hi! \\ud83e\\ude94 Free resin workshop ke baare mein kuch poochna hai? Neeche se chuno.\"}}, \"image_format\": {\"customer_action_type\": \"quick_replies\", \"message\": {\"attachment\": {\"type\": \"template\", \"payload\": {\"template_type\": \"generic\", \"elements\": [{\"title\": \"\", \"buttons\": [], \"image_hash\": \"\"}]}}, \"quick_replies\": [{\"title\": \"I'd like to learn more\", \"content_type\": \"text\", \"response_type\": null}], \"text\": \"Hi! Please let us know how we can help you.\"}}, \"video_format\": {\"customer_action_type\": \"quick_replies\", \"message\": {\"attachment\": {\"type\": \"video\", \"payload\": {\"attachment_id\": \"\"}}, \"quick_replies\": [{\"title\": \"I'd like to learn more\", \"content_type\": \"text\", \"response_type\": null}], \"text\": \"Hi! Please let us know how we can help you.\"}}, \"user_edit\": true, \"surface\": \"visual_editor_new\", \"ai_generated_icebreaker_toggle_enabled\": null, \"ai_gen_welcome_message_model_version\": null, \"ai_gen_nudge_model_version\": null, \"is_eligible_for_customized_greeting\": false, \"is_user_editing\": false, \"is_eligible_for_leveraging_inbox_faqs\": false, \"ice_breakers_edited\": true, \"performance_booster_enabled\": false}"
+            }
+          },
+          "degrees_of_freedom_spec": {
+            "creative_features_spec": {
+              "adapt_to_placement": {
+                "enroll_status": "OPT_OUT"
+              },
+              "add_text_overlay": {
+                "enroll_status": "OPT_OUT"
+              },
+              "ads_with_benefits": {
+                "enroll_status": "OPT_OUT"
+              },
+              "advantage_plus_creative": {
+                "enroll_status": "OPT_OUT"
+              },
+              "app_highlights": {
+                "enroll_status": "OPT_OUT"
+              },
+              "audio": {
+                "enroll_status": "OPT_OUT"
+              },
+              "auto_promotion_tag": {
+                "enroll_status": "OPT_OUT"
+              },
+              "biz_ai": {
+                "enroll_status": "OPT_OUT"
+              },
+              "carousel_to_video": {
+                "enroll_status": "OPT_OUT"
+              },
+              "catalog_feed_tag": {
+                "enroll_status": "OPT_OUT"
+              },
+              "creative_stickers": {
+                "enroll_status": "OPT_OUT"
+              },
+              "customize_product_recommendation": {
+                "enroll_status": "OPT_OUT"
+              },
+              "cv_transformation": {
+                "enroll_status": "OPT_OUT"
+              },
+              "description_automation": {
+                "enroll_status": "OPT_OUT"
+              },
+              "dha_optimization": {
+                "enroll_status": "OPT_OUT"
+              },
+              "dynamic_cta_text": {
+                "enroll_status": "OPT_OUT"
+              },
+              "dynamic_partner_content": {
+                "enroll_status": "OPT_OUT"
+              },
+              "enable_ncs_testimonials": {
+                "enroll_status": "OPT_OUT"
+              },
+              "enhance_cta": {
+                "enroll_status": "OPT_OUT"
+              },
+              "fb_feed_tag": {
+                "enroll_status": "OPT_OUT"
+              },
+              "fb_reels_tag": {
+                "enroll_status": "OPT_OUT"
+              },
+              "fb_story_tag": {
+                "enroll_status": "OPT_OUT"
+              },
+              "feed_caption_optimization": {
+                "enroll_status": "OPT_OUT"
+              },
+              "generate_cta": {
+                "enroll_status": "OPT_OUT"
+              },
+              "hide_price": {
+                "enroll_status": "OPT_OUT"
+              },
+              "hyperlink_formatting": {
+                "enroll_status": "OPT_OUT"
+              },
+              "ig_feed_tag": {
+                "enroll_status": "OPT_OUT"
+              },
+              "ig_glados_feed": {
+                "enroll_status": "OPT_OUT"
+              },
+              "ig_reels_tag": {
+                "enroll_status": "OPT_OUT"
+              },
+              "ig_stream_tag": {
+                "enroll_status": "OPT_OUT"
+              },
+              "ig_video_native_subtitle": {
+                "enroll_status": "OPT_OUT"
+              },
+              "image_animation": {
+                "enroll_status": "OPT_OUT"
+              },
+              "image_auto_crop": {
+                "enroll_status": "OPT_OUT"
+              },
+              "image_background_gen": {
+                "enroll_status": "OPT_OUT"
+              },
+              "image_banner": {
+                "enroll_status": "OPT_OUT"
+              },
+              "image_brightness_and_contrast": {
+                "enroll_status": "OPT_OUT"
+              },
+              "image_end_card": {
+                "enroll_status": "OPT_OUT"
+              },
+              "image_enhancement": {
+                "enroll_status": "OPT_OUT"
+              },
+              "image_templates": {
+                "enroll_status": "OPT_OUT"
+              },
+              "image_text_translation": {
+                "enroll_status": "OPT_OUT"
+              },
+              "image_touchups": {
+                "enroll_status": "OPT_OUT"
+              },
+              "image_uncrop": {
+                "enroll_status": "OPT_OUT"
+              },
+              "inline_comment": {
+                "enroll_status": "OPT_OUT"
+              },
+              "local_store_extension": {
+                "enroll_status": "OPT_OUT"
+              },
+              "media_liquidity_animated_image": {
+                "enroll_status": "OPT_OUT"
+              },
+              "media_order": {
+                "enroll_status": "OPT_OUT"
+              },
+              "media_type_automation": {
+                "enroll_status": "OPT_OUT"
+              },
+              "multi_creative_post_carousel": {
+                "enroll_status": "OPT_OUT"
+              },
+              "multi_photo_to_video": {
+                "enroll_status": "OPT_OUT"
+              },
+              "music_generation": {
+                "enroll_status": "OPT_OUT"
+              },
+              "pac_genai_recomposition": {
+                "enroll_status": "OPT_OUT"
+              },
+              "pac_recomposition": {
+                "enroll_status": "OPT_OUT"
+              },
+              "pac_relaxation": {
+                "enroll_status": "OPT_OUT"
+              },
+              "product_browsing": {
+                "enroll_status": "OPT_OUT"
+              },
+              "product_extensions": {
+                "enroll_status": "OPT_OUT"
+              },
+              "product_metadata_automation": {
+                "enroll_status": "OPT_OUT"
+              },
+              "product_tags": {
+                "enroll_status": "OPT_OUT"
+              },
+              "profile_card": {
+                "enroll_status": "OPT_OUT"
+              },
+              "profile_extension": {
+                "enroll_status": "OPT_OUT"
+              },
+              "replace_media_text": {
+                "enroll_status": "OPT_OUT"
+              },
+              "reveal_details_over_time": {
+                "enroll_status": "OPT_OUT"
+              },
+              "show_destination_blurbs": {
+                "enroll_status": "OPT_OUT"
+              },
+              "show_summary": {
+                "enroll_status": "OPT_OUT"
+              },
+              "site_extensions": {
+                "enroll_status": "OPT_OUT"
+              },
+              "standard_enhancements_catalog": {
+                "enroll_status": "OPT_OUT"
+              },
+              "text_extraction_for_headline": {
+                "enroll_status": "OPT_OUT"
+              },
+              "text_extraction_for_tap_target": {
+                "enroll_status": "OPT_OUT"
+              },
+              "text_formatting_optimization": {
+                "enroll_status": "OPT_OUT"
+              },
+              "text_generation": {
+                "enroll_status": "OPT_OUT"
+              },
+              "text_optimizations": {
+                "enroll_status": "OPT_OUT"
+              },
+              "text_overlay_translation": {
+                "enroll_status": "OPT_OUT"
+              },
+              "text_translation": {
+                "enroll_status": "OPT_OUT"
+              },
+              "translate_voiceover": {
+                "enroll_status": "OPT_OUT"
+              },
+              "video_auto_crop": {
+                "enroll_status": "OPT_OUT"
+              },
+              "video_filtering": {
+                "enroll_status": "OPT_OUT"
+              },
+              "video_highlight": {
+                "enroll_status": "OPT_OUT"
+              },
+              "video_highlights": {
+                "enroll_status": "OPT_OUT"
+              },
+              "video_to_image": {
+                "enroll_status": "OPT_OUT"
+              },
+              "video_uncrop": {
+                "enroll_status": "OPT_OUT"
+              },
+              "video_uncrop_9x16_to_9x18": {
+                "enroll_status": "OPT_OUT"
+              },
+              "video_voiceover": {
+                "enroll_status": "OPT_OUT"
+              },
+              "wa_mm_image_filtering": {
+                "enroll_status": "OPT_OUT"
+              },
+              "wa_mm_text_truncation_length": {
+                "enroll_status": "OPT_OUT"
+              }
+            }
+          }
+        },
+        "tracking_specs": [
+          {
+            "action.type": [
+              "onsite_conversion"
+            ]
+          },
+          {
+            "action.type": [
+              "onsite_conversion"
+            ],
+            "conversion_id": [
+              "37340112652270640"
+            ]
+          },
+          {
+            "action.type": [
+              "onsite_conversion"
+            ],
+            "conversion_id": [
+              "25895356890162065",
+              "26791291813881224",
+              "27289183517426731",
+              "27692685527049133",
+              "27823736243985671",
+              "27862227246770186",
+              "27887956480843863",
+              "27946302638363156",
+              "28134148906197080",
+              "29091180733804328",
+              "37513464921601807"
+            ]
+          },
+          {
+            "action.type": [
+              "whatsapp"
+            ],
+            "page": [
+              "432667730092416"
+            ]
+          },
+          {
+            "action.type": [
+              "messenger"
+            ],
+            "page": [
+              "432667730092416"
+            ]
+          },
+          {
+            "action.type": [
+              "post_engagement"
+            ],
+            "page": [
+              "432667730092416"
+            ],
+            "post": [
+              "1548595437285315"
+            ]
+          },
+          {
+            "action.type": [
+              "link_click"
+            ],
+            "post": [
+              "1548595437285315"
+            ],
+            "post.wall": [
+              "432667730092416"
+            ]
+          },
+          {
+            "action.type": [
+              "post_interaction_gross"
+            ],
+            "page": [
+              "432667730092416"
+            ],
+            "post": [
+              "1548595437285315"
+            ]
+          }
+        ]
+      }
+    ],
+    "paging": {
+      "cursors": {
+        "before": "QVFIVFdtazI3NUNOUXpVcV9NcDIwa2QzOFRpOFI4dWNBZA0tGWTE0S0pHMlNoREt1SS1ISjVXVnVXYTFCRTJxUl9IbVZAsNWF1V1lfZAU5PdVRsT1FYaUdzcGNn",
+        "after": "QVFIVFdtazI3NUNOUXpVcV9NcDIwa2QzOFRpOFI4dWNBZA0tGWTE0S0pHMlNoREt1SS1ISjVXVnVXYTFCRTJxUl9IbVZAsNWF1V1lfZAU5PdVRsT1FYaUdzcGNn"
+      }
+    }
+  },
+  "insights": {
+    "data": [
+      {
+        "spend": "1045.04",
+        "actions": [
+          {
+            "action_type": "link_click",
+            "value": "1116"
+          },
+          {
+            "action_type": "post_reaction",
+            "value": "110"
+          },
+          {
+            "action_type": "onsite_conversion.messaging_conversation_replied_7d",
+            "value": "705"
+          },
+          {
+            "action_type": "onsite_conversion.messaging_block",
+            "value": "5"
+          },
+          {
+            "action_type": "onsite_conversion.total_messaging_connection",
+            "value": "805"
+          },
+          {
+            "action_type": "onsite_conversion.post_unlike",
+            "value": "10"
+          },
+          {
+            "action_type": "post_engagement",
+            "value": "1393"
+          },
+          {
+            "action_type": "post_interaction_gross",
+            "value": "277"
+          },
+          {
+            "action_type": "comment",
+            "value": "27"
+          },
+          {
+            "action_type": "page_engagement",
+            "value": "1393"
+          },
+          {
+            "action_type": "post_interaction_net",
+            "value": "265"
+          },
+          {
+            "action_type": "onsite_conversion.messaging_user_depth_2_message_send",
+            "value": "542"
+          },
+          {
+            "action_type": "onsite_conversion.messaging_first_reply",
+            "value": "706"
+          },
+          {
+            "action_type": "post",
+            "value": "82"
+          },
+          {
+            "action_type": "onsite_conversion.post_unsave",
+            "value": "2"
+          },
+          {
+            "action_type": "onsite_conversion.post_save",
+            "value": "58"
+          },
+          {
+            "action_type": "onsite_conversion.post_net_comment",
+            "value": "27"
+          },
+          {
+            "action_type": "onsite_conversion.messaging_user_depth_3_message_send",
+            "value": "301"
+          },
+          {
+            "action_type": "onsite_conversion.post_net_save",
+            "value": "56"
+          },
+          {
+            "action_type": "onsite_conversion.post_net_like",
+            "value": "100"
+          },
+          {
+            "action_type": "onsite_conversion.messaging_conversation_started_7d",
+            "value": "724"
+          }
+        ],
+        "date_start": "2026-10-19",
+        "date_stop": "2026-10-26"
+      }
+    ],
+    "paging": {
+      "cursors": {
+        "before": "MAZDZD",
+        "after": "MAZDZD"
+      }
+    }
+  }
+}

@@ -1,0 +1,139 @@
+{
+  "id": "3030431073970235",
+  "name": "25 Oct Shubh-Labh Rs99 - WhatsApp 9211664301 | Feed 4x5 + Reels 9x16 | 23 Oct 2026-10-22-ba0879610e32f26644eadc56a45cd333",
+  "object_story_spec": {
+    "page_id": "432667730092416",
+    "instagram_user_id": "17841460786142951"
+  },
+  "asset_feed_spec": {
+    "optimization_type": "PLACEMENT",
+    "call_to_action_types": [
+      "WHATSAPP_MESSAGE"
+    ],
+    "ad_formats": [
+      "SINGLE_IMAGE"
+    ],
+    "reasons_to_shop": false,
+    "shops_bundle": false,
+    "bodies": [
+      {
+        "text": "🪔 Is Diwali, apne haathon se Shubh-Labh resin hanging banana seekhein!\n\nOnline Resin Art Workshop — sirf ₹99\n📅 25 October | ⏰ 3 PM IST | 3 ghante\n🎥 Video recording available\n\nWorkshop details aur booking ke liye neeche WhatsApp button par tap karke message bhejein.\nMaterials/kit alag se hain."
+      }
+    ],
+    "titles": [
+      {
+        "text": "₹99 Shubh-Labh Workshop | WhatsApp par book karein"
+      }
+    ],
+    "descriptions": [
+      {
+        "text": " "
+      }
+    ],
+    "link_urls": [
+      {
+        "website_url": "https://api.whatsapp.com/send?phone=919211664301&text=Hi%21%20Mujhe%20Rs%2099%20Shubh-Labh%20resin%20workshop%20book%20karni%20hai."
+      }
+    ],
+    "images": [
+      {
+        "hash": "3016e0ccf916f236a8e6fc98035c712c",
+        "adlabels": [
+          {
+            "name": "feed_4x5",
+            "id": "120255291493210581"
+          }
+        ]
+      },
+      {
+        "hash": "915481c24e026720e8c9a66fec0f32c9",
+        "adlabels": [
+          {
+            "name": "reels_9x16",
+            "id": "120255291493200581"
+          }
+        ]
+      },
+      {
+        "hash": "fe4af1696d321a05719f4a2ac9867c33",
+        "adlabels": [
+          {
+            "name": "square_1x1",
+            "id": "120255291493190581"
+          }
+        ]
+      }
+    ],
+    "asset_customization_rules": [
+      {
+        "priority": 1,
+        "image_label": {
+          "name": "reels_9x16",
+          "id": "120255291493200581"
+        },
+        "customization_spec": {
+          "age_min": 13,
+          "age_max": 65,
+          "publisher_platforms": [
+            "facebook",
+            "instagram"
+          ],
+          "instagram_positions": [
+            "story",
+            "reels",
+            "profile_reels"
+          ],
+          "facebook_positions": [
+            "story",
+            "facebook_reels"
+          ]
+        }
+      },
+      {
+        "priority": 2,
+        "image_label": {
+          "name": "feed_4x5",
+          "id": "120255291493210581"
+        },
+        "customization_spec": {
+          "age_min": 13,
+          "age_max": 65,
+          "publisher_platforms": [
+            "facebook",
+            "instagram"
+          ],
+          "instagram_positions": [
+            "stream",
+            "profile_feed"
+          ],
+          "facebook_positions": [
+            "feed"
+          ]
+        }
+      },
+      {
+        "priority": 3,
+        "image_label": {
+          "name": "square_1x1",
+          "id": "120255291493190581"
+        },
+        "customization_spec": {
+          "age_min": 13,
+          "age_max": 65
+        }
+      }
+    ],
+    "call_to_actions": [
+      {
+        "type": "WHATSAPP_MESSAGE",
+        "value": {
+          "app_destination": "WHATSAPP"
+        }
+      }
+    ],
+    "additional_data": {
+      "multi_share_end_card": false,
+      "is_click_to_message": false
+    }
+  }
+}

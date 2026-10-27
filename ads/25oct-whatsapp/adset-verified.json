@@ -1,0 +1,13 @@
+{
+  "id": "120255290410990581",
+  "status": "PAUSED",
+  "effective_status": "PAUSED",
+  "promoted_object": {
+    "page_id": "432667730092416",
+    "smart_pse_enabled": false
+  },
+  "destination_type": "WHATSAPP",
+  "optimization_goal": "CONVERSATIONS",
+  "daily_budget": "30000",
+  "end_time": "2026-10-25T14:00:00+0530"
+}

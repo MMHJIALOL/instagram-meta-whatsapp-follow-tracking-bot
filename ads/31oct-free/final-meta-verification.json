@@ -1,0 +1,133 @@
+{
+  "id": "120255353812750581",
+  "status": "PAUSED",
+  "effective_status": "PAUSED",
+  "creative": {
+    "id": "28760561506928488",
+    "page_welcome_message": "{\"type\": \"VISUAL_EDITOR\", \"version\": 2, \"landing_screen_type\": \"welcome_message\", \"media_type\": \"text\", \"text_format\": {\"customer_action_type\": \"ice_breakers\", \"message\": {\"ice_breakers\": [{\"title\": \"Workshop kab hai?\"}, {\"title\": \"Kya ye free hai?\"}, {\"title\": \"Recording available hogi?\"}], \"quick_replies\": [], \"text\": \"Hi! 🪔 31 October ke FREE Diwali special resin workshop ke baare mein poochhein. Neeche se chuno.\"}}, \"image_format\": {\"customer_action_type\": \"quick_replies\", \"message\": {\"attachment\": {\"type\": \"template\", \"payload\": {\"template_type\": \"generic\", \"elements\": [{\"title\": \"\", \"buttons\": [], \"image_hash\": \"\"}]}}, \"quick_replies\": [{\"title\": \"I'd like to learn more\", \"content_type\": \"text\", \"response_type\": null}], \"text\": \"Hi! Please let us know how we can help you.\"}}, \"video_format\": {\"customer_action_type\": \"quick_replies\", \"message\": {\"attachment\": {\"type\": \"video\", \"payload\": {\"attachment_id\": \"\"}}, \"quick_replies\": [{\"title\": \"I'd like to learn more\", \"content_type\": \"text\", \"response_type\": null}], \"text\": \"Hi! Please let us know how we can help you.\"}}, \"user_edit\": true, \"surface\": \"visual_editor_new\", \"ai_generated_icebreaker_toggle_enabled\": null, \"ai_gen_welcome_message_model_version\": null, \"ai_gen_nudge_model_version\": null, \"is_eligible_for_customized_greeting\": false, \"is_user_editing\": false, \"is_eligible_for_leveraging_inbox_faqs\": false, \"ice_breakers_edited\": true, \"performance_booster_enabled\": false}",
+    "asset_feed_spec": {
+      "images": [
+        {
+          "adlabels": [
+            {
+              "name": "reels_9x16",
+              "id": "120255291493200581"
+            }
+          ],
+          "hash": "4e3cf6778d536f6ae61dff3a9acc83cf"
+        },
+        {
+          "adlabels": [
+            {
+              "name": "feed_4x5",
+              "id": "120255291493210581"
+            }
+          ],
+          "hash": "226bde6b9e9900e8898ab4ceabff5305"
+        },
+        {
+          "adlabels": [
+            {
+              "name": "square_1x1",
+              "id": "120255291493190581"
+            }
+          ],
+          "hash": "a6412659339a0b4d2af7df8fcff23f4f"
+        }
+      ],
+      "bodies": [
+        {
+          "text": "🪔 Diwali Special FREE online Resin Art Pooja Thali Workshop\n📅 31 October (Saturday) | ⏰ 12–3 PM IST (3 ghante)\nOnline, kahin se bhi join karo. Video recording bhi available hogi 🎥\n\nWorkshop details aur WhatsApp group link ke liye neeche message karo."
+        }
+      ],
+      "call_to_action_types": [
+        "INSTAGRAM_MESSAGE"
+      ],
+      "descriptions": [
+        {
+          "text": "Create an account or log in to Instagram - Share what you're into with the people who get you."
+        }
+      ],
+      "link_urls": [
+        {
+          "website_url": "https://www.instagram.com/"
+        }
+      ],
+      "titles": [
+        {
+          "text": "FREE Resin Pooja Thali Workshop | 31 Oct, 12 PM"
+        }
+      ],
+      "ad_formats": [
+        "SINGLE_IMAGE"
+      ],
+      "asset_customization_rules": [
+        {
+          "customization_spec": {
+            "age_max": 65,
+            "age_min": 13,
+            "publisher_platforms": [
+              "instagram"
+            ],
+            "instagram_positions": [
+              "story",
+              "reels"
+            ]
+          },
+          "image_label": {
+            "name": "reels_9x16",
+            "id": "120255291493200581"
+          },
+          "priority": 1
+        },
+        {
+          "customization_spec": {
+            "age_max": 65,
+            "age_min": 13,
+            "publisher_platforms": [
+              "instagram"
+            ],
+            "instagram_positions": [
+              "stream",
+              "profile_feed"
+            ]
+          },
+          "image_label": {
+            "name": "feed_4x5",
+            "id": "120255291493210581"
+          },
+          "priority": 2
+        },
+        {
+          "customization_spec": {
+            "age_max": 65,
+            "age_min": 13
+          },
+          "image_label": {
+            "name": "square_1x1",
+            "id": "120255291493190581"
+          },
+          "priority": 3
+        }
+      ],
+      "optimization_type": "PLACEMENT",
+      "additional_data": {
+        "multi_share_end_card": false,
+        "is_click_to_message": false
+      },
+      "reasons_to_shop": false,
+      "shops_bundle": false
+    }
+  },
+  "campaign": {
+    "id": "120255353801660581",
+    "status": "PAUSED"
+  },
+  "adset": {
+    "id": "120255353803050581",
+    "status": "PAUSED",
+    "daily_budget": "40000",
+    "end_time": "2026-10-31T12:00:00+0530",
+    "destination_type": "INSTAGRAM_DIRECT"
+  }
+}

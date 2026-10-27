@@ -7,7 +7,7 @@ one private Messenger reply (Facebook allows only one until they answer) with th
 Facebook doesn't tell apps who follows a Page, so the "I'm following ✅" tap (or DONE) is trusted and gets the link.
 Needs PAGE_ID, PAGE_ACCESS_TOKEN (with pages_messaging) and FB_APP_SECRET in .env; until then Page webhooks
 are ignored. People are kept in fb_users; their join links are main.personal_link("fb:<psid>"), so taps land in
-the same clicks table as Instagram's.
+the same clicks table as Instagram's. Texts and workshop settings come from main (text(), meet_url(), ...).
 """
 import logging
 import os
@@ -26,14 +26,22 @@ PAGE_URL = f"https://www.facebook.com/{PAGE_ID}"
 VISIT_TITLE = "Visit Page"
 
 
-def page_text(text):
-    """An Instagram message with the profile wording swapped for the Page, so Instagram text changes reach here."""
-    return (text.replace(main.VISIT_TITLE, VISIT_TITLE).replace("Profile pe", "Page pe")
+def page_text(t, visit=None):
+    """An Instagram message with the profile wording swapped for the Page, so Instagram text changes reach here.
+    visit: the Instagram profile button's title as the message names it (default: main.VISIT_TITLE)."""
+    return (t.replace(visit or main.VISIT_TITLE, VISIT_TITLE).replace("Profile pe", "Page pe")
             .replace("profile follow", "Page follow"))
 
 
+# the default texts in Messenger's wording; the bot goes through text(), which picks up the workshop's edits
 RULES_MSG, INTRO_MSG, FOLLOW_MSG, REMIND_MSG = map(page_text, (main.RULES_MSG, main.INTRO_MSG, main.FOLLOW_MSG,
                                                                main.REMIND_MSG))
+
+
+def text(key):
+    """main.text(key) in Messenger's wording."""
+    return page_text(main.text(key), main.text("VISIT_TITLE"))
+
 
 log = logging.getLogger("bot")
 
@@ -53,6 +61,10 @@ def db():
     conn.execute("CREATE TABLE IF NOT EXISTS fb_users (psid TEXT PRIMARY KEY, name TEXT, first_seen TEXT, "
                  "last_msg_at TEXT, rules_sent_at TEXT, asked_at TEXT, link_sent_at TEXT, reminded_at TEXT, "
                  "link_reminded_at TEXT, meet_sent_at TEXT)")
+    have = {row[1] for row in conn.execute("PRAGMA table_info(fb_users)")}
+    for col in ("past_msg_at", "between_sent_at"):  # main.PAST_MSG / main.BETWEEN_MSG, like in users
+        if col not in have:
+            conn.execute(f"ALTER TABLE fb_users ADD COLUMN {col} TEXT")
     return conn
 
 
@@ -76,17 +88,21 @@ def api(method, path, **kwargs):
                       timeout=15, **kwargs)
     if r.is_error:
         log.error("Messenger API %s /%s failed: %s %s", method, path, r.status_code, r.text)
+        main.set_error(r)
         return None
+    main.set_error(None)
     return r.json()
 
 
-def send(psid, text, buttons=None):
-    message = {"text": text}
+def send(psid, message_text, buttons=None):
+    message = {"text": message_text}
     if buttons:
         message = {"attachment": {"type": "template", "payload": {
-            "template_type": "button", "text": text, "buttons": buttons}}}
-    return api("POST", f"{PAGE_ID}/messages", json={"recipient": {"id": psid}, "messaging_type": "RESPONSE",
-                                                    "message": message}) is not None
+            "template_type": "button", "text": message_text, "buttons": buttons}}}
+    ok = api("POST", f"{PAGE_ID}/messages", json={"recipient": {"id": psid}, "messaging_type": "RESPONSE",
+                                                  "message": message}) is not None
+    main.note_send("fb", key(psid), message_text, buttons, ok, lambda t: page_text(t, main.text("VISIT_TITLE")))
+    return ok
 
 
 def lookup_name(psid):
@@ -96,7 +112,7 @@ def lookup_name(psid):
 
 def follow_buttons():
     return [{"type": "web_url", "url": PAGE_URL, "title": VISIT_TITLE},
-            {"type": "postback", "title": main.FOLLOWING_TITLE, "payload": main.CHECK_FOLLOW}]
+            {"type": "postback", "title": main.text("FOLLOWING_TITLE"), "payload": main.CHECK_FOLLOW}]
 
 
 def send_rules(psid, first=False):
@@ -104,7 +120,7 @@ def send_rules(psid, first=False):
     at = user(psid).get("rules_sent_at")
     if at and datetime.fromisoformat(at) > now() - main.RULES_EVERY:
         return False
-    if send(psid, INTRO_MSG if first else RULES_MSG):
+    if send(psid, text("INTRO_MSG") if first else text("RULES_MSG")):
         update(psid, rules_sent_at=now().isoformat())
         return True
     return False
@@ -121,9 +137,10 @@ def personal_link(psid, name=None):
 
 
 def send_meet(psid):
-    sent = send(psid, main.MEET_MSG.format(main.MEET_URL))
-    sent = send(psid, main.MEET_BUTTON_MSG, [{"type": "web_url", "url": main.MEET_URL,
-                                              "title": main.MEET_TITLE}]) or sent
+    url = main.meet_url()
+    sent = send(psid, main.fill(text("MEET_MSG"), url))
+    sent = send(psid, text("MEET_BUTTON_MSG"), [{"type": "web_url", "url": url,
+                                                 "title": main.text("MEET_TITLE")}]) or sent
     if sent:
         update(psid, meet_sent_at=now().isoformat())
     return sent
@@ -131,46 +148,78 @@ def send_meet(psid):
 
 def send_link(psid, name=None):
     """Like main.send_link in a DM: the Meet link first while the workshop is live, then the WhatsApp link."""
-    if main.MEET_URL:
+    if main.meet_url():
         send_meet(psid)
     url = personal_link(psid, name)
-    sent = send(psid, main.LINK_MSG.format(url))
-    return send(psid, main.LINK_BUTTON_MSG, [{"type": "web_url", "url": url, "title": main.JOIN_TITLE}]) or sent
+    sent = send(psid, main.fill(text("LINK_MSG"), url))
+    return send(psid, text("LINK_BUTTON_MSG"), [{"type": "web_url", "url": url,
+                                                 "title": main.text("JOIN_TITLE")}]) or sent
+
+
+def past_attendee(u):
+    """Got their join link for an earlier workshop and none yet for this one (main.past_before)."""
+    return bool(u.get("link_sent_at")) and not main.this_workshop(u["link_sent_at"])
+
+
+def between_buttons():
+    return [{"type": "web_url", "url": PAGE_URL, "title": VISIT_TITLE}]
+
+
+def send_between(psid, who):
+    """No workshop running: main.BETWEEN_MSG with the Page button, at most once a day."""
+    at = user(psid).get("between_sent_at")
+    if at and datetime.fromisoformat(at) > now() - main.RULES_EVERY:
+        log.info("messenger: skip %s: no workshop running, already told today", who)
+        main.activity("skip", key(psid), "no workshop running, already told today: no reply", channel="fb")
+        return False
+    if send(psid, text("BETWEEN_MSG"), between_buttons()) or send(psid, text("BETWEEN_MSG")):
+        update(psid, between_sent_at=now().isoformat())
+        log.info("messenger: sent between-workshops message to %s", who)
+        return True
+    return False
 
 
 def handle(psid, claimed=False):
     """Messenger version of main.handle; returns True if a message went out.
     claimed: they tapped "I'm following ✅" or wrote DONE, which Facebook gives no way to check, so it's trusted."""
     u = user(psid)
-    first = not u.get("last_msg_at")
+    first = not main.this_workshop(u.get("last_msg_at"))
     update(psid, last_msg_at=now().isoformat())
     name = u.get("name")
     if name is None:  # looked up once; "" = Facebook didn't share it
         name = lookup_name(psid) or ""
         update(psid, name=name)
     who = name or psid
-    if u.get("link_sent_at"):
-        if claimed and not main.MEET_URL:  # e.g. tapped the buttons of a comment reply after getting the link
+    if main.workshop() is None:
+        return send_between(psid, who)
+    live = main.meet_url()
+    past = past_attendee(u)  # an earlier workshop's link: the follow-gate again, then main.PAST_MSG + the new link
+    if u.get("link_sent_at") and not past:
+        if claimed and not live:  # e.g. tapped the buttons of a comment reply after getting the link
             if send_link(psid, name):
                 log.info("messenger: link sent again to %s", who)
                 return True
             return False
         # while live, link holders get the Meet link once (again whenever they tap "I'm following" or say DONE)
-        if main.MEET_URL and (claimed or not u.get("meet_sent_at")):
+        if live and (claimed or not main.this_workshop(u.get("meet_sent_at"))):
             if send_meet(psid):
                 log.info("messenger: meet link sent to %s", who)
                 return True
             return False
         log.info("messenger: skip %s: already has the link", who)
+        main.activity("skip", key(psid), "already has the link: no reply", channel="fb")
         return False
     if claimed:
+        if past and main.latest_workshop()["past_offer"] and send(psid, text("PAST_MSG")):
+            update(psid, past_msg_at=now().isoformat())
+            log.info("messenger: sent past-attendee offer to %s", who)
         if send_link(psid, name):
             update(psid, link_sent_at=now().isoformat())
             log.info("messenger: link sent to %s", who)
             return True
         return False
     send_rules(psid, first)
-    if send(psid, FOLLOW_MSG, follow_buttons()) or send(psid, main.FOLLOW_TEXT):
+    if send(psid, text("FOLLOW_MSG"), follow_buttons()) or send(psid, text("FOLLOW_TEXT")):
         update(psid, asked_at=now().isoformat())
         log.info("messenger: sent follow request to %s", who)
         return True
@@ -186,17 +235,27 @@ def comment(v):
     if not main.first_time(f"fbc:{cid}"):
         return
     log.info("messenger: comment trigger from %s: %r", (v.get("from") or {}).get("name"), v.get("message"))
+    main.activity("in", None, f"{(v.get('from') or {}).get('name') or 'Someone'} commented on a Facebook post",
+                  v.get("message"), channel="fb")
     # the private reply is the only message allowed before they answer, so the intro and buttons go together
+    between = main.workshop() is None
+    reply = (text("BETWEEN_MSG"), between_buttons()) if between else (text("INTRO_MSG"), follow_buttons())
     r = api("POST", f"{PAGE_ID}/messages", json={"recipient": {"comment_id": cid}, "message": {"attachment": {
-        "type": "template", "payload": {"template_type": "button", "text": INTRO_MSG, "buttons": follow_buttons()}}}})
+        "type": "template", "payload": {"template_type": "button", "text": reply[0], "buttons": reply[1]}}}})
+    psid = (r or {}).get("recipient_id")
+    main.note_send("fb", key(psid) if psid else None, reply[0], reply[1], bool(r),
+                   lambda t: page_text(t, main.text("VISIT_TITLE")))
     if not r:
         return
-    psid = r.get("recipient_id")
     if psid:
-        update(psid, asked_at=now().isoformat(), rules_sent_at=now().isoformat())
+        update(psid, **({"between_sent_at": now().isoformat()} if between else
+                        {"asked_at": now().isoformat(), "rules_sent_at": now().isoformat()}))
     log.info("messenger: sent private reply to comment %s", cid)
-    if api("POST", f"{cid}/comments", data={"message": main.COMMENT_REPLY}):
+    public = main.text("COMMENT_REPLY")
+    if api("POST", f"{cid}/comments", data={"message": public}):
         log.info("messenger: replied publicly to comment %s", cid)
+        main.activity("out", key(psid) if psid else None, "public reply under the comment", public,
+                      {"key": "COMMENT_REPLY"}, channel="fb")
 
 
 def process(payload):
@@ -208,9 +267,12 @@ def process(payload):
         log.info("messenger webhook received: messaging=%d changes=%s", len(entry.get("messaging", [])),
                  [c.get("field") for c in entry.get("changes", [])])
         for change in entry.get("changes", []):
-            if change.get("field") == "feed":
+            if change.get("field") == "feed" and main.current_event(
+                    (change.get("value") or {}).get("created_time") or entry.get("time")):
                 comment(change.get("value") or {})
         for m in entry.get("messaging", []):
+            if not main.current_event(m.get("timestamp") or entry.get("time")):
+                continue
             msg, pb = m.get("message", {}), m.get("postback", {})
             psid = m.get("sender", {}).get("id")
             if not psid or psid == PAGE_ID or msg.get("is_echo"):
@@ -219,48 +281,70 @@ def process(payload):
                 if pb.get("payload") == main.CHECK_FOLLOW and main.first_time(
                         pb.get("mid") or f"fbpb:{psid}:{m.get('timestamp')}"):
                     log.info("messenger: button tap from %s: %r", psid, pb.get("title"))
+                    main.activity("in", key(psid), f"tapped “{pb.get('title') or 'a button'}”", channel="fb")
                     handle(psid, claimed=True)
                 continue
-            text = msg.get("text", "").strip()
+            said = msg.get("text", "").strip()
             # click-to-Messenger ads attach a referral (inside the message, or alone as messaging_referrals)
             ad = (msg.get("referral") or m.get("referral") or {}).get("ad_id")
-            if not (text or ad) or not main.first_time(msg.get("mid") or f"fbref:{psid}:{m.get('timestamp')}"):
+            if not (said or ad) or not main.first_time(msg.get("mid") or f"fbref:{psid}:{m.get('timestamp')}"):
                 continue
-            if ad or text.upper() == "DONE" or main.matches(text):
-                log.info("messenger trigger from %s (ad=%s): %r", psid, ad, text)
-                for answer in main.faq_answers(text):
+            if ad or said.upper() == "DONE" or main.matches(said):
+                log.info("messenger trigger from %s (ad=%s): %r", psid, ad, said)
+                main.activity("in", key(psid), "opened the chat from an ad" if ad and not said else
+                              "message from an ad" if ad else "message", said or None, channel="fb")
+                hits = main.answers_for(said)
+                for f, answer in hits:
                     u = user(psid)
-                    if answer == main.MATERIAL_MSG and u.get("link_sent_at"):
-                        answer += "\n\n" + main.MATERIAL_LINK_MSG.format(personal_link(psid, u.get("name")))
-                    if send(psid, answer):
+                    if (f["id"] == "material" and u.get("link_sent_at") and not past_attendee(u)
+                            and not main.link_used(key(psid))):
+                        answer += "\n\n" + main.fill(text("MATERIAL_LINK_MSG"), personal_link(psid, u.get("name")))
+                    answer, buttons = page_text(answer, main.text("VISIT_TITLE")), main.reply_buttons(f)
+                    if (send(psid, answer, buttons) if buttons else send(psid, answer)) or (
+                            buttons and send(psid, f"{answer}\n{f['button_url']}")):
                         log.info("messenger: answered question from %s", psid)
-                handle(psid, claimed=text.upper() == "DONE")
+                if said.upper() != "DONE" and any(f.get("stop") for f, _ in hits):
+                    update(psid, last_msg_at=now().isoformat())  # no follow step after a "stop here" reply
+                    log.info("messenger: skip %s: a custom reply stops here", psid)
+                    main.activity("skip", key(psid), "custom reply set to \"stop here\": no follow step", channel="fb")
+                else:
+                    handle(psid, claimed=said.upper() == "DONE")
+            else:
+                main.activity("in", key(psid), "message without the keyword: no reply", said, channel="fb")
 
 
 def remind():
-    """One reminder per person, like Instagram, only inside the 24h window and never while the workshop is live:
-    REMIND_MSG with the buttons main.REMIND_AFTER after them if "I'm following" was never tapped, or
-    LINK_REMIND_MSG main.LINK_REMIND_AFTER after the link if it was never really tapped."""
-    if not ready() or main.MEET_URL:
-        return
+    """One reminder per person and workshop, like Instagram, only inside the 24h window and never while the
+    workshop is live: REMIND_MSG with the buttons main.REMIND_AFTER after them if "I'm following" was never
+    tapped, or LINK_REMIND_MSG main.LINK_REMIND_AFTER after the link if it was never really tapped.
+    Returns {"follow": n, "link": n} (None when there's nothing to do)."""
+    if not ready() or main.meet_url() or main.workshop() is None:
+        return None
     from dashboard import real_taps  # same rules as the dashboard: Meta's scanners and the owner's phone don't count
     window = (now() - main.WINDOW).isoformat()
+    start = main.utc_iso(main.past_before())  # reminders from earlier workshops don't count
     with db() as conn:
-        asked = conn.execute("SELECT psid, name FROM fb_users WHERE link_sent_at IS NULL AND asked_at <= ? "
-                             "AND asked_at >= ? AND last_msg_at >= ? AND reminded_at IS NULL "
-                             "AND link_reminded_at IS NULL",
-                             ((now() - main.REMIND_AFTER).isoformat(), window, window)).fetchall()
-        linked = conn.execute("SELECT psid, name FROM fb_users WHERE link_sent_at <= ? AND last_msg_at >= ? "
-                              "AND reminded_at IS NULL AND link_reminded_at IS NULL",
-                              ((now() - main.LINK_REMIND_AFTER).isoformat(), window)).fetchall()
+        asked = conn.execute("SELECT psid, name FROM fb_users WHERE (link_sent_at IS NULL OR link_sent_at < ?) "
+                             "AND asked_at <= ? AND asked_at >= ? AND last_msg_at >= ? "
+                             "AND (reminded_at IS NULL OR reminded_at < ?) "
+                             "AND (link_reminded_at IS NULL OR link_reminded_at < ?)",
+                             (start, (now() - main.REMIND_AFTER).isoformat(), window, window, start, start)).fetchall()
+        linked = conn.execute("SELECT psid, name FROM fb_users WHERE link_sent_at <= ? AND link_sent_at >= ? "
+                              "AND last_msg_at >= ? AND (reminded_at IS NULL OR reminded_at < ?) "
+                              "AND (link_reminded_at IS NULL OR link_reminded_at < ?)",
+                              ((now() - main.LINK_REMIND_AFTER).isoformat(), start, window, start, start)).fetchall()
         clicks = conn.execute("SELECT igsid, clicked_at, COALESCE(user_agent, ''), ip FROM clicks "
                               "WHERE igsid LIKE 'fb:%'").fetchall()
+    done = {"follow": 0, "link": 0}
     for psid, name in asked:
-        if send(psid, REMIND_MSG, follow_buttons()):
+        if send(psid, text("REMIND_MSG"), follow_buttons()):
             update(psid, reminded_at=now().isoformat())
+            done["follow"] += 1
             log.info("messenger: sent reminder to %s", name or psid)
     tapped = real_taps(clicks)
     for psid, name in linked:
-        if key(psid) not in tapped and send(psid, main.LINK_REMIND_MSG.format(personal_link(psid, name))):
+        if key(psid) not in tapped and send(psid, main.fill(text("LINK_REMIND_MSG"), personal_link(psid, name))):
             update(psid, link_reminded_at=now().isoformat())
+            done["link"] += 1
             log.info("messenger: sent join-link reminder to %s (no tap yet)", name or psid)
+    return done

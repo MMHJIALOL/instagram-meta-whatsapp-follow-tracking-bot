@@ -1,0 +1,29 @@
+Created using the built-in image generation tool.
+Reference: C:/Users/ishaa/Downloads/IMG_0436.JPG.jpeg
+Master is the native generated image. Exports use the same design at exact 4:5 dimensions; the 2160 x 2700 version is upscaled.
+
+Use case: ads-marketing / compositing.
+Create one polished, high-resolution Instagram feed ad poster, portrait aspect ratio exactly 4:5, target 2048 x 2560 pixels. This is a finished advertising graphic, no mockup.
+Input image 1 is the user's actual handmade resin pooja thali photo and MUST be the hero visual in the poster. Preserve its distinctive pink and burgundy translucent resin, gold outlined layered flowers, pearl rim, gold bowls and Ganesha detail. Faithfully extract/composite the photographed thali from the busy balcony background, removing the background and supporting hand where feasible; keep the actual handmade design and photographic detail, do not replace it with another tray. Feature it very large, with entire or near-entire thali visible, as the compelling central subject.
+Art direction: tasteful festive Indian craft workshop, warm ivory and blush background, burgundy typography and restrained fine gold accents matching the photo. Clean editorial composition with strong mobile readability, generous margins and expertly typeset hierarchy. Restrained luxurious craft aesthetic, no unnecessary ornaments. Top approximately 30% for title and free offer, middle approximately 48% for beautifully integrated photo, bottom approximately 22% for event details and CTA.
+Exact text, all legible, correctly spelled, no other copy:
+"FREE ONLINE"
+"RESIN ART WORKSHOP"
+"Create your own"
+"Pooja Thali"
+"22 OCTOBER"
+"11 AM–2 PM IST • 3 HOURS"
+"BOOK YOUR FREE SPOT"
+Make FREE ONLINE prominent in a burgundy badge. Make Pooja Thali a beautiful large editorial serif headline. Use clean bold sans serif for schedule and supporting type. Bottom CTA styled as a burgundy rounded rectangle with cream lettering. Ensure time and date are easy to read at phone size. No invented host, handle, logo, contact details, URL, QR code, testimonials, promises of materials or certification. No watermark. All essential type well inside the edges. Deliver a single premium finished poster with crisp detailed photography and sharp type.
+
+FINAL LAYOUT REVISION:
+Edit this finished poster into a proper 4:5 portrait Instagram feed ad. CRITICAL OUTPUT DIMENSIONS: 2048 pixels wide by 2560 pixels tall. Width is 80% of height. The current poster is much too narrow; make the new canvas approximately twice as wide in proportion. Do not return a tall narrow banner. Recompose the layout to fit a moderately portrait 4:5 rectangle. Preserve the beautiful burgundy, cream, gold festive aesthetic and the actual photographed pink floral resin thali. Show the same thali prominently in the center. Compress the heading area and footer vertically, use the increased width, and scale the product to fit. Keep all text safely within margins and fully readable at mobile size.
+Exact text:
+"FREE ONLINE"
+"RESIN ART WORKSHOP"
+"Create your own"
+"Pooja Thali"
+"22 OCTOBER"
+"11 AM–2 PM IST • 3 HOURS"
+"BOOK YOUR FREE SPOT"
+Keep the photo's distinctive gold bowls, Ganesha, resin flowers and pearl border. No added logos, contact information or extra copy. Finished high resolution sharp poster. Aspect ratio 4:5 (width:height), 2048x2560.

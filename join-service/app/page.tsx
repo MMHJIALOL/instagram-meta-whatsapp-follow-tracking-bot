@@ -1,0 +1,1 @@
+export default function Home() { return <main style={{maxWidth:520,margin:"15vh auto",padding:24,fontFamily:"sans-serif"}}><p>KALAKRITI STUDIO</p><h1>Your next creation starts here.</h1><p>Open the personal workshop invite sent to you by Kalakriti Studio to join us on WhatsApp.</p></main>; }

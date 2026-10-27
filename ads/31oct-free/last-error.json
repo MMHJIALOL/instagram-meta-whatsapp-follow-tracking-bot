@@ -1,0 +1,9 @@
+{
+  "message": "object_story_spec param is invalid: Object story spec is ill-formed. May be missing Page ID or creative details, or invalid fields exist",
+  "hint": null,
+  "link": null,
+  "code": 100,
+  "subcode": 1443048,
+  "trace": "A4c9GrVHm2ogMvmkpOcss_I",
+  "rate_limited": false
+}

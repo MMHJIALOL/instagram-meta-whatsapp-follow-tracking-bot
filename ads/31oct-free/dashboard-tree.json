@@ -1,0 +1,810 @@
+{
+  "campaigns": [
+    {
+      "id": "120255353801660581",
+      "name": "31st Oct Diwali Special FREE Resin Pooja Thali Workshop",
+      "status": "PAUSED",
+      "effective_status": "PAUSED",
+      "objective": "OUTCOME_ENGAGEMENT",
+      "issues": [],
+      "daily_budget": 0.0,
+      "lifetime_budget": 0.0,
+      "start": "2026-10-26T23:55:10+0530",
+      "end": "2026-10-31T12:00:00+0530",
+      "created": "2026-10-26T23:55:09+0530",
+      "template": false,
+      "adsets": [
+        {
+          "id": "120255353803050581",
+          "name": "31st Oct Diwali Special FREE Resin Pooja Thali Workshop · audience",
+          "status": "PAUSED",
+          "effective_status": "PAUSED",
+          "issues": [],
+          "daily_budget": 400.0,
+          "lifetime_budget": 0.0,
+          "budget_remaining": 400.0,
+          "start": "2026-10-26T23:55:10+0530",
+          "end": "2026-10-31T12:00:00+0530",
+          "goal": "CONVERSATIONS",
+          "destination": "INSTAGRAM_DIRECT",
+          "audience": "India · 18–65+ · everyone · + similar people · Instagram only",
+          "value_rule_set": null,
+          "placements": {
+            "auto": false,
+            "facebook": [],
+            "instagram": [
+              "stream",
+              "story",
+              "reels",
+              "profile_feed",
+              "ig_search"
+            ],
+            "messenger": [],
+            "threads": [],
+            "audience_network": []
+          },
+          "bid_strategy": "LOWEST_COST_WITHOUT_CAP",
+          "ads": [
+            {
+              "id": "120255353812750581",
+              "name": "31st Oct Diwali Special FREE Resin Pooja Thali Workshop",
+              "status": "PAUSED",
+              "effective_status": "PAUSED",
+              "issues": [],
+              "review": {},
+              "preview": "https://fb.me/2zajAWKSIkKeAEz",
+              "thumb": "https://scontent.fdel1-3.fna.fbcdn.net/v/t45.1600-4/864583175_122108390577512135_64190459489259321_n.png?_nc_cat=100&_nc_map=urlgen_bucketless&ccb=1-7&_nc_ohc=qpQljP-I5voQ7kNvwFhR3BW&_nc_oc=AdoWyC0Jx9i10tvsmbzaZGCtHO3FvfWktO7M-l2QCIHW3TDmMsWCH82p7e2hLLk9jS4G62fugmXjskEb-5uyiSYQ&_nc_zt=1&_nc_ht=scontent.fdel1-3.fna&edm=ABiOSUQEAAAA&_nc_gid=ECAW2rQh88z5ROjirOcONA&_nc_tpa=Q5bMBQKxOLoAXwSvuA-3D4PYBeubV-XTXDo4qk6oVKZyNp6wE1E1Yh5HFZyixa1PEd_CZ7yAFkQ_D7zwTw&stp=c0.5000x0.5000f_dst-emg0_p200x200_q75_tt6&ur=52f3c4&_nc_sid=58080a&oh=00_AQOAApS5YRl47gvRDLBUL71nPK9HgJuTvigUWzwYnmm5lg&oe=6AE57769",
+              "type": "SHARE",
+              "caption": null,
+              "permalink": "https://www.instagram.com/p/De97EKtgUNw/",
+              "created": "2026-10-26T23:55:17+0530",
+              "stats": {
+                "spend": 0.0,
+                "results": 0,
+                "result_label": "DMs started",
+                "dms": 0,
+                "impressions": 0
+              }
+            }
+          ],
+          "created": "2026-10-26T23:55:10+0530",
+          "stats": {
+            "spend": 0.0,
+            "results": 0.0,
+            "result_label": "DMs started",
+            "dms": 0.0,
+            "impressions": 0
+          }
+        }
+      ],
+      "stats": {
+        "spend": 0.0,
+        "results": 0,
+        "result_label": "DMs started",
+        "dms": 0,
+        "impressions": 0
+      }
+    },
+    {
+      "id": "120255290410140581",
+      "name": "25 Oct Shubh-Labh Rs99 - WhatsApp 9211664301",
+      "status": "PAUSED",
+      "effective_status": "PAUSED",
+      "objective": "OUTCOME_ENGAGEMENT",
+      "issues": [],
+      "daily_budget": 0.0,
+      "lifetime_budget": 0.0,
+      "start": "2026-10-23T00:35:30+0530",
+      "end": "2026-10-25T14:00:00+0530",
+      "created": "2026-10-23T00:35:28+0530",
+      "template": false,
+      "adsets": [
+        {
+          "id": "120255290410990581",
+          "name": "25 Oct Shubh-Labh Rs99 - WhatsApp 9211664301 · audience",
+          "status": "PAUSED",
+          "effective_status": "PAUSED",
+          "issues": [],
+          "daily_budget": 300.0,
+          "lifetime_budget": 0.0,
+          "budget_remaining": 300.0,
+          "start": "2026-10-23T00:35:30+0530",
+          "end": "2026-10-25T14:00:00+0530",
+          "goal": "CONVERSATIONS",
+          "destination": "WHATSAPP",
+          "audience": "India · 18–65+ · everyone · + similar people · automatic placements",
+          "value_rule_set": null,
+          "placements": {
+            "auto": true
+          },
+          "bid_strategy": "LOWEST_COST_WITHOUT_CAP",
+          "ads": [
+            {
+              "id": "120255290411990581",
+              "name": "25 Oct Shubh-Labh Rs99 - WhatsApp 9211664301",
+              "status": "PAUSED",
+              "effective_status": "PAUSED",
+              "issues": [],
+              "review": {},
+              "preview": "https://fb.me/2yKadFy4THWbmht",
+              "thumb": "https://scontent.fdel27-7.fna.fbcdn.net/v/t45.1600-4/861775797_122106432909512135_1960415455667423227_n.png?_nc_cat=110&_nc_map=urlgen_bucketless&ccb=1-7&_nc_ohc=e7GS0nJ2ZwUQ7kNvwH3qdaP&_nc_oc=AdrAOlx8K7mQd3YOwV5JRdPI7TwTbseFe498bicuQsteoDVqvDCUd0thKcEDo5QGkd72OgOLEwk8GekDIJ_nCDFH&_nc_zt=1&_nc_ht=scontent.fdel27-7.fna&edm=ABiOSUQEAAAA&_nc_gid=ECAW2rQh88z5ROjirOcONA&_nc_tpa=Q5bMBQJkhQsCsOzh5fCZcDMOM6rnIe-Q0DGECRbcpBE6snIWwDbsSFAvJUteQJVQUxyElk5KpE_FhyGH9A&stp=c0.5000x0.5000f_dst-emg0_p200x200_q75_tt6&ur=52f3c4&_nc_sid=58080a&oh=00_AQNpHss9DMWkGoYgnUYrWCcWGKXU0aRdJuS9eFH41bRvxA&oe=6AE569A0",
+              "type": "SHARE",
+              "caption": null,
+              "permalink": "https://www.instagram.com/p/Dez2QUdATvy/",
+              "created": "2026-10-23T00:35:34+0530",
+              "stats": {
+                "spend": 339.89,
+                "results": 38.0,
+                "result_label": "DMs started",
+                "dms": 38.0,
+                "impressions": 7122
+              }
+            }
+          ],
+          "created": "2026-10-23T00:35:30+0530",
+          "stats": {
+            "spend": 339.89,
+            "results": 38.0,
+            "result_label": "DMs started",
+            "dms": 38.0,
+            "impressions": 7122
+          }
+        }
+      ],
+      "stats": {
+        "spend": 339.89,
+        "results": 38.0,
+        "result_label": "DMs started",
+        "dms": 38.0,
+        "impressions": 7122
+      }
+    },
+    {
+      "id": "120255227520700581",
+      "name": "22nd oct karwa chauth free",
+      "status": "PAUSED",
+      "effective_status": "PAUSED",
+      "objective": "OUTCOME_ENGAGEMENT",
+      "issues": [],
+      "daily_budget": 0.0,
+      "lifetime_budget": 0.0,
+      "start": "2026-10-19T15:02:21+0530",
+      "end": "2026-10-22T11:00:00+0530",
+      "created": "2026-10-19T15:02:19+0530",
+      "template": false,
+      "adsets": [
+        {
+          "id": "120255227520910581",
+          "name": "22nd oct karwa chauth free · audience",
+          "status": "PAUSED",
+          "effective_status": "PAUSED",
+          "issues": [],
+          "daily_budget": 400.0,
+          "lifetime_budget": 0.0,
+          "budget_remaining": 400.0,
+          "start": "2026-10-19T15:02:21+0530",
+          "end": "2026-10-22T11:00:00+0530",
+          "goal": "CONVERSATIONS",
+          "destination": "INSTAGRAM_DIRECT",
+          "audience": "India · 18–65+ · everyone · + similar people · Instagram only",
+          "value_rule_set": null,
+          "placements": {
+            "auto": false,
+            "facebook": [],
+            "instagram": [
+              "stream",
+              "story",
+              "reels",
+              "profile_feed",
+              "ig_search"
+            ],
+            "messenger": [],
+            "threads": [],
+            "audience_network": []
+          },
+          "bid_strategy": "LOWEST_COST_WITHOUT_CAP",
+          "ads": [
+            {
+              "id": "120255227526050581",
+              "name": "22nd oct karwa chauth free",
+              "status": "PAUSED",
+              "effective_status": "PAUSED",
+              "issues": [],
+              "review": {},
+              "preview": "https://fb.me/2lr9i21EGwg725V",
+              "thumb": "https://external.fdel1-3.fna.fbcdn.net/emg1/v/t13/10642733122836420342?_nc_oc=AdqM98RvceNZzSgyy4Ff_jx-S0cf9Y8KUsTErdjuO1ZZegGW8dI-kZ8ntPZ9LYrq5xLRwPPQtvhn0NbPFZ8qBKnC&url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQIb93a8mluyArKa7nnzX5VrM8VkEZ0rPdeXbt2xkLKgjCbYlvX-XYeEyG9wMxmWpt5NXzyLx4V_rmQOHnlL8bZJtPn13u4ocaz3nXD0FX-_bJ18m676sfJwa1mcv9E3QGmZr98lUr94VpndgKlM4OGB&fb_obo=1&utld=facebook.com&_nc_sid=58080a&_nc_ht=external.fdel1-3.fna.fbcdn.net&stp=c0.5000x0.5000f_dst-emg0_p200x200_q75_tt6&ccb=18-1&_nc_gid=ECAW2rQh88z5ROjirOcONA&edm=ABiOSUQEAAAA&_nc_map=urlgen_bucketless&_nc_zt=3&_nc_tpa=Q5bMBQIOHI2ieUMzrQ08NxM6sO44HOo5WVRv3HMuvdRVC4sr5fuTXzHPSojybTqT4zx77GvOguib4Mkppw&oh=06_Q3_EAWhrb8tgVc4N6Ev4PYEd_fAag-M5ZBZxYrCOUsWvhl3c&oe=6AE16032",
+              "type": "SHARE",
+              "caption": "🪔 FREE Resin Pooja Thali workshop Karwa Chauth Special\n22 October (Thursday), subah 11 baje se, 3 ghante. Online, kahin se bhi join karo. Recording bhi milegi 🎥\nDetails aur link ke liye neeche message karo",
+              "permalink": "https://www.instagram.com/p/Deq8cgWg0oM/",
+              "created": "2026-10-19T15:02:27+0530",
+              "stats": {
+                "spend": 1045.04,
+                "results": 724.0,
+                "result_label": "DMs started",
+                "dms": 724.0,
+                "impressions": 46926
+              }
+            }
+          ],
+          "created": "2026-10-19T15:02:21+0530",
+          "stats": {
+            "spend": 1045.04,
+            "results": 724.0,
+            "result_label": "DMs started",
+            "dms": 724.0,
+            "impressions": 46926
+          }
+        }
+      ],
+      "stats": {
+        "spend": 1045.04,
+        "results": 724.0,
+        "result_label": "DMs started",
+        "dms": 724.0,
+        "impressions": 46926
+      }
+    },
+    {
+      "id": "120255217590040581",
+      "name": "22nd october resin workshop free",
+      "status": "PAUSED",
+      "effective_status": "PAUSED",
+      "objective": "OUTCOME_ENGAGEMENT",
+      "issues": [],
+      "daily_budget": 0.0,
+      "lifetime_budget": 0.0,
+      "start": "2026-10-18T22:47:00+0530",
+      "end": "2026-10-22T11:00:00+0530",
+      "created": "2026-10-18T22:46:58+0530",
+      "template": false,
+      "adsets": [
+        {
+          "id": "120255217590420581",
+          "name": "22nd october resin workshop free · audience",
+          "status": "ACTIVE",
+          "effective_status": "CAMPAIGN_PAUSED",
+          "issues": [],
+          "daily_budget": 400.0,
+          "lifetime_budget": 0.0,
+          "budget_remaining": 400.0,
+          "start": "2026-10-18T22:47:00+0530",
+          "end": "2026-10-22T11:00:00+0530",
+          "goal": "CONVERSATIONS",
+          "destination": "INSTAGRAM_DIRECT",
+          "audience": "India · 18–65+ · everyone · + similar people · Instagram only",
+          "value_rule_set": null,
+          "placements": {
+            "auto": false,
+            "facebook": [],
+            "instagram": [
+              "stream",
+              "story",
+              "reels",
+              "profile_feed",
+              "ig_search",
+              "profile_reels"
+            ],
+            "messenger": [],
+            "threads": [],
+            "audience_network": []
+          },
+          "bid_strategy": "LOWEST_COST_WITHOUT_CAP",
+          "ads": [
+            {
+              "id": "120255217809190581",
+              "name": "22nd october resin workshop free · 22oct-pink-arch",
+              "status": "PAUSED",
+              "effective_status": "PAUSED",
+              "issues": [],
+              "review": {},
+              "preview": "https://fb.me/1X6BajMhxEKDZW9",
+              "thumb": "https://external.fdel1-7.fna.fbcdn.net/emg1/v/t13/5922275609428644129?_nc_oc=Adr5tFR9HsfPpErPQAYa0GVZJQxeZ8pbhgVg3VG8g-QzrCscYmjYqFLy3Mk2vdrkZinbo7U57iboSwdBse2OxICm&url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQJk_ds9S0C05UOoklJMsIa1NoZKIdgDt9Bi6ph-FDJOLn0HXIco0kI-t_BVRYn1Jy9F6xqkLW98-Gbe2twQS-TGnf_CD26OcP38OdjRrS165gZ6jSFT_Nadp_GVqmjXntWHpsOq2QVcHlIA7X-rwZky&fb_obo=1&utld=facebook.com&_nc_sid=58080a&_nc_ht=external.fdel1-7.fna.fbcdn.net&stp=c0.5000x0.5000f_dst-emg0_p200x200_q75_tt6&ccb=18-1&_nc_gid=ECAW2rQh88z5ROjirOcONA&edm=ABiOSUQEAAAA&_nc_map=urlgen_bucketless&_nc_zt=3&_nc_tpa=Q5bMBQJ3qyBSBpYrDN18iVsq7HqFxcAzEldoD6M8_ss1LTo50OyNl6yOUI2hxVqUVNA5YUxx-lDZ33uUzQ&oh=06_Q3_EART0Q6W0Z2IiVG3zXD6tUfJt-7X9PvXlYCQ9-NJHlcvf&oe=6AE17CB3",
+              "type": "SHARE",
+              "caption": "🪔 FREE online Resin Pooja Thali workshop\n22 October (Thursday), subah 11 se dopahar 2 baje tak (3 ghante). Online, kahin se bhi join karo. Recording bhi milegi 🎥\nDetails aur link ke liye neeche message karo",
+              "permalink": "https://www.instagram.com/p/DepM3P4AvXl/",
+              "created": "2026-10-18T23:11:46+0530",
+              "stats": {
+                "spend": 0.0,
+                "results": 0,
+                "result_label": "DMs started",
+                "dms": 0,
+                "impressions": 1
+              }
+            },
+            {
+              "id": "120255217808680581",
+              "name": "22nd october resin workshop free · 22oct-marigold-silk",
+              "status": "PAUSED",
+              "effective_status": "PAUSED",
+              "issues": [],
+              "review": {},
+              "preview": "https://fb.me/23XIoHqUI8ranQF",
+              "thumb": "https://external.fdel1-3.fna.fbcdn.net/emg1/v/t13/16088461177392209760?_nc_oc=Adorx_080I92uCjVBCeZnbA9wqRjrzGPBjwmi12rIs1IPECFZxY8by4-w0BpE9q6AycSLTiBFI9ZC997CJs_m6IU&url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQLdhh8rWCLp_IC17BrhUCS8J6-pbUvmyImqff-zd9oQV7s7WOA0H4UBj-J02-OjIlZlNvY9k7RPy8F3dzQbrDRNUu8ppevOyKTiNlT8eARrRLZqEZyDDMHu3jJK9Izdf8DarrSxV83DKyD-K9RH_HcA&fb_obo=1&utld=facebook.com&_nc_sid=58080a&_nc_ht=external.fdel1-3.fna.fbcdn.net&stp=c0.5000x0.5000f_dst-emg0_p200x200_q75_tt6&ccb=18-1&_nc_gid=ECAW2rQh88z5ROjirOcONA&edm=ABiOSUQEAAAA&_nc_map=urlgen_bucketless&_nc_zt=3&_nc_tpa=Q5bMBQIWzbxBP5JTNlnWAtS28wYwXkjZX5t_kqSpedIBVTKwtrVXlpxU5yVGuVEntXKewDjp8f_8stZzcg&oh=06_Q3_EAfIsiYLjonbT2wy2p36SDcmNXViC-iYhpnccX9I_XbQR&oe=6AE19041",
+              "type": "SHARE",
+              "caption": "🪔 FREE online Resin Pooja Thali workshop\n22 October (Thursday), subah 11 se dopahar 2 baje tak (3 ghante). Online, kahin se bhi join karo. Recording bhi milegi 🎥\nDetails aur link ke liye neeche message karo",
+              "permalink": "https://www.instagram.com/p/DepM2p-AeTU/",
+              "created": "2026-10-18T23:11:42+0530",
+              "stats": {
+                "spend": 20.92,
+                "results": 7.0,
+                "result_label": "DMs started",
+                "dms": 7.0,
+                "impressions": 457
+              }
+            },
+            {
+              "id": "120255217808210581",
+              "name": "22nd october resin workshop free · 22oct-green-emerald",
+              "status": "PAUSED",
+              "effective_status": "PAUSED",
+              "issues": [],
+              "review": {},
+              "preview": "https://fb.me/2zc6HjaZi4OMhY4",
+              "thumb": "https://external.fdel27-9.fna.fbcdn.net/emg1/v/t13/6192300051281325718?_nc_oc=AdoqSRQwOve0yylQSIUd4EbvJTrDFEq763H1_BTHpH3a7z7jO857gAgGwpRAYsJVkJOzrj-s-G6IUxWsStVR2Jgg&url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQLPiDUQpzAzk28i8sVR3TUytxdi-1k5jNZESjT5S9IPENW7N7YLNXOBZifoF2kpaJQlkGD2luSwL-4TLDMNIej_SXS6vgHiyY2UFSx-WUdlW3uugf-HNnEo2A45cWjICRXBXK3wUKVcEEGomOEtgYfz&fb_obo=1&utld=facebook.com&_nc_sid=58080a&_nc_ht=external.fdel27-9.fna.fbcdn.net&stp=c0.5000x0.5000f_dst-emg0_p200x200_q75_tt6&ccb=18-1&_nc_gid=ECAW2rQh88z5ROjirOcONA&edm=ABiOSUQEAAAA&_nc_map=urlgen_bucketless&_nc_zt=3&_nc_tpa=Q5bMBQIj572tSy8NIwEwove_d5uecL9ZvUvJZ7-wbO8BRsaJlwA-YzZierzuIDhekBvoXSiZ5DNXBv2F3Q&oh=06_Q3_EAS8FpJAxgsSVxJU37UUCq0apw5AAjBkYKpfPfHLCoI6X&oe=6AE18661",
+              "type": "SHARE",
+              "caption": "🪔 FREE online Resin Pooja Thali workshop\n22 October (Thursday), subah 11 se dopahar 2 baje tak (3 ghante). Online, kahin se bhi join karo. Recording bhi milegi 🎥\nDetails aur link ke liye neeche message karo",
+              "permalink": "https://www.instagram.com/p/DepM2kWAeVa/",
+              "created": "2026-10-18T23:11:36+0530",
+              "stats": {
+                "spend": 0.0,
+                "results": 0,
+                "result_label": "DMs started",
+                "dms": 0,
+                "impressions": 0
+              }
+            },
+            {
+              "id": "120255217807870581",
+              "name": "22nd october resin workshop free · 22oct-cream-lotus",
+              "status": "PAUSED",
+              "effective_status": "PAUSED",
+              "issues": [],
+              "review": {},
+              "preview": "https://fb.me/23omXZoziVq7drS",
+              "thumb": "https://external.fdel27-7.fna.fbcdn.net/emg1/v/t13/8472159218746316403?_nc_oc=AdrjNd1iP8Xu2Qp5dmUfErvAS2eIE7CaapxI0of9FIVgX1EfWk5-ADve6HZsgtRSZig0gq0P7Jy-HS_aO2f1M4t_&url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQJS6NBijcZXdKABlvDfWYr--PFjbWrD9wU6N1moBlGyFocS-jJV94k0eQ7-3nfUsAYf_QXeEdaabeoxEROobs87-4aK--M02x9PrF7ZjjDpWE3V28noetZGODqOxl35PccyFH8QEjIo5AP3YdFvxX7Z&fb_obo=1&utld=facebook.com&_nc_sid=58080a&_nc_ht=external.fdel27-7.fna.fbcdn.net&stp=c0.5000x0.5000f_dst-emg0_p200x200_q75_tt6&ccb=18-1&_nc_gid=ECAW2rQh88z5ROjirOcONA&edm=ABiOSUQEAAAA&_nc_map=urlgen_bucketless&_nc_zt=3&_nc_tpa=Q5bMBQKzmvTsSs5GDAzhQlYg-efWKMuLgckP26gw5wxMZe3qfmetMngmPlyovhI5LxUwI-pBnIkr2GHUgA&oh=06_Q3_EAd_c4G3NjANXlsxBjg-Vr_-3tJxwnjrRhQJEl9mU4vta&oe=6AE17E25",
+              "type": "SHARE",
+              "caption": "🪔 FREE online Resin Pooja Thali workshop\n22 October (Thursday), subah 11 se dopahar 2 baje tak (3 ghante). Online, kahin se bhi join karo. Recording bhi milegi 🎥\nDetails aur link ke liye neeche message karo",
+              "permalink": "https://www.instagram.com/p/DepM1wLAvpd/",
+              "created": "2026-10-18T23:11:32+0530",
+              "stats": {
+                "spend": 23.86,
+                "results": 7.0,
+                "result_label": "DMs started",
+                "dms": 7.0,
+                "impressions": 487
+              }
+            },
+            {
+              "id": "120255217807660581",
+              "name": "22nd october resin workshop free · 22oct-cream-diyas",
+              "status": "PAUSED",
+              "effective_status": "PAUSED",
+              "issues": [],
+              "review": {},
+              "preview": "https://fb.me/2eVuODPKRDVDKlk",
+              "thumb": "https://external.fdel27-7.fna.fbcdn.net/emg1/v/t13/4926840790440621213?_nc_oc=AdrkolqJfV9IsZkaWH2OWiF-b_FSOziSfcnIOTfIFcNnwSpeIOAtZsdgdPnmWfPvced55Cg0r3ydnBEa9U8uAneC&url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQKxn78ePEfjDRswXxHNO9MYHgMOsTk6ZA4EZl9z3qrNILUX-zi4nfIW31GbESI8d3ojm2q2vuFUs3A57592Gj4bqxq91xjd_2BTO6nDSlE4sghkivPwyjymYWsr-7l0ItOTu3CVuLP7D8teSs16Sv2D&fb_obo=1&utld=facebook.com&_nc_sid=58080a&_nc_ht=external.fdel27-7.fna.fbcdn.net&stp=c0.5000x0.5000f_dst-emg0_p200x200_q75_tt6&ccb=18-1&_nc_gid=ECAW2rQh88z5ROjirOcONA&edm=ABiOSUQEAAAA&_nc_map=urlgen_bucketless&_nc_zt=3&_nc_tpa=Q5bMBQIMemqVnzFFeN0aLoNyibWFs117abj1BY-Q6in6Ye9w6wLgB9XVc4krWNe9EOatRKVUEep8CDEr7g&oh=06_Q3_EARKj9mbWZmXAuneNY2gS3Wd6kriBXZu06osOOdIAauTR&oe=6AE17066",
+              "type": "SHARE",
+              "caption": "🪔 FREE online Resin Pooja Thali workshop\n22 October (Thursday), subah 11 se dopahar 2 baje tak (3 ghante). Online, kahin se bhi join karo. Recording bhi milegi 🎥\nDetails aur link ke liye neeche message karo",
+              "permalink": "https://www.instagram.com/p/DepM1atgjBU/",
+              "created": "2026-10-18T23:11:28+0530",
+              "stats": {
+                "spend": 0.02,
+                "results": 0,
+                "result_label": "DMs started",
+                "dms": 0,
+                "impressions": 1
+              }
+            },
+            {
+              "id": "120255217807440581",
+              "name": "22nd october resin workshop free · 22oct-burgundy-frame",
+              "status": "ACTIVE",
+              "effective_status": "CAMPAIGN_PAUSED",
+              "issues": [],
+              "review": {},
+              "preview": "https://fb.me/2826t5wEV05cMsW",
+              "thumb": "https://external.fdel27-9.fna.fbcdn.net/emg1/v/t13/1494003853557656547?_nc_oc=AdpYw9ICngDo2jwRfg_h8wukWI3i5OKSD2pZELiBg5Xgpe1Z71v8OHvxJvghR9sesNIEK0Fwr6xcb99-CMEKWEps&url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQJDzINxueuy7ut81JCYMETsBffU5Mo49VwFRgNfCQkuwUnWhqDhMqRR3EIDSe8KwMD1yknEZRFUps0IdBr8rDgnkuc2qVmUdpW-HzUqblHWU3rkAoZLc47xv01CB5K_40lvpSVITvEgbrNVX4j72z1p&fb_obo=1&utld=facebook.com&_nc_sid=58080a&_nc_ht=external.fdel27-9.fna.fbcdn.net&stp=c0.5000x0.5000f_dst-emg0_p200x200_q75_tt6&ccb=18-1&_nc_gid=ECAW2rQh88z5ROjirOcONA&edm=ABiOSUQEAAAA&_nc_map=urlgen_bucketless&_nc_zt=3&_nc_tpa=Q5bMBQIkF5QKlYYqSPG6udj49E5T89D27u-h6tBvk_HNoLeZLFCYENFDydyWT2CRfiURvO7qITn-Zt_cJw&oh=06_Q3_EAT3g8DYQZho5UDhdWIW4KaJCIxn5d_7VTNZKg3UV5X_Z&oe=6AE1924A",
+              "type": "SHARE",
+              "caption": "🪔 FREE online Resin Pooja Thali workshop\n22 October (Thursday), subah 11 se dopahar 2 baje tak (3 ghante). Online, kahin se bhi join karo. Recording bhi milegi 🎥\nDetails aur link ke liye neeche message karo",
+              "permalink": "https://www.instagram.com/p/DepM0wbA5Rj/",
+              "created": "2026-10-18T23:11:23+0530",
+              "stats": {
+                "spend": 267.38,
+                "results": 70.0,
+                "result_label": "DMs started",
+                "dms": 70.0,
+                "impressions": 6485
+              }
+            },
+            {
+              "id": "120255217591830581",
+              "name": "22nd october resin workshop free · 22oct-tall-marigold",
+              "status": "PAUSED",
+              "effective_status": "PAUSED",
+              "issues": [],
+              "review": {},
+              "preview": "https://fb.me/22WoCUhhxhhMd28",
+              "thumb": "https://external.fdel27-3.fna.fbcdn.net/emg1/v/t13/2096550936062600956?_nc_oc=AdqlEk3uYMsi5oj0NRfrS3FcMO4MR8rCFCysm1hgIMapwPXNoQXnoOJyehPT-VPiqJqpUEH10XekZM6mUyG0gU4d&url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQKd8PJuKQDek_f7Hx2Dbm-fi3hPI0I_u2vXiNg-BYBJICMP4b7AXS9FHjqQtNpQgyJ3zkYQLFnXgTteMhE-dotq3vRD4u4S-w75Z8CPY5XQt5v2oKEF1f8zNvkX_NzEC_bWdJmBi1-f27lRb4sSuLrA&fb_obo=1&utld=facebook.com&_nc_sid=58080a&_nc_ht=external.fdel27-3.fna.fbcdn.net&stp=c0.5000x0.5000f_dst-emg0_p200x200_q75_tt6&ccb=18-1&_nc_gid=ECAW2rQh88z5ROjirOcONA&edm=ABiOSUQEAAAA&_nc_map=urlgen_bucketless&_nc_zt=3&_nc_tpa=Q5bMBQIe5WXjr2CUee1nCat9q8V9P-EWk2Gx4QqkcWu1zbG36zqUq0okMDJydHzXmf8I9NC-yQu4kcArZA&oh=06_Q3_EAeKJ9wqUCG7y3JIhx1UJ5kVXRXiA1CsgkxNTAoCa58SG&oe=6AE17B12",
+              "type": "SHARE",
+              "caption": "🪔 FREE online Resin Pooja Thali workshop\n22 October (Thursday), subah 11 se dopahar 2 baje tak (3 ghante). Online, kahin se bhi join karo. Recording bhi milegi 🎥\nDetails aur link ke liye neeche message karo",
+              "permalink": "https://www.instagram.com/p/DepM3p6AUjf/",
+              "created": "2026-10-18T22:47:30+0530",
+              "stats": {
+                "spend": 5.45,
+                "results": 2.0,
+                "result_label": "DMs started",
+                "dms": 2.0,
+                "impressions": 115
+              }
+            }
+          ],
+          "created": "2026-10-18T22:47:00+0530",
+          "stats": {
+            "spend": 317.63,
+            "results": 86.0,
+            "result_label": "DMs started",
+            "dms": 86.0,
+            "impressions": 7546
+          }
+        }
+      ],
+      "stats": {
+        "spend": 317.63,
+        "results": 86.0,
+        "result_label": "DMs started",
+        "dms": 86.0,
+        "impressions": 7546
+      }
+    },
+    {
+      "id": "120255200899020581",
+      "name": "18th october resin workshop free – Copy",
+      "status": "PAUSED",
+      "effective_status": "PAUSED",
+      "objective": "OUTCOME_ENGAGEMENT",
+      "issues": [],
+      "daily_budget": 0.0,
+      "lifetime_budget": 0.0,
+      "start": "2026-10-17T12:58:33+0530",
+      "end": "2026-10-18T23:59:00+0530",
+      "created": "2026-10-17T12:58:31+0530",
+      "template": false,
+      "adsets": [
+        {
+          "id": "120255200899400581",
+          "name": "18th october resin workshop free · audience – Copy",
+          "status": "PAUSED",
+          "effective_status": "PAUSED",
+          "issues": [],
+          "daily_budget": 300.0,
+          "lifetime_budget": 0.0,
+          "budget_remaining": 300.0,
+          "start": "2026-10-17T12:58:33+0530",
+          "end": "2026-10-18T23:59:00+0530",
+          "goal": "CONVERSATIONS",
+          "destination": "INSTAGRAM_DIRECT",
+          "audience": "India · 18–65+ · everyone · + similar people · Instagram only",
+          "value_rule_set": null,
+          "placements": {
+            "auto": false,
+            "facebook": [],
+            "instagram": [
+              "stream",
+              "story",
+              "reels",
+              "profile_feed",
+              "ig_search"
+            ],
+            "messenger": [],
+            "threads": [],
+            "audience_network": []
+          },
+          "bid_strategy": "LOWEST_COST_WITHOUT_CAP",
+          "ads": [
+            {
+              "id": "120255200899860581",
+              "name": "18th october resin workshop free · 56D27327-684B-4C5C-8B7F-7555096CC1C9 – Copy",
+              "status": "PAUSED",
+              "effective_status": "PAUSED",
+              "issues": [],
+              "review": {},
+              "preview": "https://fb.me/27j4FfYRcwdp3I8",
+              "thumb": "https://external.fdel27-7.fna.fbcdn.net/emg1/v/t13/379307901954643079?_nc_oc=Ados257fRtOX2JLin_bOpjqdZEoJiaBaMrAyZNjik5ew4Nh5V2egPx34PUIo5EgAWLA4r8vYT1np_UbMy6dCQbLI&url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQINA8kUMEl_BcBCdnB2ANTnx_QcPR4uxDQC5ELbjM5inw3zzO_Jidbdj-9g69rp8QKBsnV9DrDhTjaMkHK90gc5BeBUbwygkroaESDSzHi6qenxoGQKyld8RX2bXCJt3LUvgdZPg7pUoAmP-wtMtnkX&fb_obo=1&utld=facebook.com&_nc_sid=58080a&_nc_ht=external.fdel27-7.fna.fbcdn.net&stp=c0.5000x0.5000f_dst-emg0_p200x200_q75_tt6&ccb=18-1&_nc_gid=ECAW2rQh88z5ROjirOcONA&edm=ABiOSUQEAAAA&_nc_map=urlgen_bucketless&_nc_zt=3&_nc_tpa=Q5bMBQL6XGrcpIQKjKhwzaLb3AlrMcT6enApju3CLg2V3o3Po7qLOsYznA9Ff9pkR7wh4IY9BmzS1nPAFA&oh=06_Q3_EAbjdlQxT5iNHeIgeRcz_L_FYCz9-LPYetqdbopSnkx0X&oe=6AE191A2",
+              "type": "SHARE",
+              "caption": "🪔 FREE Resin Pooja Thali workshop Karwa Chauth Special\n18 October (Sunday), dopahar 3 baje se, lagbhag 3 ghante. Online, kahin se bhi join karo.\nDetails aur link ke liye neeche message karo",
+              "permalink": "https://www.instagram.com/p/Delkr0qgWhK/",
+              "created": "2026-10-17T12:58:35+0530",
+              "stats": {
+                "spend": 207.97,
+                "results": 162.0,
+                "result_label": "DMs started",
+                "dms": 162.0,
+                "impressions": 7384
+              }
+            }
+          ],
+          "created": "2026-10-17T12:58:32+0530",
+          "stats": {
+            "spend": 207.97,
+            "results": 162.0,
+            "result_label": "DMs started",
+            "dms": 162.0,
+            "impressions": 7384
+          }
+        }
+      ],
+      "stats": {
+        "spend": 207.97,
+        "results": 162.0,
+        "result_label": "DMs started",
+        "dms": 162.0,
+        "impressions": 7384
+      }
+    },
+    {
+      "id": "120255115583110581",
+      "name": "18th october resin workshop free",
+      "status": "PAUSED",
+      "effective_status": "PAUSED",
+      "objective": "OUTCOME_ENGAGEMENT",
+      "issues": [],
+      "daily_budget": 0.0,
+      "lifetime_budget": 0.0,
+      "start": "2026-10-12T18:15:22+0530",
+      "end": null,
+      "created": "2026-10-12T18:15:21+0530",
+      "template": false,
+      "adsets": [
+        {
+          "id": "120255189359790581",
+          "name": "18th october resin workshop free · audience – Copy",
+          "status": "PAUSED",
+          "effective_status": "PAUSED",
+          "issues": [],
+          "daily_budget": 300.0,
+          "lifetime_budget": 0.0,
+          "budget_remaining": 300.0,
+          "start": "2026-10-16T17:54:39+0530",
+          "end": "2026-10-17T23:59:00+0530",
+          "goal": "CONVERSATIONS",
+          "destination": "INSTAGRAM_DIRECT",
+          "audience": "India · 18–65+ · everyone · + similar people · Instagram only",
+          "value_rule_set": null,
+          "placements": {
+            "auto": false,
+            "facebook": [],
+            "instagram": [
+              "stream",
+              "story",
+              "reels",
+              "profile_feed",
+              "ig_search"
+            ],
+            "messenger": [],
+            "threads": [],
+            "audience_network": []
+          },
+          "bid_strategy": "LOWEST_COST_WITHOUT_CAP",
+          "ads": [
+            {
+              "id": "120255189359810581",
+              "name": "18th october resin workshop free · 56D27327-684B-4C5C-8B7F-7555096CC1C9",
+              "status": "PAUSED",
+              "effective_status": "PAUSED",
+              "issues": [],
+              "review": {},
+              "preview": "https://fb.me/2cfDKR1pDEVOhXT",
+              "thumb": "https://external.fdel27-5.fna.fbcdn.net/emg1/v/t13/4277289380937167555?_nc_oc=Adq3q4N_TvBZyE8iuIU8to9yFJcR23sI7TEUuzVT3rlFz88zrsSuXrfp4qHNKqYJjK5jQgkaHpi4Mggmo1pDZC79&url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQJTJbbBUirm76YDzdOcpAcVn8n3Tw4H-CI41TSXlx3OYJv622-S6rnGyUDSJRklyGnKIeLpwKCytS-r6Em39Kzea-WaufOweq3tWcb5sy9X2KKgEp6fY8p1DvXVU5Ggo2HfuywFUXbaNVtK2f8EMzbU&fb_obo=1&utld=facebook.com&_nc_sid=58080a&_nc_ht=external.fdel27-5.fna.fbcdn.net&stp=c0.5000x0.5000f_dst-emg0_p200x200_q75_tt6&ccb=18-1&_nc_gid=ECAW2rQh88z5ROjirOcONA&edm=ABiOSUQEAAAA&_nc_map=urlgen_bucketless&_nc_zt=3&_nc_tpa=Q5bMBQJGUhX8NGr-DAY6x5GAulJFH-o6j6WL3lTyuYA6RJebtjNZDx7XBnjiFDFLGWMGLh92WYt--1V-fw&oh=06_Q3_EAdHyhiYilsJcXZJ62wgNWtvmTNVmFoPJ7F8RBon2gWfk&oe=6AE1956B",
+              "type": "SHARE",
+              "caption": "🪔 FREE Resin Pooja Thali workshop Karwa Chauth Special\n18 October (Sunday), dopahar 3 baje se, lagbhag 3 ghante. Online, kahin se bhi join karo.\nDetails aur link ke liye neeche message karo",
+              "permalink": "https://www.instagram.com/p/DejiC4sAlNJ/",
+              "created": "2026-10-16T17:57:04+0530",
+              "stats": {
+                "spend": 3.05,
+                "results": 4.0,
+                "result_label": "DMs started",
+                "dms": 4.0,
+                "impressions": 134
+              }
+            },
+            {
+              "id": "120255189359800581",
+              "name": "18th october resin workshop free · video-output-A08F1B69-936A-4585-95B0-8AA5C9F79875-1",
+              "status": "PAUSED",
+              "effective_status": "PAUSED",
+              "issues": [],
+              "review": {},
+              "preview": "https://fb.me/1XkGsY8nOAmpfoB",
+              "thumb": "https://scontent.fdel27-2.fna.fbcdn.net/v/t15.5256-10/828493193_1135786252447750_6727699051837087981_n.jpg?_nc_cat=105&_nc_map=urlgen_bucketless&ccb=1-7&_nc_ohc=cButbGzzcIgQ7kNvwHp7rCe&_nc_oc=Adqfv4RSBUFUrsS88QMPIcO4-9Ym6rlXGjmSpulCGN0wLuXXhgP0lVBNRffhqg3QLPsmjCQTQRySAIv7tqjfZic5&_nc_zt=23&_nc_ht=scontent.fdel27-2.fna&edm=ABiOSUQEAAAA&_nc_gid=ECAW2rQh88z5ROjirOcONA&_nc_tpa=Q5bMBQIvICj4cNAmtIaBAUnCVhE5o_zadHgGmiizlofVQtEBP_JFTypV6CJdNZ6B6YkfKF-6Jy6sKxYjVQ&stp=c0.5000x0.5000f_dst-emg0_p200x200_q75_tt6&ur=5fad0e&_nc_sid=58080a&oh=00_AQPuAxa9FBdv0AMmSp6mLNue1En8Uw-VSn2Wo6kdQXqjFw&oe=6AE5681B",
+              "type": "VIDEO",
+              "caption": "🪔 FREE Resin Pooja Thali workshop Karwa Chauth Special\n18 October (Sunday), dopahar 3 baje se, lagbhag 3 ghante. Online, kahin se bhi join karo.\nDetails aur link ke liye neeche message karo",
+              "permalink": "https://www.instagram.com/p/Dejhx2Gg90j/",
+              "created": "2026-10-16T17:54:40+0530",
+              "stats": {
+                "spend": 56.76,
+                "results": 21.0,
+                "result_label": "DMs started",
+                "dms": 21.0,
+                "impressions": 1570
+              }
+            }
+          ],
+          "created": "2026-10-16T17:54:39+0530",
+          "stats": {
+            "spend": 59.809999999999995,
+            "results": 25.0,
+            "result_label": "DMs started",
+            "dms": 25.0,
+            "impressions": 1704
+          }
+        },
+        {
+          "id": "120255115583770581",
+          "name": "18th october resin workshop free · audience",
+          "status": "PAUSED",
+          "effective_status": "PAUSED",
+          "issues": [],
+          "daily_budget": 300.0,
+          "lifetime_budget": 0.0,
+          "budget_remaining": 300.0,
+          "start": "2026-10-12T18:15:22+0530",
+          "end": null,
+          "goal": "CONVERSATIONS",
+          "destination": "INSTAGRAM_DIRECT",
+          "audience": "India · 18–65+ · everyone · + similar people · Instagram only",
+          "value_rule_set": null,
+          "placements": {
+            "auto": false,
+            "facebook": [],
+            "instagram": [
+              "stream",
+              "story",
+              "reels",
+              "profile_feed",
+              "ig_search",
+              "profile_reels"
+            ],
+            "messenger": [],
+            "threads": [],
+            "audience_network": []
+          },
+          "bid_strategy": "LOWEST_COST_WITHOUT_CAP",
+          "ads": [
+            {
+              "id": "120255115587990581",
+              "name": "18th october resin workshop free · video-output-A08F1B69-936A-4585-95B0-8AA5C9F79875-1",
+              "status": "PAUSED",
+              "effective_status": "PAUSED",
+              "issues": [],
+              "review": {},
+              "preview": "https://fb.me/27Lp3s6gzYmUIXw",
+              "thumb": "https://scontent.fdel27-8.fna.fbcdn.net/v/t15.5256-10/844522702_1971295906897376_873204029106944172_n.jpg?_nc_cat=109&_nc_map=urlgen_bucketless&ccb=1-7&_nc_ohc=mWKYKv8EMo8Q7kNvwGmFsb0&_nc_oc=AdprcX48y1JAkX0RnN9rr8Hw49yJksziEj8u4YSFaDjux37OKdhTcuJDSz0jNVqOFIcyaKo68YwJGbCZTRXqyemh&_nc_zt=23&_nc_ht=scontent.fdel27-8.fna&edm=ABiOSUQEAAAA&_nc_gid=ECAW2rQh88z5ROjirOcONA&_nc_tpa=Q5bMBQLoCVF3qmBgoXJNb8V3RvKYWJLfwNcWjBN7J4hEAxSHeyw_C5OTkWGczRoWx5YiV2JzWLc6hKrMgg&stp=c0.5000x0.5000f_dst-emg0_p200x200_q75_tt6&ur=d2b52d&_nc_sid=58080a&oh=00_AQMZen3iwOXYpF2EA6m8IyF2GG7b_3QfOQnRLeDJD71phg&oe=6AE56145",
+              "type": "VIDEO",
+              "caption": "🪔 FREE Resin Pooja Thali workshop Karwa Chauth Special\n18 October (Sunday), dopahar 3 baje se, lagbhag 3 ghante. Online, kahin se bhi join karo.\nDetails aur link ke liye neeche message karo",
+              "permalink": "https://www.instagram.com/p/DeZRBHcAv8I/",
+              "created": "2026-10-12T18:15:35+0530",
+              "stats": {
+                "spend": 138.46,
+                "results": 59.0,
+                "result_label": "DMs started",
+                "dms": 59.0,
+                "impressions": 2807
+              }
+            },
+            {
+              "id": "120255115585120581",
+              "name": "18th october resin workshop free · 56D27327-684B-4C5C-8B7F-7555096CC1C9",
+              "status": "PAUSED",
+              "effective_status": "PAUSED",
+              "issues": [],
+              "review": {},
+              "preview": "https://fb.me/24MA2ywDDmTQzSI",
+              "thumb": "https://external.fdel1-1.fna.fbcdn.net/emg1/v/t13/11387566760817023902?_nc_oc=AdqLuIO3Q26YaUJGfcqqx6fhn0qr6tR1MAaee9qXKmxtMV3prZzk_0a3FOTI1bmKuBnv_qY9YBUYKH4rEjsbt5G1&url=https%3A%2F%2Fwww.facebook.com%2Fads%2Fimage%2F%3Fd%3DAQLGD3H4QqWUaj_W8OZGTPkKZSMJpdS147Rbmlnlx8OfNYnKauj1VZg3hGXy4tt74z-e0igqBCs0xwc0tf5i-V-tPFezApFtFD3MkSMZOZ-opoRcnUy-LvUQ3rfDdzvs4qGN_RUchoahxfR1GHpzZKPT&fb_obo=1&utld=facebook.com&_nc_sid=58080a&_nc_ht=external.fdel1-1.fna.fbcdn.net&stp=c0.5000x0.5000f_dst-emg0_p200x200_q75_tt6&ccb=18-1&_nc_gid=ECAW2rQh88z5ROjirOcONA&edm=ABiOSUQEAAAA&_nc_map=urlgen_bucketless&_nc_zt=3&_nc_tpa=Q5bMBQKgH8oCkQ7m2kAFxV4nfkMOfsCTPz9-Uszb9yLR85KKgmxiUhAdkB-q_uMaDvcss5e2mEQDSbVMFA&oh=06_Q3_EAb0UTcGzLboXFGrxthJVv7XPbunplHfwBZZELZT7WNeE&oe=6AE1755B",
+              "type": "SHARE",
+              "caption": "🪔 FREE Resin Pooja Thali workshop Karwa Chauth Special\n18 October (Sunday), dopahar 3 baje se, lagbhag 3 ghante. Online, kahin se bhi join karo.\nDetails aur link ke liye neeche message karo",
+              "permalink": "https://www.instagram.com/p/DelTGijgibB/",
+              "created": "2026-10-12T18:15:25+0530",
+              "stats": {
+                "spend": 1210.71,
+                "results": 895.0,
+                "result_label": "DMs started",
+                "dms": 895.0,
+                "impressions": 36293
+              }
+            }
+          ],
+          "created": "2026-10-12T18:15:22+0530",
+          "stats": {
+            "spend": 1349.17,
+            "results": 954.0,
+            "result_label": "DMs started",
+            "dms": 954.0,
+            "impressions": 39100
+          }
+        }
+      ],
+      "stats": {
+        "spend": 1408.98,
+        "results": 979.0,
+        "result_label": "DMs started",
+        "dms": 979.0,
+        "impressions": 40804
+      }
+    },
+    {
+      "id": "120254958322650581",
+      "name": "again new main",
+      "status": "PAUSED",
+      "effective_status": "PAUSED",
+      "objective": "OUTCOME_ENGAGEMENT",
+      "issues": [],
+      "daily_budget": 0.0,
+      "lifetime_budget": 0.0,
+      "start": "2026-10-02T21:44:44+0530",
+      "end": "2026-10-11T23:00:00+0530",
+      "created": "2026-10-02T21:44:43+0530",
+      "template": true,
+      "adsets": [
+        {
+          "id": "120254958322670581",
+          "name": "karvachauth 11th oct created rn 10th oct",
+          "status": "PAUSED",
+          "effective_status": "PAUSED",
+          "issues": [],
+          "daily_budget": 2000.0,
+          "lifetime_budget": 0.0,
+          "budget_remaining": 2000.0,
+          "start": "2026-10-02T21:44:44+0530",
+          "end": "2026-10-11T23:00:00+0530",
+          "goal": "CONVERSATIONS",
+          "destination": "INSTAGRAM_DIRECT",
+          "audience": "India · 18–65+ · everyone · + similar people · automatic placements",
+          "value_rule_set": "1253176533635053",
+          "placements": {
+            "auto": true
+          },
+          "bid_strategy": "LOWEST_COST_WITHOUT_CAP",
+          "ads": [
+            {
+              "id": "120254958322660581",
+              "name": "karvaachauthhh mainnn",
+              "status": "PAUSED",
+              "effective_status": "PAUSED",
+              "issues": [],
+              "review": {},
+              "preview": "https://fb.me/yZKM1tbRGp1rjb2",
+              "thumb": "https://scontent.fdel1-7.fna.fbcdn.net/v/t15.5256-10/834722862_2526344157859236_7881430982448907204_n.jpg?_nc_cat=110&_nc_map=urlgen_bucketless&ccb=1-7&_nc_ohc=FdYRUkwRn7MQ7kNvwFzaDq6&_nc_oc=AdrOPxPj4MXx4wCpTib1Rr8ZcUlIuHViH3nbq3LklNiPPugcTpVY4hvUTkt62AMIrgLEi9faTAtmnYvOfIZpuPt5&_nc_zt=23&_nc_ht=scontent.fdel1-7.fna&edm=ABiOSUQEAAAA&_nc_gid=ECAW2rQh88z5ROjirOcONA&_nc_tpa=Q5bMBQKOZxj2goCddGJh3TGMPGxjbfj6IGUXqQVbZi9dQFQol8dAFHj8SnBP-Oo1LbKjfxalO4M0_45FWA&stp=c0.5000x0.5000f_dst-emg0_p200x200_q75_tt6&ur=5fad0e&_nc_sid=58080a&oh=00_AQOCd8a8xQJEMp-aZOffTMfGQz0b_jEP7ilpMREjNlMrQQ&oe=6AE58A84",
+              "type": "VIDEO",
+              "caption": "FREE Karwa Chauth Resin Workshop ✨\n\nMake your own beautiful resin art for Karwa Chauth 🌙\nEasy for beginners. No experience needed.\n\nTap \"Send message\" and we'll send you all the details 📩",
+              "permalink": "https://www.instagram.com/p/DeZANEjAAUv/",
+              "created": "2026-10-02T21:44:45+0530",
+              "stats": {
+                "spend": 2583.17,
+                "results": 677.0,
+                "result_label": "DMs started",
+                "dms": 677.0,
+                "impressions": 43018
+              }
+            }
+          ],
+          "created": "2026-10-02T21:44:44+0530",
+          "stats": {
+            "spend": 2583.17,
+            "results": 677.0,
+            "result_label": "DMs started",
+            "dms": 677.0,
+            "impressions": 43018
+          }
+        }
+      ],
+      "stats": {
+        "spend": 2583.17,
+        "results": 677.0,
+        "result_label": "DMs started",
+        "dms": 677.0,
+        "impressions": 43018
+      }
+    }
+  ],
+  "at": 1793039444.9041266
+}

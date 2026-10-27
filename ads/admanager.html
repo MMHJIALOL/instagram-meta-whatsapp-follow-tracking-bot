@@ -372,7 +372,11 @@ button.cnext{position:absolute;right:6px;top:50%;transform:translateY(-50%);widt
     </div>
 
     <div class="card">
-      <h2>4 · Photos &amp; videos</h2>
+      <h2>4 · Ad images &amp; videos</h2>
+      <div class="row" style="margin-bottom:12px"><button type="button" class="main" id="add-images"><i class="ti ti-photo-plus"></i> Add images</button><button type="button" id="add-videos">Add videos</button></div>
+      <input type="file" id="image-files" accept="image/jpeg,image/png" multiple hidden>
+      <input type="file" id="video-files" accept="video/*" multiple hidden>
+      <p class="sub">Choose a ratio for each image after adding it: 1:1 square, 4:5 portrait, 9:16 vertical, or 1.91:1 landscape. Keep the whole image with white padding, or crop the centre. The preview shows the file that will be uploaded.</p>
       <div class="drop" id="drop" tabindex="0" role="button"><i class="ti ti-cloud-upload"></i>Drop photos or videos here, or tap to choose<div class="sub">JPG / PNG photos, MP4 / MOV videos. Several at once is fine.</div></div>
       <input type="file" id="files" accept="image/jpeg,image/png,image/gif,video/*" multiple hidden>
       <div class="media" id="media"></div>
@@ -965,16 +969,62 @@ function addFiles(list){
       <button class="mx" data-rm="${m.k}" aria-label="Remove ${esc(f.name)}"><i class="ti ti-x"></i></button>
       <div class="mname" title="${esc(f.name)}">${m.video?'<i class="ti ti-video"></i> ':""}${esc(f.name)}</div><div class="bar"><i style="width:0"></i></div><div class="mst sub"></div><div class="thumbs"></div>`;
     $("media").appendChild(el);
-    upload(m);updMedia(m);
+    if(!m.video&&/\.(jpe?g|png)$/i.test(f.name)){
+      m.original=f;m.imageRatio="original";m.fit="contain";
+      el.insertAdjacentHTML("beforeend",`<label class="f" style="margin:8px 0 0"><span>Image ratio</span><select data-ratio="${m.k}" aria-label="Image ratio for ${esc(f.name)}"><option value="original">Original</option><option value="1:1">1:1 · Square</option><option value="4:5">4:5 · Portrait</option><option value="9:16">9:16 · Vertical</option><option value="1.91:1">1.91:1 · Landscape</option></select></label><label class="f" style="margin:6px 0"><span>Image fit</span><select data-fit="${m.k}" disabled aria-label="Image fit for ${esc(f.name)}"><option value="contain">Full image + white padding</option><option value="cover">Crop centre</option></select></label><div class="sub" data-size></div>`);
+      prepareImage(m);
+    }else upload(m);
+    updMedia(m);
   }
   $("multi").hidden=MEDIA.length<2;autoPerf();schedulePreview();
 }
+const IMAGE_SIZES={"1:1":[1080,1080],"4:5":[1080,1350],"9:16":[1080,1920],"1.91:1":[1910,1000]};
+async function prepareImage(m){
+  m.preparing=true;updMedia(m);
+  const source=URL.createObjectURL(m.original);
+  try{
+    const img=new Image();img.src=source;await img.decode();
+    if(m.gone)return;
+    let width=img.naturalWidth,height=img.naturalHeight;
+    if(m.imageRatio!=="original"){
+      [width,height]=IMAGE_SIZES[m.imageRatio];
+      const canvas=document.createElement("canvas");canvas.width=width;canvas.height=height;
+      const ctx=canvas.getContext("2d");ctx.fillStyle="#fff";ctx.fillRect(0,0,width,height);
+      const scale=(m.fit==="cover"?Math.max:Math.min)(width/img.naturalWidth,height/img.naturalHeight);
+      const w=img.naturalWidth*scale,h=img.naturalHeight*scale;
+      ctx.drawImage(img,(width-w)/2,(height-h)/2,w,h);
+      const blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/jpeg",.94));
+      if(m.gone)return;
+      if(!blob)throw new Error("Couldn't prepare this image. Try a different photo.");
+      m.file=new File([blob],m.original.name.replace(/\.[^.]+$/,"")+"-"+m.imageRatio.replace(":","x")+".jpg",{type:"image/jpeg"});
+    }else m.file=m.original;
+    URL.revokeObjectURL(m.url);m.url=URL.createObjectURL(m.file);m.width=width;m.height=height;
+    const el=$("m-"+m.k);el.querySelector(".mprev img").src=m.url;
+    el.querySelector(".mprev").style.aspectRatio=`${width}/${height}`;
+    el.querySelector("[data-size]").textContent=`${width} × ${height} px · ${m.imageRatio==="original"?"Original":m.imageRatio}`;
+    m.preparing=false;upload(m);updMedia(m);schedulePreview();
+  }catch(e){if(!m.gone){m.preparing=false;m.err=e.message||"Couldn't read this image";updMedia(m)}}
+  finally{URL.revokeObjectURL(source)}
+}
+$("media").onchange=e=>{
+  const target=e.target;if(!target.matches("[data-ratio],[data-fit]"))return;
+  const k=+(target.dataset.ratio||target.dataset.fit),i=MEDIA.findIndex(m=>m.k===k);if(i<0)return;
+  const old=MEDIA[i],el=$("m-"+k);old.gone=true;old.xhr?.abort();
+  const m={...old,gone:false,job:null,err:null,local:0,wasReady:false,errShown:false,thumb:null,xhr:null,
+    imageRatio:el.querySelector("[data-ratio]").value,fit:el.querySelector("[data-fit]").value};
+  MEDIA[i]=m;el.querySelector("[data-fit]").disabled=m.imageRatio==="original";
+  el.querySelector(".shape")?.remove();prepareImage(m);schedulePreview();
+};
+$("add-images").onclick=()=>$("image-files").click();
+$("add-videos").onclick=()=>$("video-files").click();
+for(const id of ["image-files","video-files"])$(id).onchange=e=>{addFiles([...e.target.files]);e.target.value=""};
 function upload(m){
   const x=new XMLHttpRequest();x.open("POST","/api/upload");
+  m.xhr=x;
   x.setRequestHeader("x-local","1");x.setRequestHeader("x-filename",encodeURIComponent(m.file.name));
   x.setRequestHeader("content-type",m.file.type||"application/octet-stream");
   x.upload.onprogress=e=>{if(e.lengthComputable){m.local=Math.round(e.loaded/e.total*100);updMedia(m)}};
-  x.onload=()=>{let j={};try{j=JSON.parse(x.responseText)}catch(e){}
+  x.onload=()=>{if(m.gone)return;let j={};try{j=JSON.parse(x.responseText)}catch(e){}
     if(x.status>=400){m.err=(j.detail&&j.detail.message)||"Upload failed";updMedia(m);return}
     m.job=j;updMedia(m);pollMedia(m)};
   x.onerror=()=>{m.err="Couldn't send the file to the ad manager";updMedia(m)};
@@ -982,14 +1032,16 @@ function upload(m){
 }
 function pollMedia(m){
   if(m.gone)return;
-  api("/api/job/"+m.job.id).then(j=>{m.job=j;if(j.phase==="ready"&&!m.thumb)m.thumb=j.thumb;updMedia(m);if(j.phase!=="ready"&&j.phase!=="error")setTimeout(()=>pollMedia(m),1500)})
+  api("/api/job/"+m.job.id).then(j=>{if(m.gone)return;m.job=j;if(j.phase==="ready"&&!m.thumb)m.thumb=j.thumb;updMedia(m);if(j.phase!=="ready"&&j.phase!=="error")setTimeout(()=>pollMedia(m),1500)})
     .catch(e=>{m.err=e.message;updMedia(m)});
 }
 function updMedia(m){
+  if(m.gone)return;
   const el=$("m-"+m.k);if(!el)return;
   const j=m.job,st=el.querySelector(".mst"),bar=el.querySelector(".bar i");
   let text,p=0,cls="sub";
   if(m.err){text="✕ "+m.err;cls="err"}
+  else if(m.preparing){text="Preparing image…"}
   else if(!j||j.phase==="receiving"){text=`Sending… ${m.local}%`;p=m.local}
   else if(j.phase==="uploading"){text=`Uploading to Meta… ${j.pct||0}%`;p=j.pct||0}
   else if(j.phase==="processing"){text=`Meta is processing… ${j.pct||0}%`;p=j.pct||0}
@@ -1230,7 +1282,7 @@ function ctaLabel(){
   return "";
 }
 function mediaItems(){const ok=MEDIA.filter(m=>!m.err&&!(m.job&&m.job.phase==="error"));return $("f-carousel").checked&&ok.length>1?ok:ok.slice(0,1)}
-const ratio=m=>{const j=m&&m.job;return j&&j.width&&j.height?j.width/j.height:1};
+const ratio=m=>{const j=m&&m.job;return m&&m.width&&m.height?m.width/m.height:j&&j.width&&j.height?j.width/j.height:1};
 function mediaEl(m,cls="",still=false){
   if(!m)return `<div class="placeholder"><i class="ti ti-photo"></i>Your photo or video shows here</div>`;
   if(m.video)return still?(m.thumb?`<img class="${cls}" src="${esc(m.thumb)}" alt="">`:""):`<video class="${cls}" src="${m.url}" muted autoplay loop playsinline></video>`;

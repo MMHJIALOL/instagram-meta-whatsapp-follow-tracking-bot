@@ -1,0 +1,41 @@
+{
+  "daily_budget": "40000",
+  "targeting": {
+    "age_max": 65,
+    "age_min": 18,
+    "geo_locations": {
+      "countries": [
+        "IN"
+      ],
+      "location_types": [
+        "frequently_in",
+        "home",
+        "recent"
+      ]
+    },
+    "targeting_automation": {
+      "advantage_audience": 1
+    },
+    "publisher_platforms": [
+      "instagram"
+    ],
+    "instagram_positions": [
+      "stream",
+      "story",
+      "reels",
+      "profile_feed",
+      "ig_search"
+    ]
+  },
+  "optimization_goal": "CONVERSATIONS",
+  "billing_event": "IMPRESSIONS",
+  "bid_strategy": "LOWEST_COST_WITHOUT_CAP",
+  "destination_type": "INSTAGRAM_DIRECT",
+  "name": "31st Oct Diwali Special FREE Resin Pooja Thali Workshop · audience",
+  "campaign_id": "120255353801660581",
+  "status": "PAUSED",
+  "promoted_object": {
+    "page_id": "432667730092416"
+  },
+  "end_time": "2026-10-31T12:00:00+05:30"
+}

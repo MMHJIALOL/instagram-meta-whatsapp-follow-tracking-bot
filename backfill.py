@@ -70,12 +70,14 @@ def reply(person):
     claimed = any(t.upper() == "DONE" or t.startswith("I'm following") for t in texts)
     answers = []
     for t in texts:
-        answers += [a for a in main.faq_answers(t) if a not in answers]
-    for a in answers:
-        if a == main.MATERIAL_MSG and main.already_sent(sid):
-            a += "\n\n" + main.MATERIAL_LINK_MSG.format(main.personal_link(sid))
-        main.send({"id": sid}, a)
-    main.handle(sid, person["username"], {"id": sid}, claimed=claimed)
+        answers += [qa for qa in main.answers_for(t) if qa not in answers]
+    for f, a in answers:
+        if f["id"] == "material" and main.already_sent(sid):
+            a += "\n\n" + main.fill(main.text("MATERIAL_LINK_MSG"), main.personal_link(sid))
+        buttons = main.reply_buttons(f)
+        main.send({"id": sid}, a, buttons) if buttons else main.send({"id": sid}, a)
+    if claimed or not any(f.get("stop") for f, _ in answers):  # a custom reply can stop the follow step
+        main.handle(sid, person["username"], {"id": sid}, claimed=claimed)
     main.log.info("caught up missed DM from %s", person["username"] or sid)
     return True
 

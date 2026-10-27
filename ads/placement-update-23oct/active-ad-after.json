@@ -1,0 +1,177 @@
+{
+  "id": "120255290411990581",
+  "name": "25 Oct Shubh-Labh Rs99 - WhatsApp 9211664301",
+  "status": "ACTIVE",
+  "effective_status": "IN_PROCESS",
+  "creative": {
+    "id": "3030431073970235",
+    "asset_feed_spec": {
+      "images": [
+        {
+          "adlabels": [
+            {
+              "name": "feed_4x5",
+              "id": "120255291493210581"
+            }
+          ],
+          "hash": "3016e0ccf916f236a8e6fc98035c712c"
+        },
+        {
+          "adlabels": [
+            {
+              "name": "reels_9x16",
+              "id": "120255291493200581"
+            }
+          ],
+          "hash": "915481c24e026720e8c9a66fec0f32c9"
+        },
+        {
+          "adlabels": [
+            {
+              "name": "square_1x1",
+              "id": "120255291493190581"
+            }
+          ],
+          "hash": "fe4af1696d321a05719f4a2ac9867c33"
+        }
+      ],
+      "bodies": [
+        {
+          "text": "🪔 Is Diwali, apne haathon se Shubh-Labh resin hanging banana seekhein!\n\nOnline Resin Art Workshop — sirf ₹99\n📅 25 October | ⏰ 3 PM IST | 3 ghante\n🎥 Video recording available\n\nWorkshop details aur booking ke liye neeche WhatsApp button par tap karke message bhejein.\nMaterials/kit alag se hain."
+        }
+      ],
+      "call_to_action_types": [
+        "WHATSAPP_MESSAGE"
+      ],
+      "call_to_actions": [
+        {
+          "type": "WHATSAPP_MESSAGE",
+          "value": {
+            "app_destination": "WHATSAPP"
+          }
+        }
+      ],
+      "descriptions": [
+        {
+          "text": " "
+        }
+      ],
+      "link_urls": [
+        {
+          "website_url": "https://api.whatsapp.com/send?phone=919211664301&text=Hi%21%20Mujhe%20Rs%2099%20Shubh-Labh%20resin%20workshop%20book%20karni%20hai."
+        }
+      ],
+      "titles": [
+        {
+          "text": "₹99 Shubh-Labh Workshop | WhatsApp par book karein"
+        }
+      ],
+      "ad_formats": [
+        "SINGLE_IMAGE"
+      ],
+      "asset_customization_rules": [
+        {
+          "customization_spec": {
+            "age_max": 65,
+            "age_min": 13,
+            "publisher_platforms": [
+              "facebook",
+              "instagram"
+            ],
+            "facebook_positions": [
+              "story",
+              "facebook_reels"
+            ],
+            "instagram_positions": [
+              "story",
+              "reels",
+              "profile_reels"
+            ]
+          },
+          "image_label": {
+            "name": "reels_9x16",
+            "id": "120255291493200581"
+          },
+          "priority": 1
+        },
+        {
+          "customization_spec": {
+            "age_max": 65,
+            "age_min": 13,
+            "publisher_platforms": [
+              "facebook",
+              "instagram"
+            ],
+            "facebook_positions": [
+              "feed"
+            ],
+            "instagram_positions": [
+              "stream",
+              "profile_feed"
+            ]
+          },
+          "image_label": {
+            "name": "feed_4x5",
+            "id": "120255291493210581"
+          },
+          "priority": 2
+        },
+        {
+          "customization_spec": {
+            "age_max": 65,
+            "age_min": 13
+          },
+          "image_label": {
+            "name": "square_1x1",
+            "id": "120255291493190581"
+          },
+          "priority": 3
+        }
+      ],
+      "optimization_type": "PLACEMENT",
+      "additional_data": {
+        "multi_share_end_card": false,
+        "is_click_to_message": false
+      },
+      "reasons_to_shop": false,
+      "shops_bundle": false
+    }
+  },
+  "campaign": {
+    "id": "120255290410140581",
+    "name": "25 Oct Shubh-Labh Rs99 - WhatsApp 9211664301",
+    "status": "ACTIVE"
+  },
+  "adset": {
+    "id": "120255290410990581",
+    "name": "25 Oct Shubh-Labh Rs99 - WhatsApp 9211664301 · audience",
+    "status": "ACTIVE",
+    "daily_budget": "30000",
+    "lifetime_budget": "0",
+    "start_time": "2026-10-23T00:35:30+0530",
+    "end_time": "2026-10-25T14:00:00+0530",
+    "targeting": {
+      "age_max": 65,
+      "age_min": 18,
+      "geo_locations": {
+        "countries": [
+          "IN"
+        ],
+        "location_types": [
+          "frequently_in",
+          "home",
+          "recent"
+        ]
+      },
+      "targeting_automation": {
+        "advantage_audience": 1
+      },
+      "user_age_unknown": true
+    },
+    "destination_type": "WHATSAPP",
+    "promoted_object": {
+      "page_id": "432667730092416",
+      "smart_pse_enabled": false
+    }
+  }
+}

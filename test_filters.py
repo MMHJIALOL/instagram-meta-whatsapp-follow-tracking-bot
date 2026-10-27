@@ -3,8 +3,11 @@ import os
 from datetime import datetime
 
 os.environ.update(START_AFTER="2026-10-02T21:00:00+05:30", KEYWORD="workshop", IG_USER_ID="me", MEET_URL="")
+import tempfile
+
 import main
 
+main.DB = os.path.join(tempfile.mkdtemp(), "test.db")  # never the real bot.db (the bot records its activity there)
 main.first_time = lambda _id: True
 times = {"old": "2026-09-01T10:00:00+0000", "new": "2026-10-02T16:00:00+0000"}  # 16:00 UTC = 21:30 IST
 main.api = lambda method, path, **kw: {"timestamp": times[path]} if path in times else None
@@ -162,6 +165,9 @@ for q in ("Is it really free?", "Fees kya hai", "Free hai kya?", "What's the wor
 for q in ("What's the material list?", "What's the material cost?", "saman kya kya lagega", "Samaan list bhejo",
           "सामान क्या चाहिए", "materials needed?", "material kaha milega"):
     assert main.faq_answers(q) == [main.MATERIAL_MSG], q
+for q in ("Ab kya karna hai?", "ab kya karna h", "What now?", "what now", "Class kaise hogi?", "class kese hogi",
+          "Workshop online hai ya offline?", "Google meet pe hoga?", "अब क्या करना है", "Done, now what?"):
+    assert main.faq_answers(q) == [main.CLASS_MSG], q
 for q in ("Hello, can I get more info on this?", "I'm interested! Send me the workshop link", "Hi", "sometimes"):
     assert main.faq_answers(q) == [], q
 out.clear()

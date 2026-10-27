@@ -1,0 +1,69 @@
+{
+  "id": "8aba9a48e2e0",
+  "kind": "create",
+  "at": 1792695924.6439047,
+  "state": "done",
+  "steps": [
+    {
+      "text": "Creating the campaign",
+      "state": "done"
+    },
+    {
+      "text": "Creating the ad set (budget, dates, audience, placements)",
+      "state": "done"
+    },
+    {
+      "text": "Creating the ad",
+      "state": "done"
+    },
+    {
+      "text": "Getting previews",
+      "state": "done"
+    }
+  ],
+  "result": {
+    "campaign_id": "120255290410140581",
+    "adset_id": "120255290410990581",
+    "ads": [
+      {
+        "id": "120255290411990581",
+        "name": "25 Oct Shubh-Labh Rs99 - WhatsApp 9211664301",
+        "creative_id": "2719423701844785",
+        "thumb": "https://scontent.fdel27-4.fna.fbcdn.net/v/t45.1600-4/861163771_122106375453512135_7431481729663359961_n.png?stp=dst-jpg_tt6&_nc_cat=106&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=d5bd00&_nc_ohc=IZWZByw5GnMQ7kNvwEQLyHL&_nc_oc=Adq_Rr8r6wmNtIsg7Ek48dpTnGFhmsJXPlItns_QkQWwg50YLnu0-OPh9JRDs3CWP7EJ7J8nEyKkKWE5_JdxIwLE&_nc_zt=1&_nc_ht=scontent.fdel27-4.fna&edm=AJNyvH4EAAAA&_nc_gid=o4JBg-Iow1CBap3rc08VgQ&_nc_tpa=Q5bMBQLX1WgyWQrPo-ewgfzkNIZmnuRmpoEopM6taskMMCOM4Foh6--d3B_NLDHL0aOfAbv8QShRC1e1sg&oh=00_AQOOw4zW7GlCrXuiycNozaY4KiKarHeGePujdSt1vVDI5w&oe=6AE028EC",
+        "files": [
+          "IMG_0876.PNG"
+        ],
+        "preview": "https://fb.me/2fRsuVMBCg9rSPQ"
+      }
+    ],
+    "name": "25 Oct Shubh-Labh Rs99 - WhatsApp 9211664301",
+    "objective": "engagement",
+    "location": "messages",
+    "perf": "CONVERSATIONS",
+    "destinations": [
+      "whatsapp"
+    ],
+    "page": "paintANDbrush",
+    "ig": "kalakritistudio_parul",
+    "value_rules": null,
+    "cost_goal": null,
+    "placements": {
+      "auto": true,
+      "devices": "all",
+      "facebook": [],
+      "instagram": [],
+      "messenger": [],
+      "threads": [],
+      "audience_network": []
+    },
+    "budget": 300.0,
+    "lifetime": false,
+    "daily": 300.0,
+    "days": 3,
+    "total": 900.0,
+    "start": null,
+    "end": "2026-10-25T14:00:00+05:30",
+    "audience": "India · 18–65+ · everyone · + similar people · automatic placements",
+    "carousel": false
+  }
+}

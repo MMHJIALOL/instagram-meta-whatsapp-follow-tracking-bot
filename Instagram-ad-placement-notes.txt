@@ -1,0 +1,14 @@
+Kalakriti workshop ad — placement assets
+
+Instagram Feed / posts: Kalakriti-Instagram-Feed-4x5.png (1440 x 1800, 4:5).
+Instagram Reels: Kalakriti-Instagram-Reels-9x16.png (1440 x 2560, 9:16, when exported).
+Optional square placement: Kalakriti-Instagram-Square-1x1.png (1440 x 1440).
+
+Assign the Feed and Reels images individually with ad-level placement asset customization. Inspect each placement preview before saving the edit. These files alone do not update a running ad.
+
+Reels design target: all essential text, logo, price and product lettering inside the central area; reserve roughly 14% at top, 35% at bottom, and 6% at either side for interface overlays.
+
+Reference: https://www.kitchn.io/specs/meta-ads
+Reference: https://www.facebook.com/business/help/980593475366490
+
+Image generation: built-in image_gen tool. Reels edit target: existing Feed image. Prompt: adapt the Kalakriti workshop ad to a tall 9:16 canvas; preserve the brand, ₹99 price, crossed-out ₹999 price, 25th October, 3 p.m., 3 Hours Class Time, Video Recording Available and both floral resin hangings, with शुभ on the orange plaque and लाभ on the burgundy plaque. Keep all essential content within x=100..1340 and y=380..1620 on a 1440 x 2560 canvas; use decorative festive background above and below. No new copy or claims.

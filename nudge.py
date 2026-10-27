@@ -61,7 +61,7 @@ def nudge(igsid, username, at, follows):
             main.record_sent(igsid, username)
             return "link sent"
         return "link FAILED"
-    if main.ask_to_follow(igsid, {"id": igsid}, main.FOLLOW_MSG, main.FOLLOW_TEXT):
+    if main.ask_to_follow(igsid, {"id": igsid}, main.text("FOLLOW_MSG"), main.text("FOLLOW_TEXT")):
         return "rules + follow request sent"
     return "follow request FAILED"
 

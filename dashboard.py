@@ -14,6 +14,7 @@ import json
 import math
 import os
 import re
+import sqlite3
 import subprocess
 import threading
 import time
@@ -27,6 +28,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse
 
 import backfill
+import bot_messages
 import main
 
 main.logging.getLogger("httpx").setLevel(main.logging.WARNING)
@@ -37,8 +39,13 @@ SAME_EVENT = timedelta(seconds=90)  # live event and export line this close are 
 # pooja thali workshop 11th Oct") are members who are already in, so they aren't matched to taps.
 # Exports (chat '') are of the main chat.
 MAIN_CHAT = os.getenv("WA_MAIN_CHAT", "Karwa Chauth special worshop 18th Oct")
+# Earlier workshops' main chats: their personal links joined people there, so those joins still match (and keep
+# showing numbers) after WA_MAIN_CHAT moves on to the next workshop's group.
+PAST_MAIN_CHATS = ["Karwa Chauth special worshop 18th Oct"]
 # People whose link, tap or join is at or after this time belong to the current workshop; the rest sit below a line.
 WORKSHOP_SINCE = datetime.fromisoformat(os.getenv("WORKSHOP_SINCE", "2026-10-12T17:50:00+05:30"))
+# The three above are only used until workshops are set up (Workshop tab, see main.workshops); from then on each
+# workshop has its own group and start, and every workshop's group counts as main.
 LOG_LINE = re.compile(r"^(\S+ \S+),\d+ INFO (?:DM trigger|button tap) from (\d+)(?: \(.*?\))?: ")
 
 app = FastAPI()
@@ -435,10 +442,30 @@ def match(events, clicks, fixes, ig_info, wa_names, now):
     return results, per_who
 
 
+def main_group():
+    """The WhatsApp group of the current (or, between workshops, the last) workshop: personal links lead there."""
+    rows = main.workshops()
+    return rows[-1]["wa_group"] if rows else MAIN_CHAT
+
+
+def all_groups():
+    """Every workshop's group: joins in any of them are arrivals through a personal link."""
+    rows = main.workshops()
+    return [w["wa_group"] for w in rows if w["wa_group"]] if rows else [MAIN_CHAT, *PAST_MAIN_CHATS]
+
+
+def since():
+    """Start of the current (or last) workshop."""
+    rows = main.workshops()
+    return rows[-1]["started"] if rows else WORKSHOP_SINCE
+
+
 def main_chat(events):
     """(time, who, kind, source, chat) events -> (the main chat's events without chat, {who: (kind, time)}).
     Membership comes from the main chat, or from the other groups for people we've never seen there."""
-    is_main = lambda chat: not chat or " ".join(chat.lower().split()) == " ".join(MAIN_CHAT.lower().split())
+    norm = lambda chat: " ".join(chat.lower().split())
+    mains = {norm(c) for c in all_groups()}
+    is_main = lambda chat: not chat or norm(chat) in mains
     state = {}
     for at, who, kind, _, chat in events:
         if is_main(chat) or who not in state or not state[who][2]:
@@ -450,8 +477,8 @@ def main_chat(events):
 def build():
     """Everything the page shows, recomputed from the database on each request."""
     with db() as conn:
-        users = conn.execute("SELECT igsid, username, follows, follow_checked_at, unfollowed_at, first_seen, last_msg_at "
-                             "FROM users").fetchall()
+        users = conn.execute("SELECT igsid, username, follows, follow_checked_at, unfollowed_at, first_seen, last_msg_at, "
+                             "warned_at, warn_tried_at, warn_error FROM users").fetchall()
         sent = dict(conn.execute("SELECT igsid, sent_at FROM sent"))
         clicks = [(igsid, ts(at), ua or "", ip) for igsid, at, ua, ip in conn.execute(
             "SELECT igsid, clicked_at, user_agent, ip FROM clicks WHERE igsid IS NOT NULL ORDER BY clicked_at")]
@@ -469,12 +496,15 @@ def build():
     matches, per_who = match(events, clicks, fixes, ig_info, wa_names, main.now())
 
     last_click = {ig: max(times) for ig, times in real_taps(clicks).items()}  # Meta's scanner hits don't count
-    users += [(ig, None, None, None, None, None, None) for ig in last_click if ig not in names]  # e.g. test links
+    users += [(ig,) + (None,) * 9 for ig in last_click if ig not in names]  # e.g. test links
     label = lambda ig: names.get(ig) or ig
     in_group = lambda who: state.get(who, ("join",))[0] == "join"
 
+    wss = main.workshops()
+    starts = [w["started"] for w in wss]
+    running = main.workshop() if wss else None
     rows = []
-    for igsid, username, follows, checked, unfollowed_at, first_seen, last_msg in users:
+    for igsid, username, follows, checked, unfollowed_at, first_seen, last_msg, warned, tried, warn_error in users:
         got_link = igsid in sent
         if follows is None:
             f = "unknown"
@@ -493,15 +523,21 @@ def build():
                     "others": [{"igsid": ig, "name": label(ig), "p": round(v, 3)}
                                for ig, v in per_who.get(o["who"], []) if ig != igsid],
                     } for o in (m["options"] if m else [])]
-        cleared = lambda at: igsid in removed and at and removed[igsid] >= at
-        to_remove = f == "unfollowed" and group == "in" and not cleared(m["joined"])
-        # unfollowed, and maybe one of these numbers: worth a look before removing anyone
-        to_check = (f == "unfollowed" and bool(m) and m["conf"] == "maybe"
-                    and sum(o["p"] for o in options if o["in_group"]) >= 0.2 and not cleared(m["options"][0]["joined"]))
         # DM-only people have no link or tap, so their last DM counts too
         stamps = [sent.get(igsid), last_msg, first_seen, last_click[igsid].isoformat() if igsid in last_click else None,
                   m["joined"].isoformat() if m and m["joined"] else None]
-        current = any(datetime.fromisoformat(s) >= WORKSHOP_SINCE for s in stamps if s)
+        if wss:  # the workshop their latest link, tap, DM or join falls in
+            last = max((datetime.fromisoformat(s) for s in stamps if s), default=None)
+            ws = wss[max(0, bisect.bisect_right(starts, last) - 1)]["id"] if last else wss[0]["id"]
+            current = bool(running) and ws == running["id"]
+        else:
+            ws, current = None, any(datetime.fromisoformat(s) >= WORKSHOP_SINCE for s in stamps if s)
+        # unfollowers from a workshop that has ended are left alone
+        cleared = lambda at: igsid in removed and at and removed[igsid] >= at
+        to_remove = current and f == "unfollowed" and group == "in" and not cleared(m["joined"])
+        # unfollowed, and maybe one of these numbers: worth a look before removing anyone
+        to_check = (current and f == "unfollowed" and bool(m) and m["conf"] == "maybe"
+                    and sum(o["p"] for o in options if o["in_group"]) >= 0.2 and not cleared(m["options"][0]["joined"]))
         rows.append({
             "igsid": igsid, "username": username, "follow": f, "got_link": got_link, "current": current,
             "link_sent_at": sent.get(igsid), "unfollowed_at": unfollowed_at, "checked_at": checked,
@@ -513,6 +549,11 @@ def build():
             "group": group, "left_at": left_at.isoformat() if left_at else None,
             "to_remove": to_remove, "to_check": to_check,
             "removed_at": removed[igsid].isoformat() if igsid in removed else None, "first_seen": first_seen,
+            "ws": ws, "last_msg_at": last_msg,
+            # the unfollow warning (Send warning), only if it was in this workshop
+            "warned_at": warned if main.this_workshop(warned) else None,
+            "warn_tried_at": tried if main.this_workshop(tried) else None,
+            "warn_error": warn_error if main.this_workshop(tried) else None,
         })
     # WhatsApp members nobody's tap explains (mostly people who joined before personal links existed)
     linked = {m["who"] for m in matches.values() if m["who"]} | {w for w, opts in per_who.items() if opts}
@@ -520,12 +561,57 @@ def build():
                 "wa_name": wa_names.get(who, ("",))[0]} for who, (kind, at) in state.items() if who not in linked]
     return {"rows": rows, "wa_only": wa_only, "export": get_meta("export"), "recheck": get_meta("recheck"),
             "wa": get_meta("wa", {"state": "not started"}), "audit_every_h": main.AUDIT_EVERY / 3600,
-            "now": main.now().isoformat()}
+            "now": main.now().isoformat(), "workshops": [ws_public(w) for w in wss],
+            "running_id": running["id"] if running else None, "ws_stats": ws_stats(rows, wss), "warn": _warn}
+
+
+def ws_public(w):
+    """A workshop for the page (without its texts)."""
+    return {k: w.get(k) for k in ("id", "name", "date", "started_at", "closed_at", "wa_group", "wa_link", "meet_url",
+                                  "past_offer", "stats")}
+
+
+def ws_stats(rows, wss):
+    """Numbers per workshop id: people (latest activity in it), links sent, taps and joins inside it, and the
+    current state of its people (in group, unfollowed, removed, warned)."""
+    if not wss:
+        return {}
+    bounds = {w["id"]: (w["started"], wss[i + 1]["started"] if i + 1 < len(wss) else None) for i, w in enumerate(wss)}
+
+    def inside(wid, at):
+        if not at:
+            return False
+        lo, hi = bounds[wid]
+        t = datetime.fromisoformat(at)
+        return t >= lo and (hi is None or t < hi)
+
+    out = {w["id"]: dict(people=0, links=0, tapped=0, joined=0, in_group=0, unfollowed=0, removed=0, warned=0)
+           for w in wss}
+    for r in rows:
+        st = out[r["ws"]]
+        st["people"] += 1
+        st["links"] += inside(r["ws"], r["link_sent_at"])
+        st["tapped"] += inside(r["ws"], r["clicked_at"])
+        st["joined"] += inside(r["ws"], r["joined_at"])
+        st["in_group"] += r["group"] == "in"
+        st["unfollowed"] += r["follow"] == "unfollowed"
+        st["removed"] += bool(r["removed_at"])
+        st["warned"] += bool(r["warned_at"])
+    return out
+
+
+# state of this dashboard's own background loops, for the Activity tab (the bot's are in the jobs table)
+_loops = defaultdict(dict)
+
+
+def loop_state(name, **kw):
+    _loops[name].update(kw)
 
 
 def ig_names_loop():
     """Instagram display names of everyone who tapped a link, for the name check (one lookup per person)."""
     while True:
+        loop_state("ig_names", started_at=main.now().isoformat(), running=1, error=None)
         try:
             with db() as conn:
                 todo = [r[0] for r in conn.execute("SELECT DISTINCT igsid FROM clicks WHERE igsid IS NOT NULL "
@@ -536,17 +622,61 @@ def ig_names_loop():
                     conn.execute("INSERT OR REPLACE INTO ig_names VALUES (?, ?, ?)",
                                  (igsid, data.get("name") or "", main.now().isoformat()))
                 time.sleep(0.5)
-        except Exception:
+            loop_state("ig_names", result=f"{len(todo)} new names looked up")
+        except Exception as e:
             log.exception("Instagram name lookup failed")
+            loop_state("ig_names", error=str(e))
+        loop_state("ig_names", ended_at=main.now().isoformat(), running=0,
+                   next_at=(main.now() + timedelta(seconds=300)).isoformat())
         time.sleep(300)
 
 
 # ---------- popup when someone new needs removing ----------
 
+def refresh_used_links(rows):
+    """Personal links stop working (main.join) once we're sure the person joined the current group with it:
+    a 99%+ match or one settled by hand, to a join in WA_MAIN_CHAT since WORKSHOP_SINCE. "Check" stays open.
+    Recomputed each time, so a "Not them" on the page reopens the link."""
+    norm = lambda chat: " ".join((chat or "").lower().split())
+    start, group = since(), norm(main_group())
+    with db() as conn:
+        joined_main = {who for who, chat in conn.execute(
+            "SELECT who, chat FROM wa_events WHERE kind = 'join' AND at >= ?",
+            (start.astimezone(timezone.utc).isoformat(),)) if group and norm(chat) == group}
+        used = [(r["igsid"], r["who"], r["joined_at"]) for r in rows
+                if r["conf"] in ("sure", "confirmed") and r["who"] in joined_main and r["joined_at"]
+                and datetime.fromisoformat(r["joined_at"]) >= start]
+        before = {ig for ig, in conn.execute("SELECT igsid FROM used_links")}
+        conn.execute("DELETE FROM used_links")
+        conn.executemany("INSERT INTO used_links VALUES (?, ?, ?)", used)
+    now_used = {ig: who for ig, who, _ in used}
+    added, gone = set(now_used) - before, before - set(now_used)
+    ws_id = (main.workshops() or [{}])[-1].get("id")
+    switched, _used_ws["id"] = _used_ws["id"] not in (None, ws_id), ws_id
+    if added or gone:
+        log.info("used links: %d (+%d -%d)", len(now_used), len(added), len(gone))
+        if switched or len(added) + len(gone) > 10:  # a new workshop starts with no used links
+            main.activity("wa", None, f"Used-up links: {len(now_used)} now ({len(added)} closed, {len(gone)} opened again)"
+                          + (" because the workshop changed" if switched else ""))
+        else:
+            for ig in added:
+                main.activity("wa", ig, f"joined WhatsApp as {now_used[ig]}: their link now shows \"already used\"")
+            for ig in gone:
+                main.activity("wa", ig, "match undone: their link opens the group again")
+    return len(now_used)
+
+
+_used_ws = {"id": None}  # the workshop refresh_used_links last saw
+
+
 def notify_loop():
     while True:
+        loop_state("notify", started_at=main.now().isoformat(), running=1, error=None)
         try:
-            todo = {r["igsid"]: r for r in build()["rows"] if r["to_remove"] or r["to_check"]}
+            rows = build()["rows"]
+            used = refresh_used_links(rows)
+            todo = {r["igsid"]: r for r in rows if r["to_remove"] or r["to_check"]}
+            loop_state("notify", result=f"{len(todo)} to remove or check · {used} links used up")
             told = set(get_meta("notified", []))
             new = [r for ig, r in todo.items() if ig not in told]
             if new:
@@ -556,8 +686,11 @@ def notify_loop():
                     0, f"Unfollowed on Instagram but still in WhatsApp:\n\n{names}\n\nOpen http://127.0.0.1:8001",
                     "Resin members", 0x40000)).start()
             set_meta("notified", sorted(told | set(todo)))
-        except Exception:
+        except Exception as e:
             log.exception("notify check failed")
+            loop_state("notify", error=str(e))
+        loop_state("notify", ended_at=main.now().isoformat(), running=0,
+                   next_at=(main.now() + timedelta(seconds=60)).isoformat())
         time.sleep(60)
 
 
@@ -590,7 +723,8 @@ def scan_bot_log():
     _bot["log_pos"] += end
     for line in chunk[:end].decode("utf-8", "replace").splitlines():
         for key, marker in BOT_EVENTS:
-            if marker in line:
+            # uvicorn's own lines ("ERROR:    [Errno 10048] ...") have no timestamp
+            if marker in line and re.match(r"\d{4}-\d\d-\d\d \d\d:\d\d:\d\d", line):
                 _bot[key] = datetime.strptime(line[:19], "%Y-%m-%d %H:%M:%S").astimezone()
 
 
@@ -626,6 +760,11 @@ def check_bot():
     # a failed check is repeated once so an internet blip doesn't look like a dead tunnel
     _bot["tunnel_ok"] = bool(base) and (answers(base) or answers(base))
     _bot["checked_at"] = main.now()
+    loop_state("bot_health", ended_at=main.now().isoformat(), running=0, next_at=(main.now() + timedelta(seconds=30)).isoformat(),
+               result={"live": "Live: Instagram is reaching the bot", "verified": "Meta accepted the link, waiting for a DM",
+                       "meta": "Meta still sends to an old link (Members tab → Instagram bot)",
+                       "tunnel": "The bot's link is dead (Members tab → Make bot active)", "down": "The bot isn't running",
+                       "off": "The bot is turned off"}.get(bot_state(), bot_state()))
 
 
 def bot_health_loop():
@@ -646,7 +785,7 @@ def bot_state():
     if _bot["checked_at"] is None:
         return "checking"
     if not _bot["local_ok"]:
-        return "down"
+        return "down" if autostart("bot") else "off"  # turned off on purpose (Background apps card)
     if not _bot["tunnel_ok"]:
         return "tunnel"
     since = _bot["url_since"]
@@ -659,25 +798,36 @@ def bot_state():
 
 KEEPALIVE_CMD = re.compile(r'\.exe"?\s+"?(?:[^"]*[\\/])?keepalive\.py"?\s*$')  # not members_keepalive.py
 BOT_CMD = re.compile(r'\.exe"?\s+-m uvicorn main:app\b')
+OTHER_CMDS = {"ads_keepalive": "admanager_keepalive.py", "ads": "uvicorn admanager:app",
+              "members_keepalive": "members_keepalive.py", "members": "uvicorn dashboard:app"}
 
 
 def processes():
-    """Running keepalive.py, bot (uvicorn main:app) and cloudflared processes: {name: [pid, ...]}."""
+    """Running processes of the bot (keepalive.py, uvicorn main:app, cloudflared), the ad manager and this
+    dashboard (with its WhatsApp listener): {name: [pid, ...]}."""
     out = subprocess.run(["powershell", "-NoProfile", "-Command",
                           "Get-CimInstance Win32_Process -Filter \"Name='python.exe' or Name='pythonw.exe' or "
-                          "Name='cloudflared.exe'\" | Select-Object ProcessId,Name,CommandLine | ConvertTo-Json -Compress"],
+                          "Name='cloudflared.exe' or Name='node.exe'\" | Select-Object ProcessId,Name,CommandLine "
+                          "| ConvertTo-Json -Compress"],
                          capture_output=True, text=True, timeout=60, stdin=subprocess.DEVNULL,
                          creationflags=NO_WINDOW).stdout.strip()
     rows = json.loads(out) if out else []
-    found = {"keepalive": [], "bot": [], "tunnel": []}
+    found = {"keepalive": [], "bot": [], "tunnel": [], "listener": [], **{k: [] for k in OTHER_CMDS}}
     for r in [rows] if isinstance(rows, dict) else rows:
         cmd = r["CommandLine"] or ""
         if r["Name"] == "cloudflared.exe":
             found["tunnel"].append(r["ProcessId"])
+        elif r["Name"] == "node.exe":
+            if cmd.rstrip().endswith("listener.js"):
+                found["listener"].append(r["ProcessId"])
         elif KEEPALIVE_CMD.search(cmd):
             found["keepalive"].append(r["ProcessId"])
         elif BOT_CMD.search(cmd):
             found["bot"].append(r["ProcessId"])
+        else:
+            for key, part in OTHER_CMDS.items():
+                if part in cmd:
+                    found[key].append(r["ProcessId"])
     return found
 
 
@@ -687,13 +837,17 @@ def kill(pids):
                        creationflags=NO_WINDOW)
 
 
-def start_keepalive():
-    """Through WMI, so keepalive doesn't count as a child of the dashboard and outlives its restarts."""
-    cmd = f'"{PYW}" "{HERE / "keepalive.py"}"'
+def start_detached(cmd):
+    """Through WMI, so the process doesn't count as a child of the dashboard and outlives its restarts."""
+    cmd = cmd.replace("'", "''")
     subprocess.run(["powershell", "-NoProfile", "-Command",
                     f"Invoke-CimMethod Win32_Process -MethodName Create -Arguments "
                     f"@{{CommandLine='{cmd}'; CurrentDirectory='{HERE}'}}"],
                    capture_output=True, timeout=60, stdin=subprocess.DEVNULL, creationflags=NO_WINDOW)
+
+
+def start_keepalive():
+    start_detached(f'"{PYW}" "{HERE / "keepalive.py"}"')
 
 
 def fix_bot(new_link=False):
@@ -708,6 +862,7 @@ def fix_bot(new_link=False):
         check_bot()
         procs = processes()
         bot, tunnel = procs["bot"], procs["tunnel"]
+        set_autostart("bot", True)  # a bot made active should also come back after a restart
         if not procs["keepalive"]:
             step("Starting the bot and the tunnel")
             kill(bot + tunnel)  # leftovers of a dead keepalive would hold port 8000 or an old tunnel
@@ -778,6 +933,7 @@ def bot_status():
 @app.on_event("startup")
 def startup():
     db().close()
+    ensure_workshops()
     threading.Thread(target=backfill_users_from_log, daemon=True).start()
     threading.Thread(target=notify_loop, daemon=True).start()
     threading.Thread(target=ig_names_loop, daemon=True).start()
@@ -813,6 +969,7 @@ async def upload(request: Request):
     if not found:
         raise HTTPException(400, "No joins or leaves found. Is this a WhatsApp chat export?")
     log.info("chat export imported: %d events, %d new", found, added)
+    main.activity("admin", None, f"Uploaded a WhatsApp chat export: {found} joins/leaves, {added} new")
     return {"found": found, "added": added}
 
 
@@ -822,6 +979,7 @@ def recheck(request: Request):
     if (get_meta("recheck") or {}).get("running"):
         return {"started": False}
     threading.Thread(target=recheck_everyone, daemon=True).start()
+    main.activity("admin", None, "Started Re-check follows (everyone)")
     return {"started": True}
 
 
@@ -837,6 +995,7 @@ def bot_fix(request: Request, new_link: bool = False):
     if (_bot["fix"] or {}).get("running"):
         return {"started": False}
     threading.Thread(target=fix_bot, args=(new_link,), daemon=True).start()
+    main.activity("admin", None, "Made a new bot link" if new_link else "Pressed Make bot active")
     return {"started": True}
 
 
@@ -856,6 +1015,7 @@ def bot_catchup(request: Request):
     if (_bot["catchup"] or {}).get("running") or not (_bot["missed"] or {}).get("people"):
         return {"started": False}
     threading.Thread(target=catch_up, daemon=True).start()
+    main.activity("admin", None, f"Replying to {len(_bot['missed']['people'])} missed DMs")
     return {"started": True}
 
 
@@ -944,11 +1104,94 @@ def awake_test(request: Request):
     return {"idle_before": round(before, 1), "idle_after": round(idle_seconds(), 1)}
 
 
+# ---------- background apps: turn the bot, the ad manager and this dashboard off/on ----------
+# Each one starts at logon from a shortcut in the Startup folder. Turning one off kills its keepalive first (or it
+# would bring the rest back) and parks the shortcut in disabled_startup/, so it stays off after a restart too.
+STARTUP = Path(os.environ["APPDATA"]) / "Microsoft" / "Windows" / "Start Menu" / "Programs" / "Startup"
+PARKED = HERE / "disabled_startup"
+APPS = {  # keepalive first: killed before the processes it would restart
+    "bot": {"lnk": "Resin workshop bot.lnk", "procs": ("keepalive", "bot", "tunnel")},
+    "ads": {"lnk": "Resin ad manager.lnk", "procs": ("ads_keepalive", "ads"),
+            "start": f'"{PYW}" "{HERE / "ads" / "admanager_keepalive.py"}"'},
+    "members": {"lnk": "Resin members dashboard.lnk", "procs": ("members_keepalive", "listener", "members")},
+}
+_apps_busy = set()
+
+
+def autostart(name):
+    return (STARTUP / APPS[name]["lnk"]).exists()
+
+
+def set_autostart(name, on):
+    lnk = APPS[name]["lnk"]
+    src, dst = (PARKED / lnk, STARTUP / lnk) if on else (STARTUP / lnk, PARKED / lnk)
+    if src.exists() and not dst.exists():
+        dst.parent.mkdir(exist_ok=True)
+        src.replace(dst)
+
+
+def apps_status():
+    procs = processes()
+    return {name: {"running": any(procs[p] for p in a["procs"]), "autostart": autostart(name),
+                   "busy": name in _apps_busy} for name, a in APPS.items()}
+
+
+def app_off(name):
+    try:
+        set_autostart(name, False)
+        procs = processes()
+        pids = [pid for p in APPS[name]["procs"] for pid in procs[p]]
+        log.info("turning off %s: %s", name, pids)
+        if name == "members":
+            # this dashboard is one of them: a separate process kills it after the reply has gone out.
+            # /T on the listener takes its Edge window with it.
+            start_detached("powershell -NoProfile -WindowStyle Hidden -Command \"Start-Sleep 2; "
+                           + "; ".join(f"taskkill /F /T /PID {pid}" for pid in pids) + '"')
+            return
+        kill(pids)
+    finally:
+        _apps_busy.discard(name)
+        _bot_wake.set()
+
+
+def app_on(name):
+    try:
+        set_autostart(name, True)
+        if name == "bot":
+            fix_bot()
+        elif not any(processes()[p] for p in APPS[name]["procs"]):
+            log.info("turning on %s", name)
+            start_detached(APPS[name]["start"])
+            time.sleep(5)
+    finally:
+        _apps_busy.discard(name)
+
+
+@app.get("/api/apps")
+def apps(request: Request):
+    local_only(request)
+    return apps_status()
+
+
+@app.post("/api/apps/{name}/{action}")
+def apps_action(name: str, action: str, request: Request):
+    local_only(request)
+    if name not in APPS or action not in ("on", "off") or (name, action) == ("members", "on"):
+        raise HTTPException(404)
+    if name in _apps_busy:
+        return {"started": False}
+    _apps_busy.add(name)
+    threading.Thread(target=app_off if action == "off" else app_on, args=(name,), daemon=True).start()
+    main.activity("admin", None, f"Turned {action} the {dict(bot='Instagram bot', ads='ad manager', members='dashboard')[name]}")
+    return {"started": True}
+
+
 @app.post("/api/removed/{igsid}")
 def mark_removed(igsid: str, request: Request):
     local_only(request)
     with db() as conn:
         conn.execute("INSERT OR REPLACE INTO removed VALUES (?, ?)", (igsid, main.now().isoformat()))
+    main.activity("admin", igsid, "You marked them removed from WhatsApp")
     return {"ok": True}
 
 
@@ -970,6 +1213,8 @@ async def set_match(request: Request):
             conn.execute("INSERT OR REPLACE INTO match_fix VALUES (?, ?, ?, ?)",
                          (igsid, who, verdict, main.now().isoformat()))
     log.info("match set by hand: %s %s %s", igsid, verdict, who)
+    main.activity("admin", igsid, {"yes": f"You confirmed their number: {who}", "clear": "You undid their match",
+                                   "no": f"You ruled out {who}" if who else "You marked them as not joined"}[verdict])
     return {"ok": True}
 
 
@@ -978,6 +1223,7 @@ def unmark_removed(igsid: str, request: Request):
     local_only(request)
     with db() as conn:
         conn.execute("DELETE FROM removed WHERE igsid = ?", (igsid,))
+    main.activity("admin", igsid, "You unticked Removed")
     return {"ok": True}
 
 
@@ -992,6 +1238,10 @@ async def wa_event(request: Request):
     added = add_event(e["who"], e["kind"], at, e.get("chat", ""), "live")
     if added:
         log.info("WhatsApp %s: %s (%s)", e["kind"], norm_who(e["who"]), e.get("chat", ""))
+        late = main.now() - at > timedelta(minutes=5)  # caught up after the listener was off
+        main.activity("wa", None, f"{norm_who(e['who'])} {'joined' if e['kind'] == 'join' else 'left'} "
+                      f"\"{e.get('chat') or 'WhatsApp'}\"" + (f" (at {at.astimezone():%d %b %H:%M})" if late else ""),
+                      detail={"number": norm_who(e["who"])}, channel="wa")
     return {"added": added}
 
 
@@ -1014,3 +1264,668 @@ async def wa_status(request: Request):
     s["at"] = main.now().isoformat()
     set_meta("wa", s)
     return {"ok": True}
+
+
+@app.post("/api/wa/history")
+async def wa_history(request: Request):
+    """From wa/listener.js after a join in the workshop group: {who, chat, result: sent|skip|failed, count?, why?}.
+    The listener shares the group's message history with new members, like the phone's "Share message history"."""
+    local_only(request)
+    e = await request.json()
+    who, chat = norm_who(e.get("who") or ""), e.get("chat") or "WhatsApp"
+    if e.get("result") == "sent":
+        main.activity("wa", None, f"Shared message history with {who} in \"{chat}\" ({e.get('count')} messages)",
+                      detail={"number": who}, channel="wa")
+    else:
+        main.activity("wa" if e.get("result") == "skip" else "fail", None,
+                      f"Didn't share message history with {who} in \"{chat}\": {e.get('why') or 'unknown reason'}",
+                      detail={"number": who}, channel="wa")
+    return {"ok": True}
+
+
+# ---------- unfollow warnings (To remove card) ----------
+# UNFOLLOW_WARN_MSG with the follow buttons. Instagram only lets it through within 24 h of the person's last DM;
+# a refusal is kept (users.warn_error) and shown on the row. The bot answers their "I'm following ✅" tap
+# (main.answer_refollow).
+WARN_GAP = 2  # seconds between people when warning several
+_warn = {"running": False, "done": 0, "total": 0, "sent": 0, "failed": 0, "at": None}
+
+
+def warn_one(igsid):
+    """Send the warning to one person; returns (sent, why not)."""
+    main._ctx.who = igsid
+    at = main.now().isoformat()
+    ok = main.send({"id": igsid}, main.text("UNFOLLOW_WARN_MSG"), main.follow_buttons())
+    why = None if ok else main.last_error() or "Instagram didn't accept it"
+    main.update_user(igsid, **({"warned_at": at} if ok else {}), warn_tried_at=at, warn_error=why)
+    log.info("unfollow warning %s: %s%s", "sent" if ok else "NOT sent", igsid, "" if ok else f" ({why})")
+    return ok, why
+
+
+def warn_people(igsids):
+    _warn.update(running=True, done=0, total=len(igsids), sent=0, failed=0, at=main.now().isoformat())
+    loop_state("warn", started_at=main.now().isoformat(), running=1, error=None)
+    for i, igsid in enumerate(igsids):
+        try:
+            ok, _ = warn_one(igsid)
+        except Exception:
+            log.exception("unfollow warning to %s failed", igsid)
+            ok = False
+        _warn["sent" if ok else "failed"] += 1
+        _warn["done"] = i + 1
+        if i + 1 < len(igsids):
+            time.sleep(WARN_GAP)
+    result = f"{_warn['sent']} warned" + (f" · {_warn['failed']} couldn't be sent" if _warn["failed"] else "")
+    main.activity("admin", None, f"You sent the unfollow warning: {result}")
+    loop_state("warn", ended_at=main.now().isoformat(), running=0, result=result)
+    _warn.update(running=False, at=main.now().isoformat())
+
+
+@app.post("/api/warn")
+async def warn(request: Request):
+    """{igsids: [...]}: DM them UNFOLLOW_WARN_MSG, a couple of seconds apart (progress in /api/data -> warn)."""
+    local_only(request)
+    igsids = [str(i) for i in (await request.json()).get("igsids") or [] if i and not str(i).startswith("fb:")]
+    if not igsids:
+        raise HTTPException(400, "Nobody to warn")
+    if _warn["running"]:
+        return {"started": False}
+    _warn["running"] = True
+    threading.Thread(target=warn_people, args=(igsids,), daemon=True).start()
+    return {"started": True, "total": len(igsids)}
+
+
+@app.post("/api/follow/{igsid}")
+def follow_now(igsid: str, request: Request):
+    """Look up one person's follow status right now (instead of waiting for the 2-hourly check)."""
+    local_only(request)
+    follows, username = main.check_follow(igsid)
+    if follows is None:
+        return {"ok": False, "error": main.last_error() or "Instagram didn't answer"}
+    with db() as conn:
+        row = conn.execute("SELECT follows, username FROM users WHERE igsid = ?", (igsid,)).fetchone()
+    before = row[0] if row else None
+    cols = dict(follows=int(follows), follow_checked_at=main.now().isoformat(),
+                username=username or (row[1] if row else None))
+    if follows:
+        cols["unfollowed_at"] = None
+        if before == 0:
+            main.activity("follow", igsid, "followed again (checked from the dashboard)")
+    elif before != 0:
+        cols["unfollowed_at"] = main.now().isoformat()
+        main.activity("follow", igsid, "unfollowed (checked from the dashboard)")
+    main.update_user(igsid, **cols)
+    return {"ok": True, "follows": follows}
+
+
+# ---------- workshops (Workshop tab) ----------
+
+def ensure_workshops():
+    """The first time, the running workshop as .env describes it, so there's always one to edit."""
+    with db() as conn:
+        if conn.execute("SELECT 1 FROM workshops").fetchone():
+            return
+        start = since()
+        conn.execute("INSERT INTO workshops (name, date, started_at, wa_group, wa_link, meet_url, past_offer, texts) "
+                     "VALUES (?, NULL, ?, ?, ?, ?, 1, '{}')",
+                     (f"Workshop from {start:%d %b}", start.isoformat(), MAIN_CHAT, main.WORKSHOP_LINK, main.MEET_URL))
+    log.info("workshops set up from .env")
+    main.workshops(fresh=True)
+
+
+def clean_fields(b, need=()):
+    """Workshop fields from the page, checked; raises 400 with what's wrong."""
+    out = {}
+    for k in ("name", "date", "wa_group", "wa_link", "meet_url"):
+        if k in b:
+            out[k] = " ".join(str(b[k] or "").split()) if k in ("name", "wa_group") else str(b[k] or "").strip()
+    if "past_offer" in b:
+        out["past_offer"] = int(bool(b["past_offer"]))
+    for k in need:
+        if not out.get(k):
+            raise HTTPException(400, {"name": "Give the workshop a name", "wa_group": "Fill in the WhatsApp group name",
+                                      "wa_link": "Paste the WhatsApp invite link"}[k])
+    if len(out.get("name") or "") > 60:
+        raise HTTPException(400, "Name: 60 characters at most")
+    if out.get("date") and not re.fullmatch(r"\d{4}-\d\d-\d\d", out["date"]):
+        raise HTTPException(400, "Class date must look like 2026-10-29")
+    for k, what in (("wa_link", "WhatsApp invite link"), ("meet_url", "Class link")):
+        if out.get(k) and not re.fullmatch(r"https://\S+", out[k]):
+            raise HTTPException(400, f"{what} must start with https://")
+    return out
+
+
+def ws_update(wid, **cols):
+    cols = {k: json.dumps(v, ensure_ascii=False) if k in ("texts", "faqs", "stats") and v is not None else v
+            for k, v in cols.items()}
+    with db() as conn:
+        conn.execute(f"UPDATE workshops SET {', '.join(f'{c} = ?' for c in cols)} WHERE id = ?", (*cols.values(), wid))
+    main.workshops(fresh=True)
+
+
+def clean_texts(texts):
+    """{key: text} from the page -> only the ones that differ from main.py's defaults, each checked."""
+    out = {}
+    for k, v in (texts or {}).items():
+        if k in bot_messages.BY_KEY:
+            if err := bot_messages.check(k, v):
+                raise HTTPException(400, f"{bot_messages.BY_KEY[k]['label']}: {err}")
+            if v != getattr(main, k):
+                out[k] = v
+    return out
+
+
+def clean_faqs(items):
+    """The question list from the page, checked; returns (questions, {text key or question id: answer})."""
+    out, answers, seen = [], {}, set()
+    for f in items or []:
+        fid = str(f.get("id") or "") or "faq_" + os.urandom(4).hex()
+        if fid in seen or not (fid in bot_messages.FAQ_TEXT or re.fullmatch(r"faq_[0-9a-f]{8}", fid)):
+            raise HTTPException(400, "Unknown question")
+        seen.add(fid)
+        q = {"id": fid, "label": " ".join(str(f.get("label") or "").split()), "on": bool(f.get("on", True)),
+             "keywords": [" ".join(str(k).split()) for k in f.get("keywords") or [] if str(k).strip()]}
+        if err := bot_messages.check_faq(q):
+            raise HTTPException(400, f"{q['label'] or 'A question'}: {err}")
+        answer = str(f.get("answer") or "")
+        key = bot_messages.FAQ_TEXT.get(fid)
+        if key:
+            err = bot_messages.check(key, answer)
+        else:  # a custom reply: optional link button, optional "stop here" (no follow step after it)
+            q.update(button_title=" ".join(str(f.get("button_title") or "").split()),
+                     button_url=str(f.get("button_url") or "").strip(), stop=bool(f.get("stop")))
+            err = bot_messages.check_custom(q, answer)
+        if err:
+            raise HTTPException(400, f"{q['label']}: {err}")
+        answers[key or fid] = answer
+        out.append(q)
+    if set(bot_messages.FAQ_TEXT) - seen:
+        raise HTTPException(400, "The built-in questions can be switched off, not deleted")
+    return out, answers
+
+
+def faq_texts(base, answers):
+    """A workshop's texts with the question answers put in (built-in ones only when they differ from main.py)."""
+    texts = {k: v for k, v in base.items() if not k.startswith("faq_")}
+    for k, v in answers.items():
+        if k.startswith("faq_") or v != getattr(main, k):
+            texts[k] = v
+        else:
+            texts.pop(k, None)
+    return texts
+
+
+@app.get("/api/workshops")
+def workshops_list(request: Request):
+    local_only(request)
+    running = main.workshop()
+    return {"workshops": [ws_public(w) for w in main.workshops()], "running_id": running["id"] if running else None,
+            "settings": {"keyword": main.KEYWORD, "contact": main.CONTACT_NUMBER,
+                         "start_after": main.START_AFTER.isoformat() if main.START_AFTER else None,
+                         "ignore_media": len(main.IGNORE_MEDIA)}}
+
+
+@app.post("/api/workshops/{wid}")
+async def workshop_edit(wid: int, request: Request):
+    """Edit a workshop's fields (name, date, wa_group, wa_link, meet_url, past_offer); meet_url = Go live / End live."""
+    local_only(request)
+    w = next((w for w in main.workshops() if w["id"] == wid), None)
+    if not w:
+        raise HTTPException(404)
+    cols = clean_fields(await request.json())
+    if "name" in cols and not cols["name"]:
+        raise HTTPException(400, "Give the workshop a name")
+    if cols.get("meet_url") and w["closed_at"]:
+        raise HTTPException(400, "This workshop has ended")
+    if not cols:
+        return {"ok": True}
+    ws_update(wid, **cols)
+    what = ("went live: the bot now sends the class link" if cols.get("meet_url") and not w["meet_url"]
+            else "ended live mode" if "meet_url" in cols and not cols["meet_url"] and w["meet_url"]
+            else "changed " + ", ".join(c.replace("wa_", "WhatsApp ").replace("_", " ") for c in cols))
+    main.activity("admin", None, f"{w['name']}: {what}")
+    return {"ok": True}
+
+
+def close_running(stats):
+    """Close the running workshop (if any), freezing its numbers; returns it."""
+    running = main.workshop() if main.workshops() else None
+    if running:
+        ws_update(running["id"], closed_at=main.now().isoformat(), meet_url="", stats=stats.get(running["id"]))
+    return running
+
+
+@app.post("/api/workshops")
+async def workshop_start(request: Request):
+    """Start the next workshop: {name, date, wa_group, wa_link, past_offer, texts, faqs}. Closes the running one."""
+    local_only(request)
+    b = await request.json()
+    cols = clean_fields(b, need=("name", "wa_group", "wa_link"))
+    started = main.now()
+    if b.get("started_at"):
+        try:
+            started = datetime.fromisoformat(str(b['started_at']).replace('Z', '+00:00'))
+            if started.tzinfo is None or started > main.now():
+                raise ValueError()
+            latest = main.latest_workshop()
+            boundary = latest.get('closed_at') or latest.get('started_at')
+            if boundary and started < datetime.fromisoformat(boundary):
+                raise ValueError()
+        except (ValueError, TypeError):
+            raise HTTPException(400, 'started_at must be an actual ad creation time with timezone, after the previous workshop')
+    texts = clean_texts(b.get("texts"))
+    questions = None
+    if b.get("faqs") is not None:
+        questions, answers = clean_faqs(b["faqs"])
+        texts = faq_texts(texts, answers)
+        if questions == [dict(f) for f in bot_messages.FAQ_DEFAULTS]:
+            questions = None
+    closed = close_running(build()["ws_stats"])
+    with db() as conn:
+        conn.execute("INSERT INTO workshops (name, date, started_at, wa_group, wa_link, meet_url, past_offer, texts, "
+                     "faqs) VALUES (?, ?, ?, ?, ?, '', ?, ?, ?)",
+                     (cols["name"], cols.get("date") or None, started.isoformat(), cols["wa_group"], cols["wa_link"],
+                      cols.get("past_offer", 1), json.dumps(texts, ensure_ascii=False),
+                      json.dumps(questions, ensure_ascii=False) if questions else None))
+    main.workshops(fresh=True)
+    log.info("workshop started: %s (closed %s)", cols["name"], closed and closed["name"])
+    main.activity("admin", None, f"Started {cols['name']}" + (f" ({closed['name']} closed)" if closed else ""))
+    return {"ok": True}
+
+
+@app.post("/api/workshops-end")
+def workshop_end(request: Request):
+    """End the running workshop without starting the next one (the bot answers with BETWEEN_MSG)."""
+    local_only(request)
+    closed = close_running(build()["ws_stats"])
+    if not closed:
+        raise HTTPException(400, "No workshop is running")
+    log.info("workshop ended: %s", closed["name"])
+    main.activity("admin", None, f"Ended {closed['name']}: the bot answers with \"No workshop right now\"")
+    return {"ok": True}
+
+
+@app.post("/api/workshops-reopen")
+def workshop_reopen(request: Request):
+    """Undo End workshop: the last one runs again (only while no other one is running)."""
+    local_only(request)
+    rows = main.workshops()
+    if not rows or not rows[-1]["closed_at"]:
+        raise HTTPException(400, "A workshop is already running")
+    ws_update(rows[-1]["id"], closed_at=None, stats=None)
+    main.activity("admin", None, f"Reopened {rows[-1]['name']}")
+    return {"ok": True}
+
+
+# ---------- reels with their own offer (Reels tab) ----------
+REEL_LINK = re.compile(r"instagram\.com/(?:[\w.]+/)?(?:reels?|p|tv)/([\w-]+)")
+
+
+def reel_update(rid, **cols):
+    cols = {k: json.dumps(v, ensure_ascii=False) if k in ("texts", "faqs") and v is not None else v
+            for k, v in cols.items()}
+    with db() as conn:
+        conn.execute(f"UPDATE reels SET {', '.join(f'{c} = ?' for c in cols)} WHERE id = ?", (*cols.values(), rid))
+    main.reels(fresh=True)
+
+
+def find_media(link):
+    """The post/reel of our account that a link (or a media id) points to: {id, permalink, timestamp}."""
+    link = link.strip()
+    if re.fullmatch(r"\d{6,}", link):
+        found = main.api("GET", link, params={"fields": "id,permalink,timestamp"})
+        if not found:
+            raise HTTPException(400, "Instagram doesn't know that id: " + (main.last_error() or "lookup failed"))
+        return found
+    m = REEL_LINK.search(link)
+    if not m:
+        raise HTTPException(400, "Paste the reel's link, like https://www.instagram.com/reel/ABC123/")
+    code, params = m.group(1), {"fields": "id,permalink,timestamp", "limit": 50}
+    for _ in range(8):  # the newest 400 posts
+        page = main.api("GET", "me/media", params=params)
+        if not page:
+            raise HTTPException(400, "Couldn't ask Instagram: " + (main.last_error() or "lookup failed"))
+        for x in page.get("data", []):
+            if f"/{code}/" in (x.get("permalink") or "") + "/":
+                return x
+        after = (page.get("paging") or {}).get("cursors", {}).get("after")
+        if not after or not (page.get("paging") or {}).get("next"):
+            break
+        params = {**params, "after": after}
+    raise HTTPException(400, "That reel isn't on this Instagram account (or Instagram doesn't list it yet). "
+                             "Check the link, or try again in a minute.")
+
+
+def reel_stats(rid):
+    with db() as conn:
+        people, dmed, asked, links = conn.execute(
+            "SELECT COUNT(*), COUNT(dm_at), COUNT(asked_at), COUNT(sent_at) FROM reel_people WHERE reel_id = ?",
+            (rid,)).fetchone()
+        clicks = conn.execute("SELECT igsid, clicked_at, COALESCE(user_agent, ''), ip FROM reel_clicks "
+                              "WHERE reel_id = ? AND igsid IS NOT NULL", (rid,)).fetchall()
+    return {"people": people, "dmed": dmed, "asked": asked, "links": links, "tapped": len(real_taps(clicks))}
+
+
+def reel_public(r):
+    return {k: r[k] for k in ("id", "name", "media_id", "reel_url", "wa_link", "created_at")} | {
+        "follow_first": bool(r["follow_first"]), "active": bool(r["active"]), "stats": reel_stats(r["id"])}
+
+
+@app.get("/api/bypassed-media")
+def bypass_list(request: Request):
+    local_only(request)
+    return {"items": [{"media_id": mid, "url": url} for mid, url in main.bypassed_media().items()]}
+
+
+@app.post("/api/bypassed-media")
+async def bypass_add(request: Request):
+    local_only(request)
+    body = await request.json()
+    url = str(body.get("url") or "").strip()
+    parsed = main.urlparse(url if "://" in url else "https://" + url)
+    if parsed.scheme not in ("http", "https") or parsed.hostname not in ("instagram.com", "www.instagram.com", "m.instagram.com") or not REEL_LINK.search(url):
+        raise HTTPException(400, "Paste a valid Instagram reel or post link.")
+    media = find_media(url)
+    canonical = "https://www.instagram.com/" + ("reel/" if "/reel" in parsed.path else "p/") + REEL_LINK.search(url)[1] + "/"
+    with db() as conn:
+        conn.execute("INSERT OR REPLACE INTO bypass_media VALUES (?, ?, ?)",
+                     (str(media["id"]), canonical, main.now().isoformat()))
+    return {"ok": True}
+
+
+@app.delete("/api/bypassed-media/{media_id}")
+def bypass_remove(media_id: str, request: Request):
+    local_only(request)
+    with db() as conn:
+        conn.execute("DELETE FROM bypass_media WHERE media_id = ?", (media_id,))
+    return {"ok": True}
+
+
+@app.get("/api/reels")
+def reels_list(request: Request):
+    local_only(request)
+    return {"reels": [reel_public(r) for r in main.reels()]}
+
+
+@app.post("/api/reels")
+async def reel_new(request: Request):
+    """{name, wa_link}: a new reel offer, off and with no reel connected; its texts and questions start as a copy
+    of the latest reel's (the ₹99 offer's for the first one)."""
+    local_only(request)
+    b = await request.json()
+    name, wa_link = " ".join(str(b.get("name") or "").split()), str(b.get("wa_link") or "").strip()
+    if not name or len(name) > 60:
+        raise HTTPException(400, "Give it a name (60 characters at most)")
+    if wa_link and not re.fullmatch(r"https://\S+", wa_link):
+        raise HTTPException(400, "The WhatsApp link must start with https://")
+    last = (main.reels() or [None])[-1]
+    texts = last["texts"] if last else bot_messages.REEL_99_TEXTS
+    faqs = last["faqs"] if last else bot_messages.REEL_99_FAQS
+    with db() as conn:
+        rid = conn.execute("INSERT INTO reels (name, media_id, reel_url, wa_link, follow_first, active, created_at, "
+                           "texts, faqs) VALUES (?, '', '', ?, 1, 1, ?, ?, ?)",
+                           (name, wa_link or (bot_messages.REEL_99_LINK if not last else ""), main.now().isoformat(),
+                            json.dumps(texts, ensure_ascii=False),
+                            json.dumps(faqs, ensure_ascii=False) if faqs else None)).lastrowid
+    main.reels(fresh=True)
+    main.activity("admin", None, f"Set up the reel offer {name} (no reel connected yet)")
+    return {"ok": True, "id": rid}
+
+
+@app.post("/api/reels/{rid}")
+async def reel_edit(rid: int, request: Request):
+    """Change name, wa_link, follow_first, active; reel_url connects a reel ('' disconnects it)."""
+    local_only(request)
+    r = reel_by_id(rid)
+    b, cols = await request.json(), {}
+    if "name" in b:
+        cols["name"] = " ".join(str(b["name"] or "").split())
+        if not cols["name"] or len(cols["name"]) > 60:
+            raise HTTPException(400, "Give it a name (60 characters at most)")
+    if "wa_link" in b:
+        cols["wa_link"] = str(b["wa_link"] or "").strip()
+        if not re.fullmatch(r"https://\S+", cols["wa_link"]):
+            raise HTTPException(400, "Paste the WhatsApp link (starts with https://)")
+    for k in ("follow_first", "active"):
+        if k in b:
+            cols[k] = int(bool(b[k]))
+    if "reel_url" in b:
+        if str(b["reel_url"] or "").strip():
+            media = find_media(str(b["reel_url"]))
+            other = next((x for x in main.reels() if x["media_id"] == media["id"] and x["id"] != rid), None)
+            if other:
+                raise HTTPException(400, f"That reel is already connected to {other['name']}")
+            if media["id"] in main.IGNORE_MEDIA:
+                raise HTTPException(400, "That reel is muted (IGNORE_MEDIA in .env): the bot ignores its comments")
+            cols.update(media_id=media["id"], reel_url=media.get("permalink") or str(b["reel_url"]).strip())
+        else:
+            cols.update(media_id="", reel_url="")
+    if not cols:
+        return {"ok": True}
+    if (cols.get("active", r["active"]) and (cols.get("media_id", r["media_id"]))
+            and not cols.get("wa_link", r["wa_link"])):
+        raise HTTPException(400, "Add the WhatsApp link first: it's where everyone's link takes them")
+    reel_update(rid, **cols)
+    what = (f"connected to {cols['reel_url']}: comments on it now get its messages" if cols.get("media_id")
+            else "disconnected from its reel" if "media_id" in cols
+            else "switched on" if cols.get("active") == 1 and not r["active"]
+            else "switched off: its people get the workshop's messages again" if cols.get("active") == 0
+            else "changed " + ", ".join(c.replace("wa_", "WhatsApp ").replace("_", " ") for c in cols))
+    main.activity("admin", None, f"{r['name']}: {what}")
+    return {"ok": True}
+
+
+@app.delete("/api/reels/{rid}")
+def reel_delete(rid: int, request: Request):
+    """Delete a reel offer nobody has gone through yet (otherwise switch it off)."""
+    local_only(request)
+    r = reel_by_id(rid)
+    if reel_stats(rid)["people"]:
+        raise HTTPException(400, "People already went through it: switch it off instead (keeps their history)")
+    with db() as conn:
+        conn.execute("DELETE FROM reels WHERE id = ?", (rid,))
+        conn.execute("DELETE FROM funnel WHERE reel_id = ?", (rid,))
+    main.reels(fresh=True)
+    main.activity("admin", None, f"Deleted the reel offer {r['name']}")
+    return {"ok": True}
+
+
+# ---------- bot messages (Messages tab) ----------
+
+def reel_by_id(rid):
+    """The reel offer the Messages tab is editing (?reel=ID / "reel": ID), or None for the workshop's texts."""
+    if rid in (None, "", 0, "0"):
+        return None
+    r = next((r for r in main.reels() if str(r["id"]) == str(rid)), None)
+    if not r:
+        raise HTTPException(404, "That reel offer doesn't exist any more")
+    return r
+
+
+def messages_payload(r=None):
+    with main.in_reel(r):
+        return _messages_payload(r)
+
+
+def _messages_payload(r):
+    w = main.latest_workshop()
+    edits = w["texts"]
+    return {
+        "workshop": {"id": w["id"], "name": w["name"], "closed": bool(w["closed_at"]), "date": w["date"]},
+        "reel": {"id": r["id"], "name": r["name"], "connected": bool(r["media_id"]), "active": bool(r["active"])}
+        if r else None,
+        "reels": [{"id": x["id"], "name": x["name"]} for x in main.reels()],
+        "groups": bot_messages.GROUPS,
+        "messages": [{**m, "text": edits.get(m["key"]) or getattr(main, m["key"]), "default": getattr(main, m["key"]),
+                      "edited": m["key"] in edits} for m in (bot_messages.REEL_CATALOG if r else bot_messages.CATALOG)],
+        "faqs": [{**f, "builtin": f["id"] in bot_messages.FAQ_TEXT, "key": bot_messages.FAQ_TEXT.get(f["id"]),
+                  "answer": main.text(bot_messages.FAQ_TEXT.get(f["id"], f["id"]))} for f in main.faqs()],
+        "triggers": {"keyword": main.KEYWORD, "start_after": main.START_AFTER.isoformat() if main.START_AFTER else None,
+                     "ignore_media": len(main.IGNORE_MEDIA)},
+        "live": bool(main.meet_url()), "between": main.workshop() is None,
+    }
+
+
+@app.get("/api/messages")
+def messages(request: Request, reel: str = ""):
+    local_only(request)
+    return messages_payload(reel_by_id(reel))
+
+
+@app.post("/api/messages")
+async def message_save(request: Request):
+    """{key, text}: save one message for the current (or last) workshop; the bot uses it within seconds."""
+    local_only(request)
+    b = await request.json()
+    k, t = str(b.get("key") or ""), str(b.get("text") or "")
+    if err := bot_messages.check(k, t):
+        raise HTTPException(400, err)
+    r = reel_by_id(b.get("reel"))
+    w = r or main.latest_workshop()
+    if not w["id"]:
+        raise HTTPException(400, "No workshop set up yet")
+    texts = dict(w["texts"])
+    if t == getattr(main, k):
+        texts.pop(k, None)
+    else:
+        texts[k] = t
+    (reel_update if r else ws_update)(w["id"], texts=texts)
+    main.activity("admin", None, f"Edited the message \"{bot_messages.BY_KEY[k]['label']}\""
+                  + (f" for {r['name']}" if r else ""), t, {"key": k})
+    warning = None
+    if k in ("VISIT_TITLE", "FOLLOWING_TITLE"):
+        with main.in_reel(reel_by_id(b.get("reel"))):
+            missing = [bot_messages.BY_KEY[m]["label"] for m in ("INTRO_MSG", "RULES_MSG") if t not in main.text(m)]
+        if missing:
+            warning = f"\"{t}\" isn't in: {', '.join(missing)}. People read the button name there, so update them too."
+    return {"ok": True, "warning": warning}
+
+
+@app.post("/api/faqs")
+async def faqs_save(request: Request):
+    """{faqs: [{id?, label, keywords, on, answer}]}: the whole question list (new ones get an id)."""
+    local_only(request)
+    b = await request.json()
+    questions, answers = clean_faqs(b.get("faqs"))
+    r = reel_by_id(b.get("reel"))
+    w = r or main.latest_workshop()
+    if not w["id"]:
+        raise HTTPException(400, "No workshop set up yet")
+    (reel_update if r else ws_update)(w["id"], texts=faq_texts(w["texts"], answers),
+                                      faqs=None if questions == [dict(f) for f in bot_messages.FAQ_DEFAULTS] else questions)
+    main.activity("admin", None, "Edited the questions the bot answers" + (f" for {r['name']}" if r else ""))
+    return {"ok": True}
+
+
+@app.post("/api/messages/test")
+async def message_test(request: Request):
+    """{text}: what the bot would answer to this DM (questions only; the follow step comes after)."""
+    local_only(request)
+    b = await request.json()
+    said, r = str(b.get("text") or ""), reel_by_id(b.get("reel"))
+    with main.in_reel(r):  # in a reel's flow every DM starts the bot
+        return {"triggers": bool(r) or main.matches(said) or said.strip().upper() == "DONE",
+                "between": main.workshop() is None,
+                "answers": [{"id": f["id"], "label": f["label"], "answer": a, "custom": main.custom(f),
+                             "stop": bool(f.get("stop")), "button": f.get("button_title") or None}
+                            for f, a in main.answers_for(said)]}
+
+
+# ---------- activity feed + background jobs (Activity tab) ----------
+FEED_KINDS = {"in": ("in",), "out": ("out", "skip"), "links": ("link", "wa"), "follows": ("follow",),
+              "jobs": ("job",), "you": ("admin",), "problems": ("fail",)}
+
+
+@app.get("/api/activity")
+def activity_feed(request: Request, after: int = 0, before: int = 0, kind: str = "", who: str = "", q: str = "",
+                  limit: int = 150):
+    """Newest first. after: only rows newer than this id (live updates); before: the page before this id."""
+    local_only(request)
+    where, args = [], []
+    if after:
+        where.append("id > ?")
+        args.append(after)
+    if before:
+        where.append("id < ?")
+        args.append(before)
+    if kind in FEED_KINDS:
+        where.append(f"kind IN ({','.join('?' * len(FEED_KINDS[kind]))})")
+        args.extend(FEED_KINDS[kind])
+    if who:
+        where.append("who = ?")
+        args.append(who)
+    if q:
+        where.append("(summary LIKE ? OR text LIKE ? OR who LIKE ? OR detail LIKE ? "
+                     "OR who IN (SELECT igsid FROM users WHERE username LIKE ?))")
+        args.extend([f"%{q}%"] * 5)
+    with db() as conn:
+        rows = conn.execute("SELECT id, at, kind, who, channel, summary, text, detail FROM activity "
+                            + (f"WHERE {' AND '.join(where)} " if where else "") + "ORDER BY id DESC LIMIT ?",
+                            (*args, min(max(limit, 1), 500))).fetchall()
+        ids = tuple({r[3] for r in rows if r[3]})
+        mark = ",".join("?" * len(ids))
+        names = dict(conn.execute(f"SELECT igsid, username FROM users WHERE igsid IN ({mark})", ids)) if ids else {}
+        fb = {f"fb:{p}": n for p, n in conn.execute(
+            f"SELECT psid, name FROM fb_users WHERE 'fb:' || psid IN ({mark})", ids)} if ids else {}
+        latest = conn.execute("SELECT MAX(id) FROM activity").fetchone()[0] or 0
+    labels = {m["key"]: m["label"] for m in bot_messages.CATALOG} | {f["id"]: f["label"] for f in main.faqs()}
+    out = []
+    for i, at, kind_, who_, channel, summary, body, detail in rows:
+        detail = json.loads(detail) if detail else {}
+        name = (names.get(who_) and "@" + names[who_]) or fb.get(who_) or (
+            detail.get("username") and "@" + detail["username"]) or None
+        out.append({"id": i, "at": at, "kind": kind_, "who": who_, "name": name, "channel": channel,
+                    "summary": summary, "text": body, "label": labels.get(detail.get("key")),
+                    "buttons": detail.get("buttons"), "error": detail.get("error")})
+    return {"rows": out, "latest": latest}
+
+
+JOB_INFO = (  # name, label, what it does, which process runs it, seconds between runs
+    ("recheck", "Follow re-check & reminders", "Sends the link to anyone who followed after being asked; sends the "
+     "one follow reminder and the one join-link reminder (Instagram and Messenger).", "bot", 600),
+    ("audit", "Unfollow check", "Checks that everyone who got a link still follows (about 2 s per person). "
+     "Unfollowers land in the To remove card.", "bot", 7200),
+    ("notify", "Matching & used links", "Matches link taps to WhatsApp joins, closes used links, and pops up "
+     "new people to remove.", "dashboard", 60),
+    ("ig_names", "Instagram names", "Looks up the display name of new link tappers (helps matching).", "dashboard", 300),
+    ("bot_health", "Bot & tunnel health", "Is the bot answering, is the tunnel up, is Meta sending to it.",
+     "dashboard", 30),
+    ("listener", "WhatsApp listener", "Live joins and leaves of the workshop groups.", "listener", 60),
+    ("warn", "Unfollow warnings", "Runs when you press Send warning or Warn all.", "dashboard", None),
+    ("awake", "Keep laptop awake", "Presses Ctrl every 30 min so Windows doesn't sleep.", "keep_awake", 1800),
+)
+
+
+@app.get("/api/jobs")
+def jobs(request: Request):
+    local_only(request)
+    conn = db()
+    conn.row_factory = sqlite3.Row
+    stored = {r["name"]: dict(r) for r in conn.execute("SELECT * FROM jobs")}
+    conn.close()
+    wa, aw = get_meta("wa", {}), awake_status()
+    alive = {"bot": bool(_bot["local_ok"]), "dashboard": True,
+             "listener": wa.get("state") == "ready" and bool(wa.get("at"))
+             and main.now() - datetime.fromisoformat(wa["at"]) < timedelta(minutes=3),
+             "keep_awake": aw.get("running", False)}
+    out = []
+    for name, label, about, proc, every in JOB_INFO:
+        s = dict(stored.get(name) or _loops.get(name) or {})
+        if name == "listener":
+            s = {"ended_at": wa.get("at"), "result": "Watching: " + (wa.get("group") or "") if wa.get("state") == "ready"
+                 else wa.get("detail") or wa.get("state") or "not started"}
+        elif name == "awake":
+            s = {"ended_at": aw.get("last_press"), "next_at": aw.get("next_press") if aw.get("running") else None,
+                 "result": "On" if aw.get("running") else "Off (Members tab → Keep laptop awake)"}
+        elif name == "warn" and _warn["running"]:
+            s.update(running=1, done=_warn["done"], total=_warn["total"])
+        out.append({"name": name, "label": label, "about": about, "process": proc, "every": every,
+                    "alive": alive[proc], **s})
+    return {"jobs": out, "bot_state": bot_state()}
+
+
+@app.get("/api/wa/groups")
+def wa_groups(request: Request):
+    """For wa/listener.js: the WhatsApp groups to watch (every workshop's), newest first."""
+    local_only(request)
+    return {"groups": list(reversed(all_groups())), "main": main_group()}

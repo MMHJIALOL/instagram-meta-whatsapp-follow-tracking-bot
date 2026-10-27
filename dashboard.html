@@ -8,22 +8,30 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 :root{--bg:#f7f6f2;--card:#fff;--soft:#f0eee8;--text:#1f1e1c;--muted:#6b6a65;--border:rgba(0,0,0,.1);--strong:rgba(0,0,0,.35);
---red:#a32d2d;--red-bg:#fcebeb;--red-b:#f09595;--green:#3b6d11;--green-bg:#eaf3de;--amber:#854f0b;--amber-bg:#faeeda;--blue:#185fa5;--blue-bg:#e6f1fb}
+--red:#a32d2d;--red-bg:#fcebeb;--red-b:#f09595;--green:#3b6d11;--green-bg:#eaf3de;--amber:#854f0b;--amber-bg:#faeeda;--blue:#185fa5;--blue-bg:#e6f1fb;
+--bubble:#efefef;--bubble-text:#111}
 @media (prefers-color-scheme:dark){:root{--bg:#1c1c1b;--card:#262624;--soft:#30302e;--text:#eceae4;--muted:#a3a19a;--border:rgba(255,255,255,.12);--strong:rgba(255,255,255,.4);
---red:#f09595;--red-bg:#501313;--red-b:#a32d2d;--green:#c0dd97;--green-bg:#27500a;--amber:#fac775;--amber-bg:#633806;--blue:#b5d4f4;--blue-bg:#0c447c}}
+--red:#f09595;--red-bg:#501313;--red-b:#a32d2d;--green:#c0dd97;--green-bg:#27500a;--amber:#fac775;--amber-bg:#633806;--blue:#b5d4f4;--blue-bg:#0c447c;
+--bubble:#3a3a38;--bubble-text:#f2f2f0}}
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
 .wrap{max-width:1180px;margin:0 auto;padding:20px 16px 60px}
 h1{font-size:20px;font-weight:500;margin:0}
+h2{font-size:18px;font-weight:500;margin:0}
+h3{font-size:13px;font-weight:500;color:var(--muted);margin:22px 0 8px;text-transform:uppercase;letter-spacing:.04em}
 .sub{color:var(--muted);font-size:12px}
 button,.btn{font:inherit;font-size:13px;color:var(--text);background:var(--card);border:.5px solid var(--strong);border-radius:8px;padding:6px 12px;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
 button:hover,.btn:hover{background:var(--soft)}
-input[type=search]{font:inherit;width:100%;padding:8px 10px;border-radius:8px;border:.5px solid var(--strong);background:var(--card);color:var(--text)}
+input[type=search],.inp{font:inherit;width:100%;padding:8px 10px;border-radius:8px;border:.5px solid var(--strong);background:var(--card);color:var(--text)}
+textarea.inp{resize:vertical;min-height:60px;line-height:1.45}
+.inp:focus,input[type=search]:focus{outline:2px solid var(--blue);outline-offset:-1px}
 .card{background:var(--card);border:.5px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:14px}
 .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:8px;margin-bottom:14px}
 .tile{background:var(--card);border:.5px solid var(--border);border-radius:8px;padding:9px 12px;cursor:pointer}
 .tile.on{border-color:var(--strong);outline:1px solid var(--strong)}
 .tile b{display:block;font-size:20px;font-weight:500}
+.tiles.flat .tile{cursor:default;background:var(--soft);border-color:transparent}
 .pill{font-size:12px;padding:2px 8px;border-radius:8px;white-space:nowrap;background:var(--soft);color:var(--muted)}
 .p-green{background:var(--green-bg);color:var(--green)}.p-red{background:var(--red-bg);color:var(--red)}
 .p-amber{background:var(--amber-bg);color:var(--amber)}.p-blue{background:var(--blue-bg);color:var(--blue)}
@@ -35,69 +43,193 @@ tr.rm td{background:var(--red-bg)}
 tr.old td{opacity:.6}
 tr.wsline td{border-top:2px solid var(--text);border-bottom:2px solid var(--text);background:var(--soft);color:var(--muted);font-size:12px;text-align:center;cursor:pointer;padding:9px}
 tr.wsline td:hover{color:var(--text)}
-.rmrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:7px 0;border-top:.5px solid var(--border)}
+.rmrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:8px 0;border-top:.5px solid var(--border)}
 .copy{cursor:pointer;color:var(--muted)}
+.copy:hover{color:var(--text)}
 .drop{border:1px dashed var(--strong);border-radius:8px;padding:10px 12px;text-align:center;color:var(--muted);font-size:13px;cursor:pointer}
 .drop.over{background:var(--soft)}
-#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:8px 14px;border-radius:8px;font-size:13px;display:none}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:8px 14px;border-radius:8px;font-size:13px;display:none;z-index:9;max-width:90vw}
 .row2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
 @media (max-width:760px){.row2{grid-template-columns:minmax(0,1fr)}}
 .opt{padding:3px 0;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 .opt+.opt{border-top:.5px dashed var(--border)}
-button.mini{font-size:12px;padding:1px 8px;border-radius:6px}
+button.mini{font-size:12px;padding:2px 9px;border-radius:6px}
 .lnk{font-size:12px;color:var(--muted);text-decoration:underline;cursor:pointer;background:none;border:0;padding:0}
 .lnk:hover{background:none;color:var(--text)}
 button:disabled{opacity:.55;cursor:default}
 button.main{background:var(--text);color:var(--bg);border-color:var(--text)}
 button.main:hover{background:var(--text);opacity:.88}
+button.danger{color:var(--red);border-color:var(--red-b)}
 .hook{border-top:.5px solid var(--border);margin-top:12px;padding-top:10px}
 .hook.warn{border:.5px solid var(--red-b);background:var(--red-bg);border-radius:8px;padding:10px 12px}
 .kv{display:grid;grid-template-columns:92px minmax(0,1fr) auto;gap:8px;align-items:center;padding:3px 0}
 code{font:12px/1.4 ui-monospace,Consolas,monospace;overflow-wrap:anywhere}
 .miss{display:flex;gap:8px;align-items:baseline;padding:3px 0;font-size:13px}
 .miss .sub{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.between{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center}
+.flexrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+/* tabs */
+.tabs{display:flex;gap:4px;background:var(--soft);padding:4px;border-radius:10px;margin-bottom:16px;overflow-x:auto}
+.tabs button{border:0;background:none;padding:7px 14px;border-radius:7px;white-space:nowrap;color:var(--muted)}
+.tabs button.on{background:var(--card);color:var(--text);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.tabs button .pill{margin-left:2px}
+/* forms */
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px 14px;margin-top:12px;align-items:end}
+.form label,.fl{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted)}
+.form label span{font-size:11px}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13px;margin-top:12px;cursor:pointer}
+.check input{margin-top:3px}
+/* messages */
+.msggrid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px;margin-top:10px}
+@media (max-width:760px){.msggrid{grid-template-columns:minmax(0,1fr)}}
+.when{margin-top:4px;display:flex;gap:6px;align-items:flex-start}
+.when i{margin-top:2px}
+.phone{background:var(--soft);border-radius:12px;padding:12px;align-self:start}
+.bub{background:var(--bubble);color:var(--bubble-text);border-radius:16px 16px 16px 4px;padding:9px 12px;font-size:13px;line-height:1.4;white-space:pre-wrap;overflow-wrap:anywhere;max-width:290px}
+.bbtns{margin:8px -12px -9px;border-top:.5px solid rgba(128,128,128,.35)}
+.bbtns div{padding:7px 12px;text-align:center;color:var(--blue);font-weight:500;border-bottom:.5px solid rgba(128,128,128,.35)}
+.bbtns div:last-child{border-bottom:0}
+.lk{color:var(--blue);text-decoration:underline}
+.btnchip{display:inline-block;border:.5px solid var(--strong);border-radius:8px;padding:4px 12px;font-size:13px;color:var(--blue);font-weight:500;background:var(--card)}
+.err{color:var(--red);font-size:12px;min-height:0}
+.warnline{color:var(--amber);font-size:12px}
+.chip{display:inline-flex;gap:4px;align-items:center;font-size:11px;padding:1px 7px;border-radius:6px;border:.5px solid var(--border);color:var(--muted)}
+.navchips{display:flex;gap:6px;flex-wrap:wrap}
+.navchips button{font-size:12px;padding:3px 10px;border-radius:14px}
+.navchips button.on{background:var(--text);color:var(--bg);border-color:var(--text)}
+.date-hit{background:var(--amber-bg);color:var(--amber);border-radius:4px;padding:0 3px}
+/* wizard */
+.steps{display:flex;gap:6px;margin:10px 0 14px;flex-wrap:wrap}
+.steps span{font-size:12px;padding:4px 10px;border-radius:14px;background:var(--soft);color:var(--muted)}
+.steps span.on{background:var(--text);color:var(--bg)}
+.steps span.done{background:var(--green-bg);color:var(--green)}
+.review li{margin:4px 0}
+details summary{cursor:pointer;color:var(--muted);font-size:13px;margin:8px 0}
+/* activity */
+.jobs{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin-bottom:14px}
+.job{background:var(--card);border:.5px solid var(--border);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:3px}
+.job.bad{border-color:var(--red-b)}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;background:var(--muted);flex:none}
+.dot.ok{background:#4a9b2b}.dot.run{background:#d4900f}.dot.bad{background:#d33}
+.bar{height:4px;background:var(--soft);border-radius:2px;overflow:hidden;margin-top:4px}
+.bar i{display:block;height:100%;background:var(--blue)}
+.frow{display:grid;grid-template-columns:72px 18px minmax(0,1fr);gap:8px;padding:7px 0;border-top:.5px solid var(--border);align-items:start}
+.frow .ftime{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums;padding-top:1px}
+.frow i.ti{font-size:16px;margin-top:1px}
+.ftext{color:var(--muted);font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer;margin-top:2px}
+.ftext.open{-webkit-line-clamp:unset;display:block}
+.who{font-weight:500;cursor:pointer}
+.who:hover{text-decoration:underline}
+.dayline{font-size:12px;color:var(--muted);padding:12px 0 4px;font-weight:500}
+@media (max-width:560px){.frow{grid-template-columns:56px 16px minmax(0,1fr)}}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:flex-start;margin-bottom:14px">
+  <div class="between" style="align-items:flex-start;margin-bottom:12px">
     <div><h1>Resin members</h1><div class="sub" id="fresh"></div></div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <div class="flexrow">
+      <span id="wschip"></span>
       <label class="btn"><i class="ti ti-upload"></i> Upload export<input type="file" id="file" accept=".zip,.txt" hidden></label>
       <button id="recheck"><i class="ti ti-refresh"></i> <span>Re-check follows</span></button>
     </div>
   </div>
 
-  <div class="card" id="botcard"><span class="sub">Checking the Instagram bot…</span></div>
-
-  <div class="card" id="awakecard"><span class="sub">Checking keep-awake…</span></div>
-
-  <div class="card" id="rmcard" style="border-color:var(--red-b)">
-    <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap">
-      <b style="font-weight:500;color:var(--red)"><i class="ti ti-user-minus"></i> To remove · <span id="rmcount">0</span></b>
-      <span class="sub">Unfollowed on Instagram, still in WhatsApp</span>
-    </div>
-    <div id="rmlist"></div>
+  <div class="tabs" role="tablist">
+    <button data-tab="members" class="on"><i class="ti ti-users"></i> Members</button>
+    <button data-tab="workshop"><i class="ti ti-calendar-event"></i> Workshop</button>
+    <button data-tab="reels"><i class="ti ti-movie"></i> Reels</button>
+    <button data-tab="messages"><i class="ti ti-message-2"></i> Messages</button>
+    <button data-tab="activity"><i class="ti ti-activity"></i> Activity</button>
   </div>
 
-  <div class="row2">
-    <div class="card" id="wacard"></div>
+  <!-- ================= Members ================= -->
+  <section id="tab-members">
+    <div class="card" id="botcard"><span class="sub">Checking the Instagram bot…</span></div>
+    <div class="card" id="awakecard"><span class="sub">Checking keep-awake…</span></div>
+    <div class="card" id="appscard"><span class="sub">Checking background apps…</span></div>
+
+    <div class="card" id="rmcard" style="border-color:var(--red-b)">
+      <div class="between">
+        <b style="font-weight:500;color:var(--red)"><i class="ti ti-user-minus"></i> To remove · <span id="rmcount">0</span></b>
+        <span class="flexrow"><span id="warnall"></span><span class="sub">Unfollowed on Instagram, still in WhatsApp</span></span>
+      </div>
+      <div id="rmlist"></div>
+    </div>
+
+    <div class="row2">
+      <div class="card" id="wacard"></div>
+      <div class="card">
+        <div class="drop" id="drop"><i class="ti ti-file-zip"></i> Drop a WhatsApp chat export (.zip) here</div>
+        <div class="sub" id="exportinfo" style="margin-top:8px"></div>
+      </div>
+    </div>
+
+    <div class="tiles" id="tiles"></div>
+    <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px">
+      <input type="search" id="q" placeholder="Search username, number or name">
+      <span class="sub" id="cnt" style="white-space:nowrap"></span>
+    </div>
+    <div class="tablewrap"><table><thead id="thead"></thead><tbody id="rows"></tbody></table></div>
+  </section>
+
+  <!-- ================= Workshop ================= -->
+  <section id="tab-workshop" hidden>
+    <div id="wizard"></div>
+    <div id="wscurrent"></div>
+    <div id="wsprev"></div>
+    <div class="card" id="wssettings"></div>
+  </section>
+
+  <!-- ================= Reels ================= -->
+  <section id="tab-reels" hidden>
     <div class="card">
-      <div class="drop" id="drop"><i class="ti ti-file-zip"></i> Drop a WhatsApp chat export (.zip) here</div>
-      <div class="sub" id="exportinfo" style="margin-top:8px"></div>
+      <h2>Bypassed reels &amp; posts</h2>
+      <p class="sub">Paste an Instagram reel or post link to skip its comments and DMs tied to it, including follow-ups and bot reminders. Bypass takes priority over reel offers.</p>
+      <form id="bypass-form" class="flexrow">
+        <input class="inp" id="bypass-url" aria-label="Instagram reel or post link to bypass" placeholder="https://www.instagram.com/reel/…" required style="flex:1;min-width:200px">
+        <button class="main" type="submit" id="bypass-add">Bypass post</button>
+      </form>
+      <p class="sub">Follow-up DMs stay bypassed until the person interacts through another post, ad or story, or you remove the bypass. If Instagram provides no post source and there is no previous interaction to identify it, the bot cannot tie a DM to this list.</p>
+      <div id="bypass-list" aria-live="polite">Loading…</div>
     </div>
-  </div>
+    <div class="card"><b style="font-weight:500"><i class="ti ti-movie"></i> Reels with their own offer</b>
+      <div class="sub" style="margin-top:2px">A reel can sell something else than the workshop, with its own messages and its own WhatsApp link.
+        Comments on that reel get its messages, and those people stay in its flow for their DMs and button taps (follow check, reminders, link)
+        until they come in through an ad, another post or a story. Ads and every other post keep the workshop's messages.</div>
+      <div class="hook flexrow"><input class="inp" id="newreel" placeholder="Name, e.g. ₹99 Diwali workshop" maxlength="60" style="flex:1;min-width:200px">
+        <button data-rl="new"><i class="ti ti-plus"></i> New reel offer</button></div></div>
+    <div id="reellist"><span class="sub">Loading…</span></div>
+  </section>
 
-  <div class="tiles" id="tiles"></div>
-  <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px">
-    <input type="search" id="q" placeholder="Search username, number or name">
-    <span class="sub" id="cnt" style="white-space:nowrap"></span>
-  </div>
-  <div class="tablewrap"><table><thead id="thead"></thead><tbody id="rows"></tbody></table></div>
+  <!-- ================= Messages ================= -->
+  <section id="tab-messages" hidden>
+    <div id="msgtop" class="card"><span class="sub">Loading the bot's messages…</span></div>
+    <div id="msglist"></div>
+  </section>
+
+  <!-- ================= Activity ================= -->
+  <section id="tab-activity" hidden>
+    <h3 style="margin-top:0">Background jobs</h3>
+    <div class="jobs" id="jobs"><span class="sub">Loading…</span></div>
+    <div class="card">
+      <div class="between">
+        <b style="font-weight:500"><i class="ti ti-activity"></i> Live activity</b>
+        <span class="sub" id="feedinfo"></span>
+      </div>
+      <div class="navchips" id="feedkinds" style="margin:10px 0"></div>
+      <div class="flexrow" style="margin-bottom:4px">
+        <input type="search" id="feedq" placeholder="Search messages, names, numbers" style="flex:1;min-width:200px">
+        <span id="feedwho"></span>
+      </div>
+      <div id="feed"></div>
+      <div style="text-align:center;margin-top:10px"><button class="mini" id="feedmore" hidden>Load older</button></div>
+    </div>
+  </section>
 </div>
 <div id="toast"></div>
 <script>
-const H={"x-local":"1"};
+const H={"x-local":"1"},HJ={...H,"content-type":"application/json"};
 const FOLLOW={following:["Following","p-green"],unfollowed:["Unfollowed","p-red"],no_link:["Follows, no link","p-amber"],dm_only:["DM only",""],unknown:["Not checked",""]};
 const GROUP={in:"In group",left:"Left",none:"Not joined"};
 const CONF={confirmed:["Confirmed","p-blue"],sure:["Sure","p-green"],maybe:["Check","p-amber"]};
@@ -106,13 +238,48 @@ let D=null,filter="all",lastQr="";
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const t=s=>s?new Date(s).toLocaleString("en-IN",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit",second:"2-digit"}):"";
+const day=s=>s?new Date(s).toLocaleString("en-IN",{day:"numeric",month:"short"}):"";
 const ago=s=>{if(!s)return"never";const m=Math.round((Date.now()-new Date(s))/60000);return m<1?"just now":m<60?m+" min ago":m<1440?Math.round(m/60)+" h ago":Math.round(m/1440)+" d ago"};
+const inT=s=>{if(!s)return"";const m=Math.round((new Date(s)-Date.now())/60000);return m<=0?"any moment":m<60?"in "+m+" min":m<1440?"in "+Math.round(m/60)+" h":"in "+Math.round(m/1440)+" d"};
 const pill=([l,c])=>`<span class="pill ${c}">${l}</span>`;
-function toast(m){const e=$("toast");e.textContent=m;e.style.display="block";clearTimeout(e._t);e._t=setTimeout(()=>e.style.display="none",2500)}
+function toast(m,long){const e=$("toast");e.textContent=m;e.style.display="block";clearTimeout(e._t);e._t=setTimeout(()=>e.style.display="none",long?6000:2600)}
 function copy(v,label){navigator.clipboard.writeText(v).then(()=>toast("Copied "+(label||v)))}
-const name=r=>r.username?"@"+esc(r.username):`<span class="sub">${esc(r.igsid)}</span>`;
+const hist=r=>`<i class="ti ti-history copy" data-hist="${esc(r.igsid)}" data-hname="${esc(r.username?"@"+r.username:r.igsid)}" title="What the bot did with this person"></i>`;
+const name=r=>(r.username?"@"+esc(r.username):`<span class="sub">${esc(r.igsid)}</span>`)+" "+hist(r);
 const num=(who,wa)=>`${esc(who)} ${who.startsWith("+")?`<i class="ti ti-copy copy" data-copy="${esc(who)}" title="Copy"></i>`:""}${wa?` <span class="sub">~${esc(wa)}</span>`:""}`;
 const fix=(verdict,ig,who,label,cls="mini")=>`<button class="${cls}" data-fix="${verdict}" data-ig="${esc(ig)}" data-who="${esc(who||"")}">${label}</button>`;
+async function api(url,body,method){
+  const r=await fetch(url,{method:method||(body===undefined?"GET":"POST"),headers:body===undefined?H:HJ,body:body===undefined?undefined:JSON.stringify(body)});
+  let j={};try{j=await r.json()}catch(e){}
+  if(!r.ok)throw new Error(typeof j.detail==="string"?j.detail:"Something went wrong ("+r.status+")");
+  return j;
+}
+function setHtml(el,h){if(el.dataset.html!==h){el.innerHTML=h;el.dataset.html=h}}
+
+// ---------- tabs ----------
+const TABS=["members","workshop","reels","messages","activity"];
+let tab="members";
+function showTab(x,noHash){
+  if(!TABS.includes(x))x="members";
+  tab=x;
+  document.querySelectorAll("[data-tab]").forEach(b=>b.classList.toggle("on",b.dataset.tab===x));
+  TABS.forEach(k=>$("tab-"+k).hidden=k!==x);
+  if(!noHash)history.replaceState(null,"",x==="members"?location.pathname:"#"+x);
+  if(x==="workshop"){renderWorkshop(true);loadWsSettings()}
+  if(x==="messages")loadMessages();
+  if(x==="reels")loadReels();
+  if(x==="activity"){renderFeedKinds();loadJobs();loadFeed(true)}
+}
+const wsById=id=>(D&&D.workshops||[]).find(w=>w.id===id);
+const runningWs=()=>D&&D.running_id?wsById(D.running_id):null;
+const latestWs=()=>{const w=D&&D.workshops||[];return w[w.length-1]||null};
+function renderChip(){
+  const r=runningWs(),l=latestWs();
+  setHtml($("wschip"),!D||!D.workshops.length?"":r?`<span class="pill ${r.meet_url?"p-red":"p-green"}" style="cursor:pointer" data-tab="workshop">${r.meet_url?"● Live · ":""}${esc(r.name)}</span>`
+    :`<span class="pill p-amber" style="cursor:pointer" data-tab="workshop">No workshop running</span>`);
+}
+
+// ---------- Members ----------
 // a "Check" match: each number it could be, how likely, who else fits it, and buttons to settle it
 function options(r){
   return r.options.map(o=>`<div class="opt"><span>${num(o.who,o.wa_name)}</span><b style="font-weight:500">${pct(o.p)}</b>
@@ -128,12 +295,29 @@ function matchCell(r){
 }
 
 async function load(){
-  try{const r=await fetch("/api/data",{headers:H});D=await r.json();render()}catch(e){$("fresh").textContent="Can't reach the dashboard server"}
+  try{D=await api("/api/data");render()}catch(e){$("fresh").textContent="Can't reach the dashboard server"}
+  if(D&&D.warn&&D.warn.running)setTimeout(load,1500);
 }
+// the tiles count the running workshop (or, between workshops, the last one); "All" without workshops set up
+const focusId=()=>D.workshops.length?(D.running_id||(latestWs()||{}).id):null;
+const inFocus=r=>focusId()==null||r.ws===focusId();
 function counts(){
-  const c={all:D.rows.length,to_remove:0,check:0,following:0,unfollowed:0,no_link:0,dm_only:0,unknown:0,in:0,left:0,clicked:0,wa_only:D.wa_only.length};
-  for(const r of D.rows){c[r.follow]++;if(r.to_remove||r.to_check)c.to_remove++;if(r.conf==="maybe")c.check++;if(r.group==="in")c.in++;if(r.group==="left")c.left++;if(r.clicked_at)c.clicked++}
+  const rows=D.rows.filter(inFocus);
+  const c={all:rows.length,to_remove:0,check:0,following:0,unfollowed:0,no_link:0,dm_only:0,unknown:0,in:0,left:0,clicked:0,wa_only:D.wa_only.length};
+  for(const r of rows){c[r.follow]++;if(r.to_remove||r.to_check)c.to_remove++;if(r.conf==="maybe")c.check++;if(r.group==="in")c.in++;if(r.group==="left")c.left++;if(r.clicked_at)c.clicked++}
   return c;
+}
+function warnInfo(r){
+  const h=r.last_msg_at?(Date.now()-new Date(r.last_msg_at))/3600000:Infinity,open=h<24,busy=D.warn&&D.warn.running?"disabled":"";
+  let line;
+  if(r.warned_at){const wh=(Date.now()-new Date(r.warned_at))/3600000;
+    line=`${pill(wh>=24?["No response in 24 h","p-red"]:["Warned","p-amber"])} <span class="sub">warning sent ${ago(r.warned_at)} · still not following</span>`}
+  else if(r.warn_error)line=`<span class="sub" style="color:var(--red)">Warning not sent (${ago(r.warn_tried_at)}): ${esc(r.warn_error)}</span>`;
+  else line=`<span class="sub">${open?`<i class="ti ti-circle-check" style="color:var(--green)"></i> Can message for ${Math.max(1,Math.floor(24-h))} more h`
+    :`<i class="ti ti-clock-x"></i> ${r.last_msg_at?"Last DM "+ago(r.last_msg_at):"Never DMed the bot"}: Instagram will probably refuse (24 h rule)`}</span>`;
+  const btn=r.warned_at?`<button class="lnk" data-warn="${esc(r.igsid)}" ${busy}>Send again</button>`
+    :`<button class="mini ${open?"main":""}" data-warn="${esc(r.igsid)}" ${busy}><i class="ti ti-send"></i> ${open?"Send warning":"Try anyway"}</button>`;
+  return {line,btn};
 }
 function render(){
   const ex=D.export,rc=D.recheck;
@@ -141,20 +325,26 @@ function render(){
   $("exportinfo").innerHTML=ex?`Last export uploaded ${ago(ex.uploaded_at)} · covers up to ${t(ex.latest)} · ${ex.found} joins/leaves, ${ex.added} new`:"No export uploaded yet. Group → Export chat → Without media, then drop the zip here.";
   const b=$("recheck").querySelector("span");
   b.textContent=rc&&rc.running?`Checking ${rc.done}/${rc.total}`:"Re-check follows";
+  renderChip();
   renderWa();
   const todo=D.rows.filter(r=>r.to_remove||r.to_check).sort((a,b)=>b.to_remove-a.to_remove);
   $("rmcount").textContent=todo.length;
-  $("rmlist").innerHTML=todo.length?todo.map(r=>r.to_remove?`<div class="rmrow">
-    <span style="flex:1;min-width:160px">${name(r)} <span class="sub">unfollowed ${ago(r.unfollowed_at)}</span></span>
+  const unwarned=todo.filter(r=>!r.warned_at);
+  setHtml($("warnall"),D.warn.running?`<span class="sub"><i class="ti ti-send"></i> Warning ${D.warn.done}/${D.warn.total}…</span>`
+    :unwarned.length>1?`<button class="mini" data-warnall><i class="ti ti-send"></i> Warn all (${unwarned.length})</button>`:"");
+  setHtml($("rmlist"),todo.length?todo.map(r=>{const w=warnInfo(r);return r.to_remove?`<div class="rmrow">
+    <div style="flex:1;min-width:220px">${name(r)} <span class="sub">unfollowed ${ago(r.unfollowed_at)}</span><div style="margin-top:3px">${w.line}</div></div>
     <span>${num(r.who,r.wa_name)}</span>${pill(CONF[r.conf])}
+    ${w.btn}<button class="mini" data-follow="${esc(r.igsid)}" title="Look up their follow status now"><i class="ti ti-refresh"></i> Re-check</button>
     <label class="sub" style="display:flex;gap:4px;align-items:center;cursor:pointer"><input type="checkbox" data-removed="${esc(r.igsid)}"> Removed</label></div>`
-    :`<div class="rmrow"><span style="flex:1;min-width:160px">${name(r)} <span class="sub">unfollowed ${ago(r.unfollowed_at)} · not sure which number, pick one before removing</span></span>
-    ${pill(CONF.maybe)}<div style="flex-basis:100%">${options(r)}</div></div>`).join("")
-    :`<div class="sub" style="padding-top:6px">Nobody right now. People show up here once they've joined through their personal link and then unfollowed.</div>`;
+    :`<div class="rmrow"><div style="flex:1;min-width:220px">${name(r)} <span class="sub">unfollowed ${ago(r.unfollowed_at)} · not sure which number, pick one before removing</span><div style="margin-top:3px">${w.line}</div></div>
+    ${pill(CONF.maybe)}${w.btn}<button class="mini" data-follow="${esc(r.igsid)}"><i class="ti ti-refresh"></i> Re-check</button><div style="flex-basis:100%">${options(r)}</div></div>`}).join("")
+    :`<div class="sub" style="padding-top:6px">Nobody right now. People show up here once they've joined through their personal link and then unfollowed.</div>`);
   const c=counts();
-  const T=[["all","All"],["to_remove","To remove"],["check","Check matches"],["following","Following"],["unfollowed","Unfollowed"],["no_link","Follows, no link"],["dm_only","DM only"],["unknown","Not checked"],["clicked","Tapped link"],["in","In group"],["left","Left"],["wa_only","WhatsApp only"]];
-  $("tiles").innerHTML=T.map(([k,l])=>`<div class="tile ${filter===k?"on":""}" data-k="${k}"><span class="sub">${l}</span><b style="${k==="to_remove"&&c[k]?"color:var(--red)":""}">${c[k]}</b></div>`).join("");
+  const T=[["all",D.workshops.length?"This workshop":"All"],["to_remove","To remove"],["check","Check matches"],["following","Following"],["unfollowed","Unfollowed"],["no_link","Follows, no link"],["dm_only","DM only"],["unknown","Not checked"],["clicked","Tapped link"],["in","In group"],["left","Left"],["wa_only","WhatsApp only"]];
+  setHtml($("tiles"),T.map(([k,l])=>`<div class="tile ${filter===k?"on":""}" data-k="${k}"><span class="sub">${l}</span><b style="${k==="to_remove"&&c[k]?"color:var(--red)":""}">${c[k]}</b></div>`).join(""));
   renderRows();
+  if(tab==="workshop")renderWorkshop();
 }
 function renderWa(){
   const w=D.wa,el=$("wacard");
@@ -167,6 +357,7 @@ function renderWa(){
   if(el.dataset.html!==body){el.innerHTML=body;el.dataset.html=body;lastQr=""}
   if(w.state==="qr"&&w.qr&&w.qr!==lastQr&&window.QRCode){$("qr").innerHTML="";new QRCode($("qr"),{text:w.qr,width:200,height:200});lastQr=w.qr}
 }
+const openWs=new Set();let showOld=false;
 function renderRows(){
   const q=$("q").value.toLowerCase().trim();
   if(filter==="wa_only"){
@@ -187,17 +378,35 @@ function renderRows(){
     <td>${r.joined_at?t(r.joined_at):r.conf==="maybe"?t(r.options[0].joined)+" ?":r.clicked_at?'<span class="sub">not yet</span>':'<span class="sub">—</span>'}<div class="sub">${r.group==="left"?"left "+t(r.left_at):r.removed_at&&r.group==="in"?"marked removed":""}</div></td>
     <td>${r.who?num(r.who,r.wa_name):r.conf==="maybe"?options(r):'<span class="sub">—</span>'}</td>
     <td>${matchCell(r)}</td></tr>`;
-  // current workshop above the line; previous workshop below it, hidden until opened
-  const now=rows.filter(r=>r.current), before=rows.filter(r=>!r.current);
-  $("cnt").textContent=now.length+" shown"+(before.length?` · ${before.length} from the previous workshop`:"");
-  const line=`<tr class="wsline"><td colspan="6" onclick="showOld=!showOld;renderRows()">${showOld?"▲ Hide previous workshop":"▼ Previous workshop (ended) · "+before.length+" people"}</td></tr>`;
-  $("rows").innerHTML=now.slice(0,600).map(rowHtml).join("")+(before.length?line+(showOld?before.slice(0,600).map(rowHtml).join(""):""):"");
+  if(!D.workshops.length){
+    // before workshops were set up: current workshop above the line, everyone before it below
+    const now=rows.filter(r=>r.current),before=rows.filter(r=>!r.current);
+    $("cnt").textContent=now.length+" shown"+(before.length?` · ${before.length} from the previous workshop`:"");
+    const line=`<tr class="wsline"><td colspan="6" data-oldline>${showOld?"▲ Hide previous workshop":"▼ Previous workshop (ended) · "+before.length+" people"}</td></tr>`;
+    $("rows").innerHTML=now.slice(0,600).map(rowHtml).join("")+(before.length?line+(showOld?before.slice(0,600).map(rowHtml).join(""):""):"");
+    return;
+  }
+  // one section per workshop: the running one open on top, earlier ones folded under their own line
+  const run=D.running_id,byWs={};
+  for(const r of rows)(byWs[r.ws]=byWs[r.ws]||[]).push(r);
+  const order=[...D.workshops].reverse();
+  let h="",shown=0;
+  if(!run)h+=`<tr class="wsline"><td colspan="6" style="cursor:default">No workshop running · ${esc((latestWs()||{}).name||"")} ended ${day((latestWs()||{}).closed_at)}</td></tr>`;
+  for(const w of order){
+    const list=byWs[w.id]||[];
+    if(w.id===run){shown+=list.length;h+=list.length?list.slice(0,600).map(rowHtml).join("")
+      :`<tr><td colspan="6" class="sub" style="padding:14px 10px">${q||filter!=="all"?"Nobody in "+esc(w.name)+" matches.":"Nobody in "+esc(w.name)+" yet. People show up here as they DM, comment or tap their link."}</td></tr>`;continue}
+    const open=openWs.has(w.id);
+    h+=`<tr class="wsline" id="wsline-${w.id}"><td colspan="6" data-wsline="${w.id}">${open?"▲ Hide":"▼"} ${esc(w.name)} (${w.closed_at?"ended "+day(w.closed_at):"running"}) · ${list.length} ${list.length===1?"person":"people"}</td></tr>`;
+    if(open)h+=list.slice(0,600).map(rowHtml).join("");
+  }
+  $("cnt").textContent=run?shown+" in this workshop · "+(rows.length-shown)+" in earlier ones":rows.length+" people";
+  $("rows").innerHTML=h;
 }
-let showOld=false;
 // ---------- Instagram bot card ----------
 let B=null;
-const BOT={checking:["Checking",""],live:["Live","p-green"],verified:["Connected","p-green"],meta:["Meta has old link","p-red"],tunnel:["Link dead","p-red"],down:["Down","p-red"]};
-async function loadBot(){try{const r=await fetch("/api/bot",{headers:H});B=await r.json();renderBot()}catch(e){}}
+const BOT={checking:["Checking",""],live:["Live","p-green"],verified:["Connected","p-green"],meta:["Meta has old link","p-red"],tunnel:["Link dead","p-red"],down:["Down","p-red"],off:["Off",""]};
+async function loadBot(){try{B=await api("/api/bot");renderBot()}catch(e){}}
 function renderBot(){
   const b=B,f=b.fix,m=b.missed,c=b.catchup,bad=["meta","tunnel","down"].includes(b.state);
   const msg={checking:"Checking the bot…",
@@ -205,10 +414,19 @@ function renderBot(){
     verified:`Meta accepted the link ${ago(b.verified)} · turns Live with the next DM or comment`,
     meta:`The bot is running, but Meta is still sending to an old link (this link started ${t(b.url_since)}). Copy both into Meta below.`,
     tunnel:"The bot is running, but its link is dead, so Instagram can't reach it. Tap Make bot active.",
-    down:"The bot isn't running. Tap Make bot active."}[b.state];
+    down:"The bot isn't running. Tap Make bot active.",
+    off:"Turned off, so nobody gets bot replies. Turn it on when you need it, then paste the new Callback URL into Meta."}[b.state];
   let h=`<div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center">
     <b style="font-weight:500"><i class="ti ti-robot"></i> Instagram bot</b>${pill(BOT[b.state])}</div>
     <div class="sub" style="margin-top:4px;${bad?"color:var(--red)":""}">${esc(msg)}</div>`;
+  if(b.state==="off"){
+    const busy=(f&&f.running)||(A&&A.bot.busy);
+    h+=`<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px">
+      <button class="main" data-app="bot:on" ${busy?"disabled":""}><i class="ti ti-player-play"></i> Turn on</button>
+      ${f&&f.running?`<span class="sub">${esc(f.step)}…</span>`:""}</div>`;
+    const el=$("botcard");el.style.borderColor="";setHtml(el,h);
+    return;
+  }
   if(b.rejected&&b.state==="meta")h+=`<div class="sub" style="color:var(--amber)">Meta tried ${ago(b.rejected)} but the Verify token didn't match. Copy it again below.</div>`;
   h+=`<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px">
     <button class="${bad?"main":""}" data-bot="fix" ${f&&f.running?"disabled":""}><i class="ti ti-player-play"></i> Make bot active</button>
@@ -230,36 +448,34 @@ function renderBot(){
   h+="</div>";
   const el=$("botcard");
   el.style.borderColor=bad?"var(--red-b)":"";
-  if(el.dataset.html!==h){el.innerHTML=h;el.dataset.html=h}
+  setHtml(el,h);
 }
 async function botAction(a){
   if(a==="newlink"&&!confirm("Make a new link? The current one stops working, and you'll have to paste the new one in Meta."))return;
   if(a==="catchup"&&!confirm(`Send the bot's reply to ${B.missed.people.length} people now?`))return;
   const url={fix:"/api/bot/fix",newlink:"/api/bot/fix?new_link=true",missed:"/api/bot/missed",catchup:"/api/bot/catchup"}[a];
-  const r=await(await fetch(url,{method:"POST",headers:H})).json();
+  const r=await api(url,{});
   toast(r.started?{fix:"Fixing the bot…",newlink:"Making a new link…",missed:"Checking the inbox…",catchup:"Replying…"}[a]:"Already running");
   loadBot();
 }
 
 // ---------- Keep laptop awake card ----------
 let AW=null,AW_TEST="",AW_BUSY=false;
-const inMin=s=>{const m=Math.ceil((new Date(s)-Date.now())/60000);return m<=0?"any moment":"in "+m+" min"};
-async function loadAwake(){try{AW=await(await fetch("/api/awake",{headers:H})).json();renderAwake()}catch(e){}}
+async function loadAwake(){try{AW=await api("/api/awake");renderAwake()}catch(e){}}
 function renderAwake(){
   const a=AW,on=a.running;
-  let h=`<div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center">
+  setHtml($("awakecard"),`<div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center">
     <b style="font-weight:500"><i class="ti ti-bulb"></i> Keep laptop awake</b>${pill(on?["On","p-green"]:["Off",""])}</div>
-    <div class="sub" style="margin-top:4px">${on?`Presses Ctrl 4 times every 30 min so Windows never sees the laptop as idle · last press ${ago(a.last_press)} · next ${a.next_press?inMin(a.next_press):"soon"}`:"Off. Turn it on and it presses Ctrl 4 times every 30 min (and once straight away)."}</div>
+    <div class="sub" style="margin-top:4px">${on?`Presses Ctrl 4 times every 30 min so Windows never sees the laptop as idle · last press ${ago(a.last_press)} · next ${a.next_press?inT(a.next_press):"soon"}`:"Off. Turn it on and it presses Ctrl 4 times every 30 min (and once straight away)."}</div>
     <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px">
       <button class="${on?"":"main"}" data-awake="${on?"stop":"start"}" ${AW_BUSY?"disabled":""}><i class="ti ti-${on?"player-stop":"player-play"}"></i> ${on?"Turn off":"Turn on"}</button>
       <button class="mini" data-awake="test" ${AW_BUSY?"disabled":""}><i class="ti ti-keyboard"></i> Test now</button>
-      ${AW_TEST?`<span class="sub">${esc(AW_TEST)}</span>`:""}</div>`;
-  const el=$("awakecard");if(el.dataset.html!==h){el.innerHTML=h;el.dataset.html=h}
+      ${AW_TEST?`<span class="sub">${esc(AW_TEST)}</span>`:""}</div>`);
 }
 async function awakeAction(a){
   AW_BUSY=true;if(a==="test")AW_TEST="Pressing Ctrl 4 times…";if(AW)renderAwake();
   try{
-    const r=await(await fetch("/api/awake/"+a,{method:"POST",headers:H})).json();
+    const r=await api("/api/awake/"+a,{});
     if(a==="test"){
       AW_TEST=r.idle_after<3?(r.idle_before<3?"Ctrl pressed 4 times · Windows saw it (you're using the laptop, so the idle timer was already low)":`Ctrl pressed 4 times · Windows saw it: idle timer went ${r.idle_before} s → ${r.idle_after} s`)
         :`Ctrl pressed, but Windows didn't register it (idle timer still ${r.idle_after} s). The dashboard may be running outside your desktop session.`;
@@ -271,25 +487,669 @@ async function awakeAction(a){
   AW_BUSY=false;loadAwake();
 }
 
+// ---------- Background apps card ----------
+let A=null;
+const APPS=[["bot","ti-robot","Instagram bot","Replies to Instagram DMs and comments. Turning it on gives a new link to paste into Meta."],
+  ["ads","ti-speakerphone","Ad manager","The ads page on 127.0.0.1:8002"],
+  ["members","ti-users","This dashboard + WhatsApp listener","This page and the Edge window that watches the WhatsApp group. Off closes this page; start it again with start_dashboard.bat in the project folder."]];
+async function loadApps(){try{A=await api("/api/apps");renderApps();if(B)renderBot()}catch(e){}}
+function renderApps(){
+  let h=`<b style="font-weight:500"><i class="ti ti-apps"></i> Background apps</b>
+    <div class="sub" style="margin-top:2px">What runs in the background on this laptop (the Python, Node and Edge icons). Off also stops it starting with Windows.</div>`;
+  for(const [k,icon,label,about] of APPS){
+    const s=A[k],on=s.running;
+    h+=`<div style="display:flex;justify-content:space-between;gap:10px;align-items:center;padding:8px 0;border-top:.5px solid var(--border);margin-top:8px">
+      <div style="min-width:0"><div><i class="ti ${icon}"></i> ${label} ${pill(s.busy?["Working…",""]:on?["On","p-green"]:["Off",""])}</div>
+        <div class="sub">${about}${!on&&s.autostart?" · starts with Windows":on&&!s.autostart?" · won't start with Windows":""}</div></div>
+      ${on||k!=="members"?`<button class="${on?"mini":"main"}" data-app="${k}:${on?"off":"on"}" ${s.busy?"disabled":""}><i class="ti ti-${on?"player-stop":"player-play"}"></i> ${on?"Turn off":"Turn on"}</button>`:""}</div>`;
+  }
+  setHtml($("appscard"),h);
+}
+async function appAction(v){
+  const [k,a]=v.split(":"),label=APPS.find(x=>x[0]===k)[2];
+  if(a==="off"&&!confirm(k==="members"?"Turn off this dashboard and the WhatsApp listener? This page will stop working until you run start_dashboard.bat.":`Turn off the ${label}? It stays off after a restart too.`))return;
+  const r=await api(`/api/apps/${k}/${a}`,{});
+  toast(r.started?`${a==="on"?"Turning on":"Turning off"}: ${label}…`:"Already working on it");
+  if(k==="members"&&a==="off"&&r.started)setTimeout(()=>{document.body.innerHTML='<div class="wrap"><h1>Dashboard turned off</h1><div class="sub">Run start_dashboard.bat in the project folder to start it again.</div></div>'},1500);
+  loadApps();loadBot();
+}
+
+// ---------- unfollow warnings ----------
+async function warn(ids,what){
+  try{const r=await api("/api/warn",{igsids:ids});toast(r.started?`Sending the warning to ${what}…`:"Already sending warnings")}
+  catch(e){toast(e.message)}
+  setTimeout(load,800);
+}
+async function recheckOne(ig,btn){
+  btn.disabled=true;
+  try{const r=await api("/api/follow/"+encodeURIComponent(ig),{});toast(!r.ok?"Couldn't check: "+r.error:r.follows?"They follow again ✅ (they'll leave this list)":"Still not following")}
+  catch(e){toast(e.message)}
+  load();
+}
+
+// ---------- Workshop tab ----------
+let WS_SHOWN="",WIZ=null,WSET=null;
+const DATE_RE=/\b\d{1,2}(?:st|nd|rd|th)?\s*(?:jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\b|\b(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b/gi;
+const dateHits=s=>[...new Set((s||"").match(DATE_RE)||[])];
+// in the wizard: is a date mention about the old workshop (its class day, or its weekday when the new one differs)?
+function isOld(hit){
+  if(!WIZ.prevDate)return true;
+  const p=new Date(WIZ.prevDate+"T12:00:00"),n=WIZ.f.date&&new Date(WIZ.f.date+"T12:00:00");
+  const wd=d=>d.toLocaleDateString("en",{weekday:"long"}).toLowerCase();
+  if(/day$/i.test(hit))return hit.toLowerCase()===wd(p)&&(!n||wd(n)!==wd(p));
+  return new RegExp(`^${p.getDate()}(?:st|nd|rd|th)?\\s*${p.toLocaleDateString("en",{month:"short"})}`,"i").test(hit);
+}
+const oldHits=s=>dateHits(s).filter(isOld);
+const oldLabel=()=>WIZ.prevDate?new Date(WIZ.prevDate+"T12:00:00").toLocaleDateString("en-IN",{day:"numeric",month:"short"}):"the old date";
+function classDay(w){
+  if(!w||!w.date)return"";
+  const d=new Date(w.date+"T12:00:00"),days=Math.round((new Date(w.date+"T00:00:00")-new Date(new Date().toDateString()))/86400000);
+  return `class on ${d.toLocaleDateString("en-IN",{weekday:"short",day:"numeric",month:"short"})}`+(days>1?` (in ${days} days)`:days===1?" (tomorrow)":days===0?" (today)":"");
+}
+function statTiles(s){
+  if(!s)return"";
+  const T=[["people","People"],["links","Got link"],["tapped","Tapped link"],["joined","Joined WhatsApp"],["in_group","In group now"],["unfollowed","Unfollowed"],["removed","Removed"]];
+  return `<div class="tiles flat" style="margin:12px 0 0">${T.map(([k,l])=>`<div class="tile"><span class="sub">${l}</span><b>${s[k]??0}</b></div>`).join("")}</div>`;
+}
+const wsStats=w=>w.stats||D.ws_stats[w.id]||D.ws_stats[String(w.id)];
+const fieldVals=()=>Object.fromEntries([...document.querySelectorAll("[data-wsf]")].map(i=>[i.dataset.wsf,i.type==="checkbox"?i.checked:i.value.trim()]));
+function renderWorkshop(force){
+  if(!D)return;
+  if(!D.workshops.length){setHtml($("wscurrent"),`<div class="card"><span class="sub">Setting up workshops…</span></div>`);return}
+  const r=runningWs(),l=latestWs();
+  const key=JSON.stringify([r,l&&l.id,l&&l.closed_at,!!WIZ]);
+  if(force||key!==WS_SHOWN&&!document.activeElement.closest("#wscurrent")){
+    WS_SHOWN=key;
+    $("wscurrent").innerHTML=r?runningCard(r):betweenCard(l);
+    $("wscurrent").dataset.html="";
+  }
+  const st=$("wsstats");if(st&&r)setHtml(st,statTiles(wsStats(r)));
+  renderPrev();
+}
+function runningCard(w){
+  return `<div class="card">
+    <div class="between"><div><div class="sub">Current workshop</div><h2>${esc(w.name)}</h2></div>
+      ${w.meet_url?pill(["● Live now","p-red"]):pill(["Running","p-green"])}</div>
+    <div class="sub" style="margin-top:2px">Running since ${t(w.started_at)}${w.date?" · "+classDay(w):""}</div>
+    <div class="form">
+      <label>Name<input class="inp" data-wsf="name" value="${esc(w.name)}" maxlength="60"></label>
+      <label>Class date<input class="inp" type="date" data-wsf="date" value="${esc(w.date||"")}"></label>
+      <label>WhatsApp group name <span>exactly as it's called in WhatsApp (used to track joins)</span><input class="inp" data-wsf="wa_group" value="${esc(w.wa_group||"")}"></label>
+      <label>WhatsApp invite link <span>where everyone's personal link takes them</span><input class="inp" data-wsf="wa_link" value="${esc(w.wa_link||"")}" placeholder="https://chat.whatsapp.com/…"></label>
+    </div>
+    <label class="check"><input type="checkbox" data-wsf="past_offer" ${w.past_offer?"checked":""}><span>People from earlier workshops get the special offer message before their new link · <button class="lnk" data-goto="PAST_MSG">edit the offer</button></span></label>
+    <div class="flexrow" style="margin-top:12px"><button class="main" data-ws="save" disabled><i class="ti ti-device-floppy"></i> Save changes</button><span class="err" id="wserr"></span></div>
+    <div class="hook">${w.meet_url?`<div class="flexrow">${pill(["● Live now","p-red"])}<span class="sub">Class link:</span><code>${esc(w.meet_url)}</code><button class="mini" data-ws="endlive"><i class="ti ti-player-stop"></i> End live</button></div>
+      <div class="sub" style="margin-top:6px">Followers and link holders get this link when they message (once each). The welcome and "when" answers use their live versions, and reminders are paused.</div>`
+      :`<div class="sub" style="margin-bottom:6px"><b style="font-weight:500;color:var(--text)">Go live</b> · when the class starts, paste the Google Meet link. Followers get it as soon as they message.</div>
+      <div class="flexrow"><input class="inp" id="meetinp" placeholder="https://meet.google.com/…" style="flex:1;min-width:220px"><button data-ws="golive"><i class="ti ti-broadcast"></i> Go live</button></div>`}</div>
+    <div id="wsstats"></div>
+    <div class="hook flexrow">
+      <button class="main" data-ws="next"><i class="ti ti-arrow-right"></i> Start next workshop</button>
+      <button class="danger" data-ws="end"><i class="ti ti-flag"></i> End workshop</button>
+      <span class="sub" style="flex:1;min-width:220px">Ending it stops this workshop's messages. Until you start the next one, the bot replies "No workshop right now".</span>
+    </div></div>`;
+}
+function betweenCard(w){
+  return `<div class="card" style="border-color:var(--amber)">
+    <div class="between"><div><div class="sub">Current workshop</div><h2>No workshop running</h2></div>${pill(["Between workshops","p-amber"])}</div>
+    <div class="sub" style="margin-top:4px">${esc(w.name)} ended ${t(w.closed_at)}. The bot answers every DM and comment with the <button class="lnk" data-goto="BETWEEN_MSG">"No workshop right now" message</button> (once a day per person). Links still open ${esc(w.name)}'s group.</div>
+    <div class="flexrow" style="margin-top:12px"><button class="main" data-ws="next"><i class="ti ti-arrow-right"></i> Start next workshop</button>
+      <button data-ws="reopen"><i class="ti ti-arrow-back-up"></i> Reopen ${esc(w.name)}</button></div></div>`;
+}
+function renderPrev(){
+  const closed=D.workshops.filter(w=>w.closed_at).reverse();
+  if(!closed.length){setHtml($("wsprev"),"");return}
+  setHtml($("wsprev"),`<h3>Previous workshops</h3>`+closed.map(w=>{const s=wsStats(w),open=openWs.has("p"+w.id);return `<div class="card">
+    <div class="between" style="cursor:pointer" data-wsopen="${w.id}"><div><b style="font-weight:500">${esc(w.name)}</b> <span class="sub">${day(w.started_at)} → ${day(w.closed_at)}${s?` · ${s.people} people · ${s.joined} joined`:""}</span></div><i class="ti ti-chevron-${open?"up":"down"}"></i></div>
+    ${open?`<div class="sub" style="margin-top:6px">Group: ${esc(w.wa_group||"not tracked")}${w.wa_link?" · "+esc(w.wa_link):""}${w.stats?" · numbers as they were when it ended":" · numbers from the people whose latest activity falls in it"}</div>
+      ${statTiles(s)}<div style="margin-top:10px"><button class="mini" data-wspeople="${w.id}"><i class="ti ti-users"></i> Show people</button></div>`:""}</div>`}).join(""));
+}
+async function loadWsSettings(){
+  try{WSET=(await api("/api/workshops")).settings}catch(e){return}
+  setHtml($("wssettings"),`<b style="font-weight:500"><i class="ti ti-settings"></i> Bot-wide settings</b> <span class="sub">(the same for every workshop; set in .env)</span>
+    <div class="form" style="font-size:13px">
+      <div class="fl">Which DMs start the bot<span style="color:var(--text)">${WSET.keyword==="*"?"Every DM":"DMs containing “"+esc(WSET.keyword)+"”"} · plus DONE, DMs from ads and story replies</span></div>
+      <div class="fl">Comments that start the bot<span style="color:var(--text)">On ads, and on posts made after ${WSET.start_after?t(WSET.start_after):"any time"}${WSET.ignore_media?` (${WSET.ignore_media} ${WSET.ignore_media===1?"post":"posts"} muted)`:""}</span></div>
+      <div class="fl">Material / booking number in the texts<span style="color:var(--text)">${esc(WSET.contact||"—")}</span></div>
+    </div>`);
+}
+async function wsAction(a,btn){
+  const r=runningWs(),l=latestWs();
+  try{
+    if(a==="save"){
+      const v=fieldVals();
+      await api("/api/workshops/"+r.id,{...v});toast("Saved · the bot uses it within a few seconds");WS_SHOWN="";await load();renderWorkshop(true);return}
+    if(a==="golive"){
+      const url=$("meetinp").value.trim();
+      if(!/^https:\/\/\S+$/.test(url)){toast("Paste the Meet link (starts with https://)");return}
+      if(!confirm(`Go live with ${url}?\n\nFollowers and link holders who message the bot get this link from now on.`))return;
+      await api("/api/workshops/"+r.id,{meet_url:url});toast("Live! The bot sends the class link now");}
+    if(a==="endlive"){if(!confirm("End live mode? The bot stops sending the class link."))return;await api("/api/workshops/"+r.id,{meet_url:""});toast("Live mode ended");}
+    if(a==="end"){if(!confirm(`End ${r.name}?\n\nIts people move under Previous workshops (nothing is deleted). Until you start the next workshop, the bot replies to every DM and comment with the "No workshop right now" message.`))return;
+      await api("/api/workshops-end",{});toast(r.name+" ended");}
+    if(a==="reopen"){await api("/api/workshops-reopen",{});toast(l.name+" is running again");}
+    if(a==="next"){await startWizard();return}
+    WS_SHOWN="";await load();renderWorkshop(true);
+  }catch(e){toast(e.message,true);const er=$("wserr");if(er)er.textContent=e.message}
+}
+
+// ---------- Start next workshop wizard ----------
+async function startWizard(){
+  let m;try{m=await api("/api/messages")}catch(e){toast(e.message);return}  // always the workshop's texts
+  const r=runningWs()||latestWs();
+  WIZ={step:1,prevName:r?r.name:"",prevDate:r?r.date:"",f:{name:"",date:"",wa_group:"",wa_link:"",past_offer:r?!!r.past_offer:true},
+    keys:m.messages.map(x=>x.key),msgs:m.messages.filter(x=>x.kind!=="title"),texts:Object.fromEntries(m.messages.map(x=>[x.key,x.text])),
+    faqs:m.faqs.map(f=>({...f})),find:"",repl:"",err:""};
+  for(const f of WIZ.faqs)if(!f.builtin)WIZ.texts[f.id]=f.answer;
+  renderWizard();$("wizard").scrollIntoView({behavior:"smooth"});
+}
+const wizList=()=>[...WIZ.msgs.map(m=>({key:m.key,label:m.label,kind:m.kind})),...WIZ.faqs.filter(f=>!f.builtin).map(f=>({key:f.id,label:"Custom reply: "+f.label,kind:"text"}))];
+function wizTextarea(k){return `<textarea class="inp" data-wiz="${k}" rows="${Math.min(8,Math.max(2,(WIZ.texts[k]||"").split("\n").length+1))}">${esc(WIZ.texts[k]||"")}</textarea>`}
+function renderWizard(){
+  if(!WIZ){$("wizard").innerHTML="";return}
+  const w=WIZ,s=w.step,STEPS=["Basics","Messages","Review"];
+  let h=`<div class="card" style="border:1px solid var(--text)"><div class="between"><h2><i class="ti ti-sparkles"></i> Start next workshop</h2><button class="lnk" data-wizgo="cancel">Cancel</button></div>
+    <div class="steps">${STEPS.map((x,i)=>`<span class="${i+1===s?"on":i+1<s?"done":""}">${i+1}. ${x}</span>`).join("")}</div>`;
+  if(s===1){
+    h+=`<div class="sub">Create the WhatsApp group first, then fill these in. Nothing changes until step 3.</div>
+    <div class="form">
+      <label>Name<input class="inp" data-wizf="name" value="${esc(w.f.name)}" placeholder="e.g. 29 Oct workshop" maxlength="60"></label>
+      <label>Class date<input class="inp" type="date" data-wizf="date" value="${esc(w.f.date)}"></label>
+      <label>WhatsApp group name <span>exactly as it's called in WhatsApp</span><input class="inp" data-wizf="wa_group" value="${esc(w.f.wa_group)}"></label>
+      <label>WhatsApp invite link<input class="inp" data-wizf="wa_link" value="${esc(w.f.wa_link)}" placeholder="https://chat.whatsapp.com/…"></label>
+    </div>
+    <label class="check"><input type="checkbox" data-wizf="past_offer" ${w.f.past_offer?"checked":""}><span>Send people from earlier workshops this offer before their new link (once each)</span></label>
+    ${w.f.past_offer?`<div style="margin-top:8px">${wizTextarea("PAST_MSG")}</div>`:""}`;
+  }else if(s===2){
+    const list=wizList(),flagged=list.filter(x=>dateHits(w.texts[x.key]).length),rest=list.filter(x=>!dateHits(w.texts[x.key]).length);
+    const stale=flagged.filter(x=>oldHits(w.texts[x.key]).length);
+    const n=w.find?list.reduce((a,x)=>a+((w.texts[x.key]||"").split(w.find).length-1),0):0;
+    h+=`<div class="sub">These are ${esc(w.prevName)}'s messages, copied. Update anything that's about the old workshop.</div>
+    <div class="flexrow" style="margin:12px 0;background:var(--soft);padding:10px;border-radius:8px">
+      <i class="ti ti-replace"></i><input class="inp" id="wizfind" placeholder="Find (e.g. 22 Oct)" value="${esc(w.find)}" style="flex:1;min-width:140px">
+      <span>→</span><input class="inp" id="wizrepl" placeholder="Replace with (e.g. 29 Oct)" value="${esc(w.repl)}" style="flex:1;min-width:140px">
+      <button class="mini" data-wizgo="replace" ${n?"":"disabled"}>Replace ${n?n+" ":""}everywhere</button></div>
+    ${stale.length?`<div class="warnline" style="margin-bottom:6px"><i class="ti ti-calendar-exclamation"></i> ${stale.length} ${stale.length===1?"message still mentions":"messages still mention"} ${esc(oldLabel())} (highlighted). Update them:</div>`
+      :`<div class="sub" style="margin-bottom:6px"><i class="ti ti-circle-check" style="color:var(--green)"></i> No message mentions ${esc(oldLabel())} any more.${flagged.length?" These mention other dates; check they're right:":""}</div>`}
+    ${flagged.map(x=>`<div style="margin:10px 0"><div class="between"><b style="font-weight:500;font-size:13px">${esc(x.label)}</b><span>${dateHits(w.texts[x.key]).map(d=>`<span class="${isOld(d)?"date-hit":"chip"}">${esc(d)}</span>`).join(" ")}</span></div>${wizTextarea(x.key)}</div>`).join("")}
+    <details><summary>Other messages (${rest.length})</summary>${rest.map(x=>`<div style="margin:10px 0"><b style="font-weight:500;font-size:13px">${esc(x.label)}</b>${wizTextarea(x.key)}</div>`).join("")}</details>`;
+  }else{
+    const r=runningWs(),flagged=wizList().filter(x=>oldHits(w.texts[x.key]).length);
+    h+=`<ul class="review">
+      ${r?`<li><b style="font-weight:500">${esc(r.name)}</b> is closed and its numbers are frozen. Its ${(wsStats(r)||{}).people??""} people move under Previous workshops. Nothing is deleted.</li>`:""}
+      <li>The bot starts using <b style="font-weight:500">${esc(w.f.name)}</b>'s messages from the next DM${w.f.date?", "+classDay({date:w.f.date}):""}.</li>
+      <li>Personal links open <code>${esc(w.f.wa_link)}</code>. The dashboard tracks joins in “${esc(w.f.wa_group)}” (the listener picks it up within a minute).</li>
+      <li>Everyone from earlier workshops goes through the follow step again, then gets ${w.f.past_offer?"the offer and ":""}their new link. Their old link shows "Ye link pichle workshop ka tha" until then.</li>
+      <li>Reminders, the welcome message and warnings start fresh: one per person in this workshop.</li>
+      ${flagged.length?`<li class="warnline">${flagged.length} ${flagged.length===1?"message still mentions":"messages still mention"} ${esc(oldLabel())}: ${flagged.map(x=>esc(x.label)).join(", ")}. <button class="lnk" data-wizgo="2">Check them</button></li>`:""}
+    </ul>`;
+  }
+  h+=`<div class="err" style="margin-top:8px">${esc(w.err)}</div><div class="flexrow" style="margin-top:12px">
+    ${s>1?`<button data-wizgo="${s-1}"><i class="ti ti-arrow-left"></i> Back</button>`:""}
+    ${s<3?`<button class="main" data-wizgo="${s+1}">Next <i class="ti ti-arrow-right"></i></button>`:`<button class="main" data-wizgo="start"><i class="ti ti-rocket"></i> Start “${esc(w.f.name)}”</button>`}</div></div>`;
+  $("wizard").innerHTML=h;
+}
+function wizCheck(){
+  const f=WIZ.f;
+  if(!f.name)return"Give the workshop a name";
+  if(!f.wa_group)return"Fill in the WhatsApp group name";
+  if(!/^https:\/\/\S+$/.test(f.wa_link))return"Paste the WhatsApp invite link (starts with https://)";
+  if(f.wa_link===((runningWs()||latestWs()||{}).wa_link))return"That's the current workshop's invite link. Paste the new group's link";
+  return"";
+}
+async function wizGo(to){
+  const w=WIZ;
+  if(to==="cancel"){if(confirm("Close without starting the workshop?")){WIZ=null;renderWizard()}return}
+  if(to==="replace"){
+    for(const x of wizList())w.texts[x.key]=(w.texts[x.key]||"").split(w.find).join(w.repl);
+    toast(`Replaced “${w.find}” with “${w.repl}”`);w.find="";renderWizard();return}
+  if(to==="start"){
+    try{
+      const faqs=w.faqs.map(f=>({...f,answer:f.builtin?w.texts[f.key]:w.texts[f.id]}));
+      const texts=Object.fromEntries(w.keys.map(k=>[k,w.texts[k]]));
+      await api("/api/workshops",{...w.f,texts,faqs});
+      toast(`${w.f.name} started 🎉`,true);WIZ=null;renderWizard();M=null;WS_SHOWN="";await load();renderWorkshop(true);
+    }catch(e){w.err=e.message;renderWizard()}
+    return}
+  const n=+to;
+  if(n>w.step&&w.step===1){w.err=wizCheck();if(w.err){renderWizard();return}}
+  w.err="";w.step=n;renderWizard();$("wizard").scrollIntoView({behavior:"smooth"});
+}
+
+// ---------- Reels tab ----------
+let RL=null;
+async function loadBypasses(){
+  try{const data=await api('/api/bypassed-media');
+    setHtml($('bypass-list'),data.items.length?data.items.map(x=>`<div class="between hook"><a class="lk" href="${esc(x.url)}" target="_blank" rel="noopener" style="overflow-wrap:anywhere">${esc(x.url)}</a><button data-unbypass="${esc(x.media_id)}">Remove bypass</button></div>`).join(''):'<span class="sub">No bypassed posts yet.</span>');
+  }catch(e){setHtml($('bypass-list'),`<span class="err">${esc(e.message)}</span>`)}
+}
+$('bypass-form').addEventListener('submit',async e=>{
+  e.preventDefault();const btn=$('bypass-add');btn.disabled=true;
+  try{await api('/api/bypassed-media',{url:$('bypass-url').value.trim()});$('bypass-url').value='';await loadBypasses();toast('Post bypassed · comments and linked DMs will be skipped');}
+  catch(e){toast(e.message)}finally{btn.disabled=false}
+});
+$('bypass-list').addEventListener('click',async e=>{
+  const btn=e.target.closest('[data-unbypass]');if(!btn||btn.disabled)return;btn.disabled=true;
+  try{await api('/api/bypassed-media/'+encodeURIComponent(btn.dataset.unbypass),undefined,'DELETE');await loadBypasses();toast('Bypass removed · future interactions can trigger the bot');}
+  catch(e){toast(e.message);btn.disabled=false}
+});
+async function loadReels(){
+  loadBypasses();
+  try{RL=(await api("/api/reels")).reels}catch(e){setHtml($("reellist"),`<div class="card err">${esc(e.message)}</div>`);return}
+  if(!document.activeElement.closest("#reellist"))renderReels();
+}
+const reelState=r=>!r.active?["Off",""]:r.media_id?["● Live on its reel","p-green"]:["Waiting for the reel link","p-amber"];
+function reelCard(r){
+  const s=r.stats,T=[["people","Commented"],["dmed","Wrote back"],["asked","Asked to follow"],["links","Got link"],["tapped","Tapped link"]];
+  return `<div class="card" data-reelcard="${r.id}" style="${r.active&&r.media_id?"border-color:var(--green)":""}">
+    <div class="between"><div><div class="sub">Reel offer</div><h2>${esc(r.name)}</h2></div>${pill(reelState(r))}</div>
+    <div class="hook">${r.media_id?`<div class="flexrow"><i class="ti ti-movie"></i><a class="lk" href="${esc(r.reel_url)}" target="_blank" rel="noopener" style="overflow-wrap:anywhere">${esc(r.reel_url)}</a>
+        <button class="mini" data-rl="disconnect" data-id="${r.id}"><i class="ti ti-unlink"></i> Disconnect</button></div>
+      <div class="sub" style="margin-top:6px">${r.active?"Comments on this reel get this offer's messages from now on.":"Switched off: comments on this reel get the workshop's usual messages, and its people are back in the workshop's flow."}</div>`
+     :`<div class="sub" style="margin-bottom:6px"><b style="font-weight:500;color:var(--text)">Connect the reel</b> · once it's posted, paste its link. Until then the bot doesn't use this offer anywhere.</div>
+      <div class="flexrow"><input class="inp" data-rlurl="${r.id}" placeholder="https://www.instagram.com/reel/…" style="flex:1;min-width:220px">
+        <button class="main" data-rl="connect" data-id="${r.id}"><i class="ti ti-link"></i> Connect reel</button></div>
+      <div class="sub" style="margin-top:6px"><i class="ti ti-alert-triangle" style="color:var(--amber)"></i> Connect it right after posting: until it's connected, comments on a new reel get the workshop's messages.</div>`}</div>
+    <div class="form">
+      <label>Name <span>only you see it</span><input class="inp" data-rlf="name" data-id="${r.id}" value="${esc(r.name)}" maxlength="60"></label>
+      <label>WhatsApp link <span>where everyone's personal link takes them</span><input class="inp" data-rlf="wa_link" data-id="${r.id}" value="${esc(r.wa_link)}" placeholder="https://wa.me/91…"></label>
+    </div>
+    <label class="check"><input type="checkbox" data-rlf="follow_first" data-id="${r.id}" ${r.follow_first?"checked":""}><span>Ask them to follow first, like the workshop does. Off: the link goes out straight away.</span></label>
+    <label class="check"><input type="checkbox" data-rlf="active" data-id="${r.id}" ${r.active?"checked":""}><span>On</span></label>
+    <div class="flexrow" style="margin-top:12px"><button class="main" data-rl="save" data-id="${r.id}" disabled><i class="ti ti-device-floppy"></i> Save changes</button>
+      <button data-rl="msgs" data-id="${r.id}"><i class="ti ti-message-2"></i> Edit its messages</button>
+      ${s.people?"":`<button class="lnk" data-rl="delete" data-id="${r.id}">Delete</button>`}<span class="err" data-rlerr="${r.id}"></span></div>
+    <div class="tiles flat" style="margin:12px 0 0">${T.map(([k,l])=>`<div class="tile"><span class="sub">${l}</span><b>${s[k]??0}</b></div>`).join("")}</div></div>`;
+}
+function renderReels(){
+  if(!RL)return;
+  setHtml($("reellist"),RL.length?RL.slice().reverse().map(reelCard).join(""):'<div class="sub">No reel offers yet.</div>');
+}
+async function reelAction(a,id,btn){
+  const err=m=>{const e=document.querySelector(`[data-rlerr="${id}"]`);if(e)e.textContent=m;else toast(m,true)};
+  try{
+    if(a==="new"){const name=$("newreel").value.trim();if(!name){toast("Give it a name first");$("newreel").focus();return}
+      await api("/api/reels",{name});$("newreel").value="";toast(RL&&RL.length?"Set up · it starts with a copy of the latest reel offer's messages":"Set up · with the ₹99 workshop messages to start from");}
+    if(a==="connect"){const url=document.querySelector(`[data-rlurl="${id}"]`).value.trim();
+      if(!url){toast("Paste the reel's link first");return}
+      btn.disabled=true;
+      await api("/api/reels/"+id,{reel_url:url});toast("Connected · comments on that reel now get this offer's messages",true);}
+    if(a==="disconnect"){if(!confirm("Disconnect this reel?\n\nComments on it go back to the workshop's messages."))return;
+      await api("/api/reels/"+id,{reel_url:""});toast("Disconnected");}
+    if(a==="save"){const v={};document.querySelectorAll(`[data-rlf][data-id="${id}"]`).forEach(i=>v[i.dataset.rlf]=i.type==="checkbox"?i.checked:i.value.trim());
+      await api("/api/reels/"+id,v);toast("Saved · the bot uses it within a few seconds");}
+    if(a==="delete"){if(!confirm("Delete this reel offer and its messages?"))return;await api("/api/reels/"+id,undefined,"DELETE");toast("Deleted");}
+    if(a==="msgs"){MREEL=String(id);M=null;showTab("messages");return}
+    RL=null;document.activeElement.blur();await loadReels();
+  }catch(e){if(btn)btn.disabled=false;err(e.message)}
+}
+
+// ---------- Messages tab ----------
+let M=null,MED={},FQ=null,MFILTER="",TRY_T=null,MREEL="";  // MREEL: the reel offer whose texts are shown ("" = the workshop's)
+const SAMPLE="https://….trycloudflare.com/j/Ab3xY9";
+// each question / custom reply keeps its saved version in _orig, so every card can be saved (or undone) on its own
+const fqPlain=f=>Object.fromEntries(Object.entries(f).filter(([k])=>!k.startsWith("_")));
+const fqCopy=f=>({...f,keywords:[...f.keywords],_orig:JSON.stringify(fqPlain(f))});
+const fqDirty=f=>!f._orig||JSON.stringify(fqPlain(f))!==f._orig;
+async function loadMessages(force){
+  if(M&&!force){renderMessages();return}
+  try{M=await api(msgUrl())}catch(e){if(MREEL){MREEL="";return loadMessages(true)}$("msgtop").innerHTML=`<span class="err">${esc(e.message)}</span>`;return}
+  MED={};FQ=M.faqs.map(fqCopy);renderMessages();
+}
+const msgUrl=()=>"/api/messages"+(MREEL?"?reel="+MREEL:"");
+const withReel=b=>MREEL?{...b,reel:MREEL}:b;
+const mByKey=k=>M.messages.find(m=>m.key===k);
+const curText=k=>k in MED?MED[k]:mByKey(k).text;
+function checkMsg(m,v){
+  if(!v.trim())return"Can't be empty";
+  if(m.kind==="title"){if(v.includes("\n"))return"Button titles are one line";if(v.length>20)return`Instagram cuts button titles at 20 characters (${v.length} now)`}
+  if(m.kind==="buttons"&&v.length>640)return`Text above buttons can be at most 640 characters (${v.length} now)`;
+  if(m.kind==="text"&&new TextEncoder().encode(v).length>(m.link?940:1000))return"Too long for Instagram";
+  if(m.link&&!v.includes("{link}")&&!v.includes("{}"))return"Must contain {link} (where the link goes)";
+  if(!m.link&&v.includes("{link}"))return"{link} only works in the link messages; here it would be sent as it is";
+  return"";
+}
+function counter(m,v){
+  if(m.kind==="title")return`${v.length}/20 characters`;
+  if(m.kind==="buttons")return`${v.length}/640 characters`;
+  if(m.kind==="page")return"First line is the heading";
+  return`${new TextEncoder().encode(v).length}/1000 bytes (emoji and Hindi count more)`;
+}
+function bubble(m,v){
+  if(m.kind==="title")return`<span class="btnchip">${esc(v)}</span>`;
+  if(m.kind==="page"){const [hd,...rest]=v.split("\n");return`<div style="background:#fbf5ee;color:#5a1426;border-radius:10px;padding:14px;text-align:center"><b>${esc(hd)}</b><div style="font-size:12px;margin-top:6px">${rest.map(esc).join("<br>")}</div></div>`}
+  const html=esc(v).replace(/\{link\}|\{\}/g,`<span class="lk">${SAMPLE}</span>`);
+  const btns=(m.buttons||[]).map(k=>curText(k));
+  return `<div class="bub">${html}${btns.length?`<div class="bbtns">${btns.map(b=>`<div>${esc(b)}</div>`).join("")}</div>`:""}</div>`;
+}
+const CH={true:'<span class="chip"><i class="ti ti-brand-instagram"></i> Instagram</span> <span class="chip"><i class="ti ti-brand-messenger"></i> Messenger</span>',false:'<span class="chip"><i class="ti ti-brand-instagram"></i> Instagram</span>'};
+function msgCard(m){
+  const v=curText(m.key),rows=Math.min(10,Math.max(2,v.split("\n").length+1)),dirty=m.key in MED&&MED[m.key]!==m.text;
+  const editor=m.kind==="title"?`<input class="inp" data-medit="${m.key}" value="${esc(v)}" maxlength="40">`
+    :`<textarea class="inp" data-medit="${m.key}" rows="${rows}">${esc(v)}</textarea>`;
+  return `<div class="card" id="m-${m.key}" data-mcard="${m.key}">
+    <div class="between"><div><b style="font-weight:500">${esc(m.label)}</b> ${m.edited&&!M.reel?'<span class="pill p-blue">edited</span>':""}</div><div>${m.kind==="page"?'<span class="chip"><i class="ti ti-world"></i> Web page</span>':CH[!!m.fb&&!M.reel]}</div></div>
+    <div class="sub when"><i class="ti ti-bolt"></i><span>${esc(m.when)}</span></div>
+    <div class="msggrid"><div>${editor}
+      <div class="between" style="margin-top:4px"><span class="sub" data-mcount="${m.key}">${counter(m,v)}</span>${m.link?'<span class="sub"><code>{link}</code> = their personal link</span>':""}</div>
+      <div class="err" data-merr="${m.key}">${esc(dirty?checkMsg(m,v):"")}</div><div class="warnline" data-mwarn="${m.key}"></div>
+      <div class="flexrow" style="margin-top:8px"><button class="main mini" data-msave="${m.key}" ${dirty&&!checkMsg(m,v)?"":"disabled"}><i class="ti ti-device-floppy"></i> Save</button>
+        <button class="lnk" data-mundo="${m.key}" ${dirty?"":"hidden"}>Undo</button>
+        ${m.text!==m.default?`<button class="lnk" data-mdefault="${m.key}">Show the ${M.reel?"workshop's":"original"} text</button>`:""}</div></div>
+      <div class="phone" data-mprev="${m.key}">${bubble(m,v)}</div></div></div>`;
+}
+// ---------- custom replies: your own "when a DM says X, reply Y" (stored with the questions, id faq_…) ----------
+function customErr(f){
+  if(!f._touched)return"";
+  if(!(f.label||"").trim())return"Give it a name (only you see it)";
+  if(!f.keywords.length)return"Add at least one word to watch for";
+  const a=f.answer||"";
+  if(!a.trim())return"Write the reply";
+  if(a.includes("{link}"))return"{link} only works in the bot's own link messages";
+  if(!!(f.button_title||"").trim()!==!!(f.button_url||"").trim())return"A button needs both a title and a link";
+  if((f.button_title||"").length>20)return"Button title: at most 20 characters";
+  if(f.button_url&&!/^https:\/\/\S+$/.test(f.button_url.trim()))return"Button link must start with https://";
+  if(f.button_title&&a.length>640)return`With a button the reply can be at most 640 characters (${a.length} now)`;
+  return"";
+}
+// the error line and Save / Undo at the bottom of a question or custom reply card
+function fqErr(f){return f.builtin?(fqDirty(f)?checkMsg(mByKey(f.key),f.answer||""):""):customErr(f)}
+function fqFoot(f,i){
+  const dirty=fqDirty(f),err=fqErr(f);
+  return `<div class="err" data-fqerr="${i}" style="margin-top:6px">${esc(err)}</div>
+    <div class="flexrow" style="margin-top:8px"><button class="main mini" data-fqsave="${i}" ${dirty&&!err?"":"disabled"}><i class="ti ti-device-floppy"></i> Save</button>
+      <button class="lnk" data-fqundo="${i}" ${dirty&&f._orig?"":"hidden"}>Undo</button></div>`;
+}
+function customBubble(f){
+  return `<div class="bub">${esc(f.answer||"Your reply shows here")}${(f.button_title||"").trim()?`<div class="bbtns"><div>${esc(f.button_title)}</div></div>`:""}</div>
+    <div class="sub" style="margin-top:8px">${f.stop?"<i class=\"ti ti-hand-stop\"></i> Nothing else is sent after it":"<i class=\"ti ti-arrow-down\"></i> Then the usual follow step / link"}</div>`;
+}
+function customCard(f,i){
+  const ans=f.answer||"";
+  return `<div class="card" data-fqcard="${i}" style="${f.on?"":"opacity:.7"}">
+    <div class="between"><input class="inp" data-fq="label" data-i="${i}" value="${esc(f.label)}" placeholder="Name (only you see it), e.g. Location" style="max-width:320px;font-weight:500">
+      <div class="flexrow"><label class="check" style="margin:0"><input type="checkbox" data-fq="on" data-i="${i}" ${f.on?"checked":""}> On</label>
+        <button class="lnk" data-fqdel="${i}">Delete</button></div></div>
+    <div class="msggrid"><div>
+      <div class="fl">When a DM contains any of these words <span>comma separated · whole words, any case · <code>*</code> at the end = any ending (address* → addresses) · Hindi matches anywhere</span>
+        <textarea class="inp" data-fq="keywords" data-i="${i}" rows="2" style="min-height:0" placeholder="e.g. location, address, kahan, jagah">${esc(f.keywords.join(", "))}</textarea></div>
+      <div class="fl" style="margin-top:8px">The bot replies
+        <textarea class="inp" data-fq="answer" data-i="${i}" rows="${Math.min(8,Math.max(3,ans.split("\n").length+1))}" placeholder="Your message">${esc(ans)}</textarea></div>
+      <div class="form" style="margin-top:4px">
+        <label>Button title <span>optional · max 20 characters</span><input class="inp" data-fq="button_title" data-i="${i}" value="${esc(f.button_title||"")}" maxlength="20" placeholder="e.g. Open location"></label>
+        <label>Button link<input class="inp" data-fq="button_url" data-i="${i}" value="${esc(f.button_url||"")}" placeholder="https://…"></label></div>
+      <div class="fl" style="margin-top:10px">After this reply
+        <label class="check" style="margin-top:4px;color:var(--text)"><input type="radio" name="fqstop${i}" data-fq="stop" data-i="${i}" value="0" ${f.stop?"":"checked"}> Carry on as usual: the follow step, then their WhatsApp link</label>
+        <label class="check" style="margin-top:2px;color:var(--text)"><input type="radio" name="fqstop${i}" data-fq="stop" data-i="${i}" value="1" ${f.stop?"checked":""}> Stop here: send only this reply</label></div>
+      ${fqFoot(f,i)}
+    </div><div class="phone" data-fqprev="${i}">${customBubble(f)}</div></div></div>`;
+}
+function faqCard(f,i){
+  const ans=f.answer||"";
+  return `<div class="card" data-fqcard="${i}" style="${f.on?"":"opacity:.7"}">
+    <div class="between"><div class="flexrow" style="flex:1"><input class="inp" data-fq="label" data-i="${i}" value="${esc(f.label)}" style="max-width:260px;font-weight:500" readonly title="Built-in question"></div>
+      <div class="flexrow"><label class="check" style="margin:0"><input type="checkbox" data-fq="on" data-i="${i}" ${f.on?"checked":""}> On</label></div></div>
+    <div class="msggrid"><div>
+      <div class="fl">Keywords <span>comma separated · whole words, any case · <code>*</code> at the end = any ending (record* → recording) · Hindi matches anywhere</span>
+        <textarea class="inp" data-fq="keywords" data-i="${i}" rows="2" style="min-height:0">${esc(f.keywords.join(", "))}</textarea></div>
+      <div class="fl" style="margin-top:8px">Answer${f.key==="MATERIAL_MSG"?" <span>(link holders also get “Material: link for link holders” under it)</span>":""}
+        <textarea class="inp" data-fq="answer" data-i="${i}" rows="${Math.min(8,Math.max(2,ans.split("\n").length+1))}">${esc(ans)}</textarea></div>
+      ${fqFoot(f,i)}
+    </div><div class="phone" data-fqprev="${i}"><div class="bub">${esc(ans)}</div></div></div></div>`;
+}
+const fqCard=(f,i)=>f.builtin?faqCard(f,i):customCard(f,i);
+function renderMessages(){
+  if(!M)return;
+  const w=M.workshop,trig=M.triggers,rl=M.reel;
+  const pick=M.reels.length?`<div class="navchips" style="margin-bottom:12px"><span class="sub" style="align-self:center">Texts for</span>
+      <button data-mreel="" class="${rl?"":"on"}"><i class="ti ti-calendar-event"></i> Workshop (ads &amp; posts)</button>
+      ${M.reels.map(x=>`<button data-mreel="${x.id}" class="${rl&&rl.id===x.id?"on":""}"><i class="ti ti-movie"></i> ${esc(x.name)}</button>`).join("")}</div>`:"";
+  setHtml($("msgtop"),pick+(rl?`<div class="between"><div><b style="font-weight:500"><i class="ti ti-movie"></i> What the bot sends for ${esc(rl.name)}</b>
+      <div class="sub">Used for comments on its reel, and for those people's DMs and button taps afterwards · saved changes reach the bot within a few seconds · Instagram only</div></div>
+      ${!rl.active?pill(["Off",""]):rl.connected?pill(["● Live on its reel","p-green"]):`<span class="pill p-amber" style="cursor:pointer" data-tab="reels">No reel connected yet</span>`}</div>
+    <div class="hook sub"><i class="ti ti-bolt"></i> <b style="font-weight:500;color:var(--text)">What starts it:</b> a comment on its reel. After that, every DM from that person (no keyword needed) and their button taps.
+      Then: custom replies and question answers (below), then the follow step → link. Messages that don't apply to a reel (live class, unfollow warnings, earlier-workshop offer) aren't listed.</div>`
+    :`<div class="between"><div><b style="font-weight:500"><i class="ti ti-message-2"></i> What the bot sends</b>
+      <div class="sub">Texts for <b style="font-weight:500;color:var(--text)">${esc(w.name)}</b>${w.closed?" (ended: you're editing the texts used between workshops)":""} · saved changes reach the bot within a few seconds · Messenger gets the same texts with "Profile" changed to "Page"</div></div>
+      ${M.live?pill(["● Live: the live versions are in use","p-red"]):M.between?pill(["Between workshops","p-amber"]):""}</div>
+    <div class="hook sub"><i class="ti ti-bolt"></i> <b style="font-weight:500;color:var(--text)">What starts the bot:</b> ${trig.keyword==="*"?"every DM":"DMs containing “"+esc(trig.keyword)+"”"} · comments on ads and on posts made after ${trig.start_after?t(trig.start_after):"any time"}${M.reels.length?" (except reels connected to a reel offer)":""} · story replies · DMs from ads · “DONE”.
+      Then: your custom replies and the answers to questions (below), then the follow step → link.</div>`)+`
+    <div class="flexrow" style="margin-top:10px"><input type="search" id="mfilter" placeholder="Search the messages" value="${esc(MFILTER)}" style="flex:1;min-width:200px"></div>
+    <div class="navchips" style="margin-top:10px"><button data-mjump="custom">Custom replies</button>${M.groups.filter(([g])=>M.messages.some(m=>m.group===g)).map(([g,l])=>`<button data-mjump="${g}">${esc(l.replace(/ \(.*\)/,""))}</button>`).join("")}</div>`);
+  const f=MFILTER.toLowerCase();
+  const show=m=>!f||(m.label+" "+m.when+" "+curText(m.key)+" "+m.key).toLowerCase().includes(f);
+  const showFq=q=>!f||(q.label+" "+q.keywords.join(" ")+" "+q.answer+" "+(q.button_title||"")).toLowerCase().includes(f);
+  const mine=FQ.map((q,i)=>[q,i]).filter(([q])=>!q.builtin&&showFq(q));
+  let h=`<h3 id="g-custom">Custom replies</h3>
+    <div class="card"><b style="font-weight:500"><i class="ti ti-message-plus"></i> Your own replies</b>
+      <div class="sub" style="margin-top:2px">${M.reel?`When a DM from someone in this reel's flow contains one of your words, the bot sends your reply. It can carry a link button, and you choose whether the usual follow step comes after it. Comments always get the usual reply.`
+        :`When someone's DM contains one of your words, the bot sends your reply, on Instagram and Messenger. It can carry a link button, and you choose whether the usual follow step comes after it. They work between workshops too. Comments always get the usual reply.`}</div>
+      <div class="hook"><b style="font-weight:500"><i class="ti ti-flask"></i> Try a message</b> <span class="sub">what a DM would get (uses the saved replies and questions)</span>
+        <input class="inp" id="trymsg" placeholder="e.g. workshop kab hai aur location kya hai?" style="margin-top:8px"><div id="tryres" class="sub" style="margin-top:6px"></div></div></div>
+    ${mine.map(([q,i])=>customCard(q,i)).join("")||(f?"":`<div class="sub" style="margin:0 0 12px">No custom replies yet.</div>`)}
+    <div class="flexrow" style="margin-bottom:14px"><button data-fqadd><i class="ti ti-plus"></i> Add custom reply</button></div>`;
+  for(const [g,label] of M.groups){
+    const list=M.messages.filter(m=>m.group===g&&!m.faq&&show(m));
+    if(g==="faq"){
+      const fqs=FQ.map((q,i)=>[q,i]).filter(([q])=>q.builtin&&showFq(q));
+      if(!fqs.length&&!list.length)continue;
+      h+=`<h3 id="g-${g}">${esc(label)}</h3>
+        <div class="sub" style="margin:0 0 12px">The built-in questions can be switched off and their words and answers changed. Each card has its own Save.</div>
+        ${fqs.map(([q,i])=>faqCard(q,i)).join("")}
+        ${list.map(msgCard).join("")}`;
+      continue;
+    }
+    if(list.length)h+=`<h3 id="g-${g}">${esc(label)}</h3>`+list.map(msgCard).join("");
+  }
+  $("msglist").innerHTML=h||'<div class="sub">Nothing matches.</div>';
+}
+function onMsgInput(el){
+  const k=el.dataset.medit,m=mByKey(k),v=el.value;
+  MED[k]=v;
+  const dirty=v!==m.text,err=dirty?checkMsg(m,v):"";
+  document.querySelector(`[data-mcount="${k}"]`).textContent=counter(m,v);
+  document.querySelector(`[data-merr="${k}"]`).textContent=err;
+  document.querySelector(`[data-msave="${k}"]`).disabled=!dirty||!!err;
+  document.querySelector(`[data-mundo="${k}"]`).hidden=!dirty;
+  document.querySelector(`[data-mprev="${k}"]`).innerHTML=bubble(m,v);
+  if(m.kind==="title")for(const o of M.messages)if((o.buttons||[]).includes(k)){const p=document.querySelector(`[data-mprev="${o.key}"]`);if(p)p.innerHTML=bubble(o,curText(o.key))}
+}
+async function saveMsg(k){
+  try{
+    const r=await api("/api/messages",withReel({key:k,text:MED[k]}));
+    const m=mByKey(k);m.text=MED[k];m.edited=MED[k]!==m.default;delete MED[k];
+    toast("Saved · the bot uses it within a few seconds");
+    const card=$("m-"+k);card.outerHTML=msgCard(m);
+    if(r.warning){const wl=document.querySelector(`[data-mwarn="${k}"]`);if(wl)wl.textContent=r.warning}
+  }catch(e){document.querySelector(`[data-merr="${k}"]`).textContent=e.message}
+}
+function fqInput(el){
+  const i=+el.dataset.i,f=FQ[i],k=el.dataset.fq;
+  if(k==="on")f.on=el.checked;else if(k==="stop")f.stop=el.value==="1";
+  else if(k==="keywords")f.keywords=el.value.split(/[,\n]/).map(s=>s.trim()).filter(Boolean);else f[k]=el.value;
+  if(k==="on")document.querySelector(`[data-fqcard="${i}"]`).style.opacity=f.on?1:.7;
+  const p=document.querySelector(`[data-fqprev="${i}"]`);
+  if(f.builtin){if(k==="answer"&&p)p.innerHTML=`<div class="bub">${esc(el.value)}</div>`}
+  else{f._touched=true;if(p)p.innerHTML=customBubble(f)}
+  fqFootUpdate(i);
+}
+function fqFootUpdate(i){
+  const f=FQ[i],dirty=fqDirty(f),err=fqErr(f),q=a=>document.querySelector(`[data-${a}="${i}"]`);
+  if(!q("fqsave"))return;
+  q("fqerr").textContent=err;q("fqsave").disabled=!dirty||!!err;q("fqundo").hidden=!dirty||!f._orig;
+}
+// saves (or deletes) one card: the other questions go back as they were last saved, and their unsaved edits stay in their boxes
+async function saveFq(i,remove){
+  const f=FQ[i],btn=document.querySelector(`[data-fqsave="${i}"]`);
+  if(!remove){if(!f.builtin)f._touched=true;if(fqErr(f)){fqFootUpdate(i);return}}
+  const list=FQ.filter(q=>q._orig&&!(remove&&q===f)).map(q=>q===f?fqPlain(f):JSON.parse(q._orig));
+  if(!f._orig&&!remove)list.push(fqPlain(f));
+  if(btn)btn.disabled=true;
+  try{await api("/api/faqs",withReel({faqs:list}))}
+  catch(e){const el=document.querySelector(`[data-fqerr="${i}"]`);if(el)el.textContent=e.message;if(btn)btn.disabled=false;return}
+  toast(remove?"Deleted · the bot stops using it within a few seconds":"Saved · the bot uses it within a few seconds");
+  const keep=FQ.filter(q=>q!==f&&fqDirty(q));
+  try{M=await api(msgUrl())}catch(e){toast(e.message);return}
+  FQ=M.faqs.map(q=>keep.find(k=>k.id&&k.id===q.id)||fqCopy(q)).concat(keep.filter(k=>!k.id));
+  renderMessages();
+}
+async function tryMsg(v){
+  if(!v.trim()){$("tryres").textContent="";return}
+  try{const r=await api("/api/messages/test",withReel({text:v})),stop=r.answers.some(a=>a.stop);
+    $("tryres").innerHTML=(!r.triggers?`<span style="color:var(--amber)">This DM wouldn't start the bot (no keyword).</span> `:"")
+      +(r.answers.length?"Replies: "+r.answers.map(a=>`<b style="font-weight:500;color:var(--text)">${esc(a.label)}</b>${a.custom?" (yours"+(a.button?", with a button":"")+")":""}`).join(" + ")
+        +(stop?", then nothing else (a reply is set to stop here)":r.between?", then the \"No workshop right now\" message":", then the follow step / link")
+      :r.between?"Nothing matches: just the \"No workshop right now\" message":"Nothing matches: just the follow step / link")}catch(e){}
+}
+
+// ---------- Activity tab ----------
+const KIND={in:["ti-message-circle","var(--blue)"],out:["ti-send","var(--green)"],skip:["ti-player-skip-forward","var(--muted)"],fail:["ti-alert-triangle","var(--red)"],
+  link:["ti-link","var(--blue)"],wa:["ti-brand-whatsapp","var(--green)"],follow:["ti-user-check","var(--amber)"],job:["ti-settings","var(--muted)"],admin:["ti-user-cog","var(--amber)"]};
+const FEEDK=[["","All"],["in","Incoming"],["out","Replies"],["links","Links & WhatsApp"],["follows","Follows"],["jobs","Background"],["you","You"],["problems","Problems"]];
+let F={rows:[],latest:0,kind:"",who:"",whoName:"",q:"",more:false,polling:false,open:new Set()},FSEQ=0;
+function renderFeedKinds(){
+  setHtml($("feedkinds"),FEEDK.map(([k,l])=>`<button data-fk="${k}" class="${F.kind===k?"on":""}">${l}</button>`).join(""));
+  setHtml($("feedwho"),F.who?`<span class="pill p-blue">${esc(F.whoName||F.who)} <i class="ti ti-x copy" data-fwhoclear title="Show everyone"></i></span>`:"");
+}
+async function loadFeed(reset){
+  if(!reset&&(F.polling||!F.latest))return;
+  const seq=reset?++FSEQ:FSEQ;
+  if(!reset)F.polling=true;
+  try{
+    const qs=new URLSearchParams({kind:F.kind,who:F.who,q:F.q,limit:reset?120:200});
+    if(!reset)qs.set("after",F.latest);
+    const j=await api("/api/activity?"+qs);
+    if(seq!==FSEQ)return; // the filter changed meanwhile
+    if(reset){F.rows=j.rows;F.more=j.rows.length===120;F.latest=j.latest}
+    else{const have=new Set(F.rows.map(r=>r.id));F.rows=j.rows.filter(r=>!have.has(r.id)).concat(F.rows);F.latest=Math.max(F.latest,j.latest)}
+    renderFeed();
+  }catch(e){}
+  finally{if(!reset)F.polling=false}
+}
+async function olderFeed(){
+  const last=F.rows[F.rows.length-1];if(!last)return;
+  const qs=new URLSearchParams({kind:F.kind,who:F.who,q:F.q,before:last.id,limit:150});
+  const j=await api("/api/activity?"+qs);F.rows=F.rows.concat(j.rows);F.more=j.rows.length===150;renderFeed();
+}
+const clock=s=>new Date(s).toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false});
+const dayLabel=s=>{const d=new Date(s),n=new Date(),y=new Date(Date.now()-864e5);return d.toDateString()===n.toDateString()?"Today":d.toDateString()===y.toDateString()?"Yesterday":d.toLocaleDateString("en-IN",{weekday:"short",day:"numeric",month:"short"})};
+function feedRow(r){
+  const [icon,color]=KIND[r.kind]||["ti-point","var(--muted)"];
+  const who=r.who?`<span class="who" data-fwho="${esc(r.who)}" data-fname="${esc(r.name||r.who)}">${esc(r.name||(r.who.startsWith("fb:")?"Facebook user":r.who))}</span> `:"";
+  const ch=r.channel==="fb"?' <span class="chip"><i class="ti ti-brand-messenger"></i> Messenger</span>':"";
+  let what=esc(r.summary||"");
+  if(r.kind==="out")what=(r.summary?esc(r.summary)+" · ":"")+`<span class="sub">sent</span> <b style="font-weight:500">${esc(r.label||"a message")}</b>`;
+  if(r.kind==="fail")what=`<span style="color:var(--red)">${esc(r.summary)}</span>`+(r.label?` <span class="sub">(${esc(r.label)})</span>`:"");
+  const btns=r.buttons&&r.buttons.length?" "+r.buttons.map(b=>`<span class="chip">${esc(b)}</span>`).join(" "):"";
+  return `<div class="frow"><span class="ftime">${clock(r.at)}</span><i class="ti ${icon}" style="color:${color}"></i>
+    <div style="min-width:0"><div>${who}${what}${btns}${ch}</div>${r.text?`<div class="ftext ${F.open.has(r.id)?"open":""}" data-ft="${r.id}" title="Click to expand">${esc(r.text)}</div>`:""}</div></div>`;
+}
+function renderFeed(){
+  let h="",lastDay="";
+  for(const r of F.rows){const d=dayLabel(r.at);if(d!==lastDay){h+=`<div class="dayline">${d}</div>`;lastDay=d}h+=feedRow(r)}
+  const el=$("feed");
+  setHtml(el,h||`<div class="sub" style="padding:10px 0">Nothing yet${F.kind||F.who||F.q?" for this filter":". Everything the bot and the dashboard do shows up here as it happens"}.</div>`);
+  $("feedmore").hidden=!F.more;
+  $("feedinfo").textContent=F.rows.length?`${F.rows.length} shown · updates live`:"";
+}
+async function loadJobs(){
+  let j;try{j=await api("/api/jobs")}catch(e){return}
+  const PROC={bot:"the Instagram bot",dashboard:"this dashboard",listener:"the WhatsApp listener",keep_awake:"keep-awake"};
+  setHtml($("jobs"),j.jobs.map(x=>{
+    const running=!!x.running,err=x.error,down=!x.alive&&x.name!=="warn";
+    const dot=down?(x.name==="awake"?"":"bad"):err?"bad":running?"run":x.ended_at?"ok":"";
+    const every=x.every?(x.every<120?`every ${x.every} s`:x.every<7200?`every ${Math.round(x.every/60)} min`:`every ${Math.round(x.every/3600)} h`):"on demand";
+    const prog=running&&x.total?`<div class="bar"><i style="width:${Math.round(100*(x.done||0)/x.total)}%"></i></div><div class="sub">${x.done||0} of ${x.total}</div>`:"";
+    return `<div class="job ${dot==="bad"?"bad":""}"><div class="between"><b style="font-weight:500">${esc(x.label)}</b><span class="flexrow" style="gap:6px"><span class="sub">${every}</span><span class="dot ${dot}"></span></span></div>
+      <div class="sub">${esc(x.about)}</div>
+      ${down&&x.name!=="awake"?`<div style="color:var(--red);font-size:12px">Not running: ${PROC[x.process]} is off${x.process==="bot"?" (Members tab → Instagram bot)":""}</div>`:""}
+      ${running?`<div style="font-size:12px;color:var(--amber)">Running now…</div>`:""}${prog}
+      ${x.result?`<div style="font-size:13px">${esc(x.result)}</div>`:""}
+      ${err?`<div style="color:var(--red);font-size:12px">${esc(err)}</div>`:""}
+      <div class="sub">${x.ended_at?"last "+ago(x.ended_at):x.started_at?"started "+ago(x.started_at):"no run yet"}${x.next_at&&!running?" · next "+inT(x.next_at):""}</div></div>`}).join(""));
+}
+
+// ---------- events ----------
 document.addEventListener("click",async e=>{
-  const aw=e.target.closest("[data-awake]");if(aw&&!aw.disabled)awakeAction(aw.dataset.awake);
-  const ba=e.target.closest("[data-bot]");if(ba&&!ba.disabled)botAction(ba.dataset.bot);
-  const c=e.target.closest("[data-copy]");if(c&&c.dataset.copy)copy(c.dataset.copy,c.dataset.label);
-  const f=e.target.closest("[data-fix]");
+  const el=e.target;
+  const tb=el.closest("[data-tab]");if(tb){showTab(tb.dataset.tab);return}
+  const ap=el.closest("[data-app]");if(ap&&!ap.disabled)appAction(ap.dataset.app);
+  const aw=el.closest("[data-awake]");if(aw&&!aw.disabled)awakeAction(aw.dataset.awake);
+  const ba=el.closest("[data-bot]");if(ba&&!ba.disabled)botAction(ba.dataset.bot);
+  const c=el.closest("[data-copy]");if(c&&c.dataset.copy)copy(c.dataset.copy,c.dataset.label);
+  const hs=el.closest("[data-hist]");if(hs){F.who=hs.dataset.hist;F.whoName=hs.dataset.hname;F.kind="";showTab("activity");return}
+  const f=el.closest("[data-fix]");
   if(f){
     const {fix:verdict,ig,who}=f.dataset;
     if(verdict==="no"&&who&&!confirm(`${who} is not this person?`))return;
-    await fetch("/api/match",{method:"POST",headers:{...H,"content-type":"application/json"},body:JSON.stringify({igsid:ig,who,verdict})});
+    await api("/api/match",{igsid:ig,who,verdict});
     toast(verdict==="yes"?"Saved: "+who:verdict==="clear"?"Back to automatic matching":who?"Ruled out "+who:"Marked as not joined");load();
   }
-  const tl=e.target.closest(".tile");if(tl){filter=tl.dataset.k;render()}
+  const wn=el.closest("[data-warn]");
+  if(wn&&!wn.disabled){const r=D.rows.find(x=>x.igsid===wn.dataset.warn),nm=r.username?"@"+r.username:r.igsid;
+    if(confirm(`Send the unfollow warning to ${nm}?\n\nThey get: "you unfollowed, follow again or you'll be removed from the group" with the follow buttons.`))warn([r.igsid],nm)}
+  if(el.closest("[data-warnall]")){
+    const todo=D.rows.filter(r=>(r.to_remove||r.to_check)&&!r.warned_at),closed=todo.filter(r=>!r.last_msg_at||Date.now()-new Date(r.last_msg_at)>864e5).length;
+    if(confirm(`Send the unfollow warning to ${todo.length} people?`+(closed?`\n\n${closed} of them haven't DMed in the last 24 h, so Instagram will probably refuse those (you'll see why on each row).`:"")))warn(todo.map(r=>r.igsid),todo.length+" people")}
+  const fl=el.closest("[data-follow]");if(fl&&!fl.disabled)recheckOne(fl.dataset.follow,fl);
+  const tl=el.closest(".tile[data-k]");if(tl){filter=tl.dataset.k;render()}
+  if(el.closest("[data-oldline]")){showOld=!showOld;renderRows()}
+  const wl=el.closest("[data-wsline]");if(wl){const id=+wl.dataset.wsline;openWs.has(id)?openWs.delete(id):openWs.add(id);renderRows()}
+  // workshop
+  const wa=el.closest("[data-ws]");if(wa&&!wa.disabled)wsAction(wa.dataset.ws,wa);
+  const wo=el.closest("[data-wsopen]");if(wo){const k="p"+wo.dataset.wsopen;openWs.has(k)?openWs.delete(k):openWs.add(k);renderPrev()}
+  const wp=el.closest("[data-wspeople]");if(wp){const id=+wp.dataset.wspeople;openWs.add(id);filter="all";showTab("members");render();setTimeout(()=>{const l=$("wsline-"+id);if(l)l.scrollIntoView({behavior:"smooth",block:"center"})},50)}
+  const wz=el.closest("[data-wizgo]");if(wz&&!wz.disabled)wizGo(wz.dataset.wizgo);
+  const gt=el.closest("[data-goto]");if(gt){showTab("messages");const k=gt.dataset.goto;const go=()=>{const c=$("m-"+k);if(c){c.scrollIntoView({behavior:"smooth",block:"center"});c.style.outline="2px solid var(--blue)";setTimeout(()=>c.style.outline="",1600)}else setTimeout(go,150)};go()}
+  // reels
+  const rl=el.closest("[data-rl]");if(rl&&!rl.disabled)reelAction(rl.dataset.rl,rl.dataset.id,rl);
+  const mr=el.closest("[data-mreel]");if(mr&&mr.dataset.mreel!==MREEL){
+    if((Object.keys(MED).some(k=>MED[k]!==mByKey(k).text)||FQ.some(fqDirty))&&!confirm("You have unsaved changes here. Switch anyway?"))return;
+    MREEL=mr.dataset.mreel;M=null;MFILTER="";loadMessages(true)}
+  // messages
+  const ms=el.closest("[data-msave]");if(ms&&!ms.disabled)saveMsg(ms.dataset.msave);
+  const mu=el.closest("[data-mundo]");if(mu){const k=mu.dataset.mundo;delete MED[k];$("m-"+k).outerHTML=msgCard(mByKey(k))}
+  const md=el.closest("[data-mdefault]");if(md){const m=mByKey(md.dataset.mdefault);if(confirm("The original text (from before any edits):\n\n"+m.default+"\n\nPut it back in the box? (You still need to press Save.)")){MED[m.key]=m.default;$("m-"+m.key).outerHTML=msgCard(m)}}
+  const mj=el.closest("[data-mjump]");if(mj){const g=$("g-"+mj.dataset.mjump);if(g)g.scrollIntoView({behavior:"smooth"})}
+  if(el.closest("[data-fqadd]")){MFILTER="";FQ.push({label:"",keywords:[],on:true,answer:"",builtin:false,button_title:"",button_url:"",stop:false});renderMessages();const c=document.querySelector(`[data-fqcard="${FQ.length-1}"]`);if(c){c.scrollIntoView({behavior:"smooth",block:"center"});c.querySelector("[data-fq=label]").focus()}}
+  const fd=el.closest("[data-fqdel]");if(fd){const i=+fd.dataset.fqdel;if(!FQ[i]._orig){FQ.splice(i,1);renderMessages()}else if(confirm("Delete this custom reply? The bot stops using it right away."))saveFq(i,true)}
+  const fs=el.closest("[data-fqsave]");if(fs&&!fs.disabled)saveFq(+fs.dataset.fqsave);
+  const fu=el.closest("[data-fqundo]");if(fu){const i=+fu.dataset.fqundo;FQ[i]=fqCopy(JSON.parse(FQ[i]._orig));document.querySelector(`[data-fqcard="${i}"]`).outerHTML=fqCard(FQ[i],i)}
+  // activity
+  const fk=el.closest("[data-fk]");if(fk){F.kind=fk.dataset.fk;renderFeedKinds();loadFeed(true)}
+  const fw=el.closest("[data-fwho]");if(fw){F.who=fw.dataset.fwho;F.whoName=fw.dataset.fname;renderFeedKinds();loadFeed(true);window.scrollTo({top:0,behavior:"smooth"})}
+  if(el.closest("[data-fwhoclear]")){F.who="";F.whoName="";renderFeedKinds();loadFeed(true)}
+  const ft=el.closest("[data-ft]");if(ft){const id=+ft.dataset.ft;F.open.has(id)?F.open.delete(id):F.open.add(id);ft.classList.toggle("open")}
+});
+document.addEventListener("input",e=>{
+  const el=e.target;
+  if(el.dataset.medit)onMsgInput(el);
+  if(el.dataset.fq&&el.dataset.fq!=="on"&&el.dataset.fq!=="stop")fqInput(el);
+  if(el.id==="mfilter"){MFILTER=el.value;clearTimeout(TRY_T);TRY_T=setTimeout(()=>{renderMessages();const f=$("mfilter");f.focus();f.setSelectionRange(f.value.length,f.value.length)},250)}
+  if(el.id==="trymsg"){clearTimeout(TRY_T);TRY_T=setTimeout(()=>tryMsg(el.value),300)}
+  if(el.dataset.wsf){const b=document.querySelector("[data-ws=save]");if(b)b.disabled=false}
+  if(el.dataset.rlf){const b=document.querySelector(`[data-rl=save][data-id="${el.dataset.id}"]`);if(b)b.disabled=false}
+  if(el.dataset.wizf&&el.type!=="checkbox")WIZ.f[el.dataset.wizf]=el.value.trim();
+  if(el.dataset.wiz)WIZ.texts[el.dataset.wiz]=el.value;
+  if(el.id==="wizfind"||el.id==="wizrepl"){WIZ[el.id==="wizfind"?"find":"repl"]=el.value;
+    const n=WIZ.find?wizList().reduce((a,x)=>a+((WIZ.texts[x.key]||"").split(WIZ.find).length-1),0):0;
+    const b=document.querySelector("[data-wizgo=replace]");if(b){b.disabled=!n||!WIZ.find;b.textContent=`Replace ${n?n+" ":""}everywhere`}}
+  if(el.id==="feedq"){clearTimeout(TRY_T);TRY_T=setTimeout(()=>{F.q=el.value.trim();loadFeed(true)},300)}
 });
 document.addEventListener("change",async e=>{
-  const ig=e.target.dataset&&e.target.dataset.removed;
-  if(ig){await fetch("/api/removed/"+encodeURIComponent(ig),{method:"POST",headers:H});toast("Marked as removed");load()}
+  const el=e.target;
+  const ig=el.dataset&&el.dataset.removed;
+  if(ig){await api("/api/removed/"+encodeURIComponent(ig),{});toast("Marked as removed");load()}
+  if(el.dataset.fq==="on"||el.dataset.fq==="stop")fqInput(el);
+  if(el.dataset.wsf==="past_offer"){const b=document.querySelector("[data-ws=save]");if(b)b.disabled=false}
+  if(el.dataset.rlf&&el.type==="checkbox"){const b=document.querySelector(`[data-rl=save][data-id="${el.dataset.id}"]`);if(b)b.disabled=false}
+  if(el.dataset.wizf==="past_offer"){WIZ.f.past_offer=el.checked;renderWizard()}
 });
+window.addEventListener("beforeunload",e=>{if(Object.keys(MED).some(k=>M&&MED[k]!==mByKey(k).text)||(FQ&&FQ.some(fqDirty))||WIZ){e.preventDefault();e.returnValue=""}});
+window.addEventListener("hashchange",()=>showTab(location.hash.slice(1),true));
 $("q").oninput=()=>D&&renderRows();
-$("recheck").onclick=async()=>{const r=await fetch("/api/recheck",{method:"POST",headers:H});toast((await r.json()).started?"Checking everyone's follow status…":"Already checking");load()};
+$("recheck").onclick=async()=>{const r=await api("/api/recheck",{});toast(r.started?"Checking everyone's follow status…":"Already checking");load()};
 async function upload(f){
   if(!f)return;toast("Reading "+f.name+"…");
   const r=await fetch("/api/upload",{method:"POST",headers:{...H,"x-filename":encodeURIComponent(f.name)},body:f});
@@ -299,9 +1159,12 @@ $("file").onchange=e=>upload(e.target.files[0]);
 const dr=$("drop");dr.onclick=()=>$("file").click();
 dr.ondragover=e=>{e.preventDefault();dr.classList.add("over")};dr.ondragleave=()=>dr.classList.remove("over");
 dr.ondrop=e=>{e.preventDefault();dr.classList.remove("over");upload(e.dataTransfer.files[0])};
-load();setInterval(load,5000);
+load().then(()=>showTab(location.hash.slice(1),true));setInterval(load,5000);
 loadBot();setInterval(loadBot,3000);
 loadAwake();setInterval(loadAwake,3000);
+loadApps();setInterval(loadApps,5000);
+setInterval(()=>{if(tab==="activity"&&!document.hidden){loadFeed(false);loadJobs()}},4000);
+setInterval(()=>{if(tab==="reels"&&!document.hidden)loadReels()},10000);
 </script>
 </body>
 </html>

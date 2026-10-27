@@ -85,7 +85,7 @@ check("'didn't join' takes them out", "a" not in m)
 # 5 Oct: an existing member opening the "free ... 11th Oct" group isn't someone arriving through their link
 SUB = "free resin pooja thali workshop 11th Oct"
 ev, state = d.main_chat([(T0 + timedelta(seconds=5), "+91OLD", "join", "live", SUB),
-                         (T0 + timedelta(seconds=12), "+91A", "join", "live", "Resin Pooja thali  online workshop"),
+                         (T0 + timedelta(seconds=12), "+91A", "join", "live", d.MAIN_CHAT),
                          (T0 + timedelta(seconds=30), "+91A", "join", "live", SUB),
                          (T0 + timedelta(seconds=90), "+91A", "leave", "live", SUB)])
 m = run(ev, [tap("a", 0)])

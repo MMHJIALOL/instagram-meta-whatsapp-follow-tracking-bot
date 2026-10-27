@@ -1,0 +1,4 @@
+Edited using the built-in imagegen tool. The 2160x2700 export is upscaled.
+
+Edit the attached finished Instagram workshop poster with ONE small change: add a clearly legible line reading exactly "Recording also available" below "11 AM–2 PM IST • 3 HOURS" and above the "BOOK YOUR FREE SPOT" button. Slightly adjust the footer spacing or button height as needed to give this new line breathing room. Set the new line centered, in matching burgundy, clean medium-weight sans serif, clearly readable at mobile size.
+Preserve everything else as closely as possible: same photographic pink resin pooja thali and all its details, same warm cream and gold festive background, same typography, headline, date, timing, colors, ornaments, and CTA. Do not alter the wording of existing copy. Do not add anything else. Maintain exactly 4:5 portrait aspect ratio; output high resolution ideally 2160 x 2700 pixels. This is a targeted text addition, not a redesign.

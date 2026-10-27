@@ -1,0 +1,42 @@
+{
+  "name": "25 Oct Shubh-Labh Rs99 - WhatsApp 9211664301",
+  "objective": "engagement",
+  "location": "messages",
+  "perf": "CONVERSATIONS",
+  "page_id": "432667730092416",
+  "destinations": [
+    "whatsapp"
+  ],
+  "caption": "🪔 Is Diwali, apne haathon se Shubh-Labh resin hanging banana seekhein!\n\nOnline Resin Art Workshop — sirf ₹99\n📅 25 October | ⏰ 3 PM IST | 3 ghante\n🎥 Video recording available\n\nWorkshop details aur booking ke liye neeche WhatsApp button par tap karke message bhejein.\nMaterials/kit alag se hain.",
+  "headline": "₹99 Shubh-Labh Workshop | WhatsApp par book karein",
+  "budget_type": "daily",
+  "budget": 300,
+  "start": "",
+  "end": "2026-10-25T14:00",
+  "geo": [
+    {
+      "type": "country",
+      "key": "IN",
+      "name": "India"
+    }
+  ],
+  "age_min": 18,
+  "age_max": 65,
+  "gender": "all",
+  "advantage": true,
+  "placements": {
+    "auto": true
+  },
+  "value_rule_set_id": "",
+  "cost_goal": 0,
+  "carousel": false,
+  "greeting": "",
+  "questions": [],
+  "intended_whatsapp_number": "919211664301",
+  "suggested_customer_message": "Hi! Mujhe Rs 99 Shubh-Labh resin workshop book karni hai.",
+  "chat_link": "https://wa.me/919211664301?text=Hi%21%20Mujhe%20Rs%2099%20Shubh-Labh%20resin%20workshop%20book%20karni%20hai.",
+  "source_poster": "C:\\Users\\ishaa\\Downloads\\IMG_0876.PNG",
+  "media": [
+    "72b3d3e6e5eb"
+  ]
+}

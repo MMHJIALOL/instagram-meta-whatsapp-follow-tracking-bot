@@ -1,0 +1,20 @@
+{
+  "feed_4x5": {
+    "hash": "3016e0ccf916f236a8e6fc98035c712c",
+    "width": 1440,
+    "height": 1800,
+    "name": "Kalakriti-Instagram-Feed-4x5.png"
+  },
+  "reels_9x16": {
+    "hash": "915481c24e026720e8c9a66fec0f32c9",
+    "width": 1440,
+    "height": 2560,
+    "name": "Kalakriti-Instagram-Reels-9x16.png"
+  },
+  "square_1x1": {
+    "hash": "fe4af1696d321a05719f4a2ac9867c33",
+    "width": 1440,
+    "height": 1440,
+    "name": "Kalakriti-Instagram-Square-1x1.png"
+  }
+}

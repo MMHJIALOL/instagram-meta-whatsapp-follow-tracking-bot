@@ -959,6 +959,16 @@ def data(request: Request):
     return build()
 
 
+@app.get("/shipping-label.js")
+def shipping_label_script():
+    return FileResponse(HERE / "shipping-label.js", media_type="text/javascript")
+
+
+@app.get("/shipping-logo.jpeg")
+def shipping_label_logo():
+    return FileResponse(HERE / "assets" / "shipping-logo.jpeg", media_type="image/jpeg")
+
+
 @app.post("/api/upload")
 async def upload(request: Request):
     local_only(request)
@@ -1264,6 +1274,118 @@ async def wa_status(request: Request):
     s["at"] = main.now().isoformat()
     set_meta("wa", s)
     return {"ok": True}
+
+
+HISTORY_JOBS = HERE / "wa" / "history-jobs.json"
+_history_repair = {"running": False}
+_history_repair_lock = threading.Lock()
+
+
+def repair_history():
+    try:
+        _history_repair.update(step="Restarting WhatsApp…", ok=None)
+        settings = get_meta("wa_history_settings", {})
+        settings.update(enabled=True, retry=time.time_ns())
+        set_meta("wa_history_settings", settings)
+        set_autostart("members", True)
+        procs = processes()
+        kill(procs["listener"])
+        set_meta("wa", {"state": "starting", "detail": "Restarting history sharing…",
+                        "at": main.now().isoformat()})
+        if not procs["members_keepalive"]:
+            start_detached(f'"{PYW}" "{HERE / "members_keepalive.py"}"')
+        _history_repair["step"] = "Connecting to WhatsApp and checking missed joins…"
+        deadline = time.monotonic() + 180
+        while time.monotonic() < deadline:
+            listener = get_meta("wa", {})
+            if listener.get("state") == "ready":
+                _history_repair.update(ok=True, step="WhatsApp connected. Automatic sharing is on; pending shares are being checked.")
+                return
+            if listener.get("state") in ("qr", "auth_failure"):
+                _history_repair.update(ok=False, step="Link WhatsApp using the QR code above, then try again.")
+                return
+            time.sleep(2)
+        _history_repair.update(ok=False, step="WhatsApp is still connecting. Check the WhatsApp card above; you can try again if it stays disconnected.")
+    except Exception:
+        log.exception("history sharing repair failed")
+        _history_repair.update(ok=False, step="Could not restart sharing. Try again; see the WhatsApp card above for connection details.")
+    finally:
+        _history_repair["running"] = False
+
+
+@app.post("/api/wa/history/repair")
+def start_history_repair(request: Request):
+    local_only(request)
+    with _history_repair_lock:
+        if _history_repair["running"]:
+            return {"started": False}
+        _history_repair.update(running=True, step="Starting repair…", ok=None)
+        try:
+            threading.Thread(target=repair_history, daemon=True).start()
+        except Exception:
+            _history_repair["running"] = False
+            raise
+    return {"started": True}
+
+
+@app.get("/api/wa/history/settings")
+def history_settings(request: Request):
+    local_only(request)
+    return get_meta("wa_history_settings", {"enabled": True, "retry": 0})
+
+
+@app.post("/api/wa/history/settings")
+async def update_history_settings(request: Request):
+    local_only(request)
+    body = await request.json()
+    if type(body.get("enabled")) is not bool:
+        raise HTTPException(400, "Choose on or paused")
+    settings = history_settings(request)
+    settings["enabled"] = body["enabled"]
+    set_meta("wa_history_settings", settings)
+    return settings
+
+
+@app.post("/api/wa/history/retry")
+def retry_history(request: Request):
+    local_only(request)
+    settings = history_settings(request)
+    if not settings["enabled"]:
+        raise HTTPException(400, "Resume automatic sharing before retrying")
+    settings["retry"] = time.time_ns()
+    set_meta("wa_history_settings", settings)
+    return {"ok": True}
+
+
+@app.get("/api/wa/history")
+def history_overview(request: Request):
+    local_only(request)
+    error = None
+    try:
+        jobs = list(json.loads(HISTORY_JOBS.read_text(encoding="utf-8")).values())
+    except FileNotFoundError:
+        jobs = []
+    except (OSError, ValueError, AttributeError):
+        jobs = []
+        error = "History status is temporarily unavailable. Refresh to try again."
+    group = main_group()
+    jobs = [j for j in jobs if group and group.lower() in j.get("chat", "").lower()]
+    counts = {"sent": 0, "already_received": 0, "pending": 0, "skipped": 0}
+    for job in jobs:
+        try:
+            result = json.loads(job.get("last") or "{}")
+        except (ValueError, TypeError):
+            result = {}
+        category = ("sent" if result.get("result") == "sent" else
+                    "already_received" if result.get("why") == "already_received" else
+                    "skipped" if job.get("done") else "pending")
+        counts[category] += 1
+        job["category"] = category
+        job["result"] = result
+    jobs.sort(key=lambda j: j.get("updated", j.get("t", 0) * 1000), reverse=True)
+    return {"settings": history_settings(request), "group": group, "counts": counts,
+            "jobs": jobs[:50], "error": error, "listener": get_meta("wa", {}),
+            "repair": dict(_history_repair)}
 
 
 @app.post("/api/wa/history")

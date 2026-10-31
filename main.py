@@ -13,7 +13,7 @@ import threading
 import time
 from pathlib import Path
 from urllib.parse import urlparse
-from contextlib import asynccontextmanager, contextmanager
+from contextlib import asynccontextmanager, closing, contextmanager
 from datetime import datetime, timedelta, timezone
 from functools import cache, lru_cache
 
@@ -1124,18 +1124,18 @@ def answer_dm(sid, said):
 
 
 def bypassed_media():
-    with db() as conn:
+    with closing(db()) as conn:
         return dict(conn.execute("SELECT media_id, url FROM bypass_media"))
 
 
 def set_media_source(sid, media_id):
     if sid:
-        with db() as conn:
+        with closing(db()) as conn, conn:
             conn.execute("INSERT OR REPLACE INTO media_source VALUES (?, ?)", (sid, str(media_id or "")))
 
 
 def bypassed_person(sid):
-    with db() as conn:
+    with closing(db()) as conn:
         return bool(conn.execute(
             "SELECT 1 FROM media_source s JOIN bypass_media b USING (media_id) WHERE s.igsid = ? "
             "UNION SELECT 1 FROM funnel f JOIN reels r ON r.id = f.reel_id "

@@ -139,6 +139,7 @@ details summary{cursor:pointer;color:var(--muted);font-size:13px;margin:8px 0}
     <button data-tab="members" class="on"><i class="ti ti-users"></i> Members</button>
     <button data-tab="workshop"><i class="ti ti-calendar-event"></i> Workshop</button>
     <button data-tab="reels"><i class="ti ti-movie"></i> Reels</button>
+    <button data-tab="shipping"><i class="ti ti-package"></i> Create Shipping Label</button>
     <button data-tab="messages"><i class="ti ti-message-2"></i> Messages</button>
     <button data-tab="activity"><i class="ti ti-activity"></i> Activity</button>
   </div>
@@ -165,6 +166,7 @@ details summary{cursor:pointer;color:var(--muted);font-size:13px;margin:8px 0}
       </div>
     </div>
 
+    <div class="card" id="historycard" aria-label="Automatic message history"><span class="sub">Loading message history sharing…</span></div>
     <div class="tiles" id="tiles"></div>
     <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px">
       <input type="search" id="q" placeholder="Search username, number or name">
@@ -200,6 +202,44 @@ details summary{cursor:pointer;color:var(--muted);font-size:13px;margin:8px 0}
       <div class="hook flexrow"><input class="inp" id="newreel" placeholder="Name, e.g. ₹99 Diwali workshop" maxlength="60" style="flex:1;min-width:200px">
         <button data-rl="new"><i class="ti ti-plus"></i> New reel offer</button></div></div>
     <div id="reellist"><span class="sub">Loading…</span></div>
+  </section>
+
+  <!-- ================= Shipping ================= -->
+  <section id="tab-shipping" hidden>
+    <div class="card">
+      <h2>Create Shipping Label</h2>
+      <p class="sub">Enter the delivery details to make a 6 × 4-inch label with the Kalakriti logo. Your sender details are already included.</p>
+      <div class="row2">
+        <form id="shipping-form">
+          <div class="form" style="grid-template-columns:1fr;margin-top:0">
+            <label for="shipping-name">Recipient name<input class="inp" id="shipping-name" name="recipient" autocomplete="off" maxlength="100" required></label>
+            <label for="shipping-address">Full delivery address<textarea class="inp" id="shipping-address" name="address" rows="5" maxlength="500" placeholder="House / flat, street, landmark, city and state" required></textarea></label>
+            <label for="shipping-pin">PIN code<input class="inp" id="shipping-pin" name="pincode" inputmode="numeric" pattern="[1-9][0-9]{5}" maxlength="6" title="Enter a valid 6-digit Indian PIN code" required></label>
+          </div>
+          <fieldset class="hook" style="border:0;border-top:.5px solid var(--border);padding:10px 0 0;margin-left:0;margin-right:0">
+            <legend style="padding:0;font-weight:600">From</legend>
+            <div class="form" style="grid-template-columns:1fr;margin-top:4px">
+              <label for="shipping-from-name">Sender name<input class="inp" id="shipping-from-name" name="sender" value="Parul Agrawal" maxlength="100" required></label>
+              <label for="shipping-from-address">Sender address<textarea class="inp" id="shipping-from-address" name="senderAddress" rows="3" maxlength="300" required>Tower 30, Flat 301
+Lotus Panache
+Sector 110, Noida</textarea></label>
+              <label for="shipping-from-pin">Sender PIN code<input class="inp" id="shipping-from-pin" name="senderPincode" value="201304" inputmode="numeric" pattern="[1-9][0-9]{5}" maxlength="6" title="Enter a valid 6-digit Indian PIN code" required></label>
+              <label for="shipping-from-phone">Sender phone<input class="inp" id="shipping-from-phone" name="senderPhone" value="9899676862" inputmode="tel" pattern="[0-9]{10}" maxlength="10" title="Enter a 10-digit phone number without spaces" required></label>
+            </div>
+          </fieldset>
+          <div class="flexrow" style="margin-top:16px"><button class="main" id="shipping-create" type="submit">Create Shipping Label</button><button id="shipping-clear" type="button">Clear</button></div>
+          <p id="shipping-status" class="sub" role="status" aria-live="polite">Your label will appear here.</p>
+        </form>
+        <div style="min-width:0">
+          <canvas id="shipping-canvas" width="1800" height="1200" role="img" aria-label="Shipping label preview" style="display:block;width:100%;height:auto;background:white;border-radius:4px"></canvas>
+          <div class="flexrow" style="margin-top:14px">
+            <button id="shipping-png" type="button" disabled><i class="ti ti-photo"></i> Download image</button>
+            <button id="shipping-pdf" type="button" disabled><i class="ti ti-file-type-pdf"></i> Download A4 PDF</button>
+          </div>
+          <p class="sub">Image: 1800 × 1200 pixels. PDF: 6 × 4-inch label on a white A4 page. Print the PDF at Actual size / 100%.</p>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- ================= Messages ================= -->
@@ -256,8 +296,42 @@ async function api(url,body,method){
 }
 function setHtml(el,h){if(el.dataset.html!==h){el.innerHTML=h;el.dataset.html=h}}
 
+// Automatic history sharing uses the listener's durable queue.
+let historyBusy=false;
+const historyReasons={no_available_messages:"No eligible messages available",group_ineligible:"History sharing unavailable for this group",not_a_member_yet:"Waiting for membership to update",already_received:"Already received history",window_expired:"Sharing window expired",no_feature:"Unavailable in this WhatsApp version",not_enabled:"Unavailable for this WhatsApp account",not_accepted:"WhatsApp did not accept the share",group_not_loaded:"Waiting for the group to load"};
+async function loadHistory(){
+  if(historyBusy)return;
+  try{
+    const h=await api('/api/wa/history');
+    const enabled=h.settings.enabled;
+    const repairing=h.repair?.running===true;
+    const online=h.listener.state==='ready' && Date.now()-Date.parse(h.listener.at)<150000;
+    const state=repairing?'Reconnecting':!enabled?'Paused':online?'On':'Waiting for WhatsApp';
+    const historyOpen=$('history-details')?.open;
+    setHtml($('historycard'),`<div class="between"><b style="font-weight:500"><i class="ti ti-history"></i> Automatic message history</b><span class="pill ${repairing?'p-amber':!enabled?'':online?'p-green':'p-amber'}">${state}</span></div>
+      <div class="sub" style="margin:6px 0 12px">Share earlier messages when someone joins <strong>${esc(h.group||'the current workshop')}</strong>. Missed joins are checked every 15 seconds. Settings and pending shares survive restarts.</div>
+      <div class="tiles flat">${[['sent','Shared'],['already_received','Already received'],['pending','Pending retry'],['skipped','Skipped']].map(([k,label])=>`<div class="tile"><b>${h.counts[k]}</b>${label}</div>`).join('')}</div>
+      <div class="between"><div class="flexrow"><button id="history-repair" class="primary" ${repairing?'disabled':''}>${repairing?'Fixing sharing…':'Fix automatic sharing'}</button><button id="history-toggle" aria-pressed="${enabled}" ${repairing?'disabled':''}>${enabled?'Pause sharing':'Resume sharing'}</button><button id="history-retry" ${repairing||!enabled||!h.counts.pending?'disabled':''}>Retry pending now</button></div><span class="sub">${enabled?'Controls apply within 5 seconds.':'Pending shares are kept while paused.'}</span></div>
+      <p class="sub" style="margin:10px 0 0">Fix automatic sharing restarts WhatsApp, turns sharing on, and retries pending shares. Allow up to 3 minutes.</p>
+      <p role="status" aria-live="polite" style="margin:6px 0 0" class="${h.repair?.ok===false?'err':'sub'}">${esc(h.repair?.step||'')}</p>
+      <div class="sub" style="margin-top:10px">Keep this PC awake and connected. WhatsApp decides which messages can be shared; a share already in progress may finish after pausing.</div>
+      ${h.error?`<p class="err">${esc(h.error)}</p>`:''}
+      <details id="history-details"><summary>Recent sharing results · ${h.jobs.length}${h.jobs.length===50?' shown':''}</summary>${h.jobs.length?`<div class="tablewrap"><table><thead><tr><th>Member</th><th>Result</th><th>Details</th><th>Attempts</th><th>Next retry</th></tr></thead><tbody>${h.jobs.map(j=>`<tr><td>${esc(j.who||j.id)}</td><td>${{sent:'Shared',already_received:'Already received',pending:'Pending',skipped:'Skipped'}[j.category]}</td><td>${esc(j.result.result==='sent'?`${j.result.count??''} messages`:historyReasons[j.result.why]||j.result.why||'Waiting to share')}</td><td>${j.attempts||0}</td><td>${j.done?'—':!enabled?'Paused':!online?'When connected':j.next>Date.now()?new Date(j.next).toLocaleTimeString():'Due now'}</td></tr>`).join('')}</tbody></table></div>`:'<p class="sub">New joins and sharing results will appear here.</p>'}</details>`);
+    if(historyOpen)$('history-details').open=true;
+    $('history-toggle').onclick=()=>changeHistory('/api/wa/history/settings',{enabled:!enabled},enabled?'Sharing paused':'Automatic sharing resumed');
+    $('history-repair').onclick=()=>changeHistory('/api/wa/history/repair',{},'Repair started. Connection progress will appear here.');
+    $('history-retry').onclick=()=>changeHistory('/api/wa/history/retry',{},'Retry requested. Pending shares will be checked when WhatsApp is connected.');
+  }catch(e){$('historycard').innerHTML=`<b>Automatic message history</b><p class="err">${esc(e.message)}. Retrying shortly.</p>`}
+}
+async function changeHistory(url,body,message){
+  historyBusy=true;
+  $('historycard').querySelectorAll('button').forEach(b=>b.disabled=true);
+  try{await api(url,body);toast(message)}catch(e){toast(e.message)}
+  finally{historyBusy=false;await loadHistory()}
+}
+
 // ---------- tabs ----------
-const TABS=["members","workshop","reels","messages","activity"];
+const TABS=["members","workshop","reels","shipping","messages","activity"];
 let tab="members";
 function showTab(x,noHash){
   if(!TABS.includes(x))x="members";
@@ -1160,11 +1234,13 @@ const dr=$("drop");dr.onclick=()=>$("file").click();
 dr.ondragover=e=>{e.preventDefault();dr.classList.add("over")};dr.ondragleave=()=>dr.classList.remove("over");
 dr.ondrop=e=>{e.preventDefault();dr.classList.remove("over");upload(e.dataTransfer.files[0])};
 load().then(()=>showTab(location.hash.slice(1),true));setInterval(load,5000);
+loadHistory();setInterval(loadHistory,5000);
 loadBot();setInterval(loadBot,3000);
 loadAwake();setInterval(loadAwake,3000);
 loadApps();setInterval(loadApps,5000);
 setInterval(()=>{if(tab==="activity"&&!document.hidden){loadFeed(false);loadJobs()}},4000);
 setInterval(()=>{if(tab==="reels"&&!document.hidden)loadReels()},10000);
 </script>
+<script src="/shipping-label.js" defer></script>
 </body>
 </html>

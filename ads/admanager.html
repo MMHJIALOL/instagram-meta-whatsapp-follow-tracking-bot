@@ -322,6 +322,7 @@ button.cnext{position:absolute;right:6px;top:50%;transform:translateY(-50%);widt
   <section id="tab-new" hidden>
    <div class="newgrid">
     <div class="formcol">
+    <div class="card" id="existing-info" hidden></div>
     <div class="card">
       <h2>1 · What is this ad for?</h2>
       <label class="f"><span>Ad name (only you see this)</span><input id="f-name" maxlength="200" placeholder="e.g. Diwali diya workshop · Delhi"></label>
@@ -737,6 +738,7 @@ function adsetHtml(s){
       ${fact("Audience",esc(s.audience),"wide")}
     </div>
     <div style="margin-top:8px"><button class="mini" data-edit="${s.id}"><i class="ti ti-calendar-cog"></i> Change dates${bt?", budget":""} or value rules</button></div>
+    ${s.destination==="INSTAGRAM_DIRECT"&&s.goal==="CONVERSATIONS"&&s._c.objective==="OUTCOME_ENGAGEMENT"?`<button class="mini" style="margin-top:8px" data-add-existing="${s.id}">Add ad to this ad set</button>`:""}
     ${issuesHtml(s)}${EDIT===s.id?editForm(s,"adset"):""}
     <div class="ads">${s.ads.map(adHtml).join("")||'<div class="sub">No ads.</div>'}</div>
   </div>`;
@@ -1365,9 +1367,27 @@ const grow=t=>{t.style.height="auto";t.style.height=Math.max(38,t.scrollHeight+1
 $("tab-new").addEventListener("input",e=>{if(e.target.closest("#prevcol,#vrbuilder"))return;if(e.target.matches("[data-a]"))grow(e.target);if(e.target.matches("[data-q],[data-a]"))CHATLOG=[];if(!$("prevreal").hidden)showMock();schedulePreview()});
 $("tab-new").addEventListener("change",e=>{if(e.target.closest("#prevcol,#vrbuilder"))return;schedulePreview()});
 // create
+let EXISTING=null;
+function existingMode(s){
+  EXISTING=s;
+  const box=$("existing-info");box.hidden=!s;
+  box.innerHTML=s?`<h2>Add to existing ad set</h2><p>${esc(s._c.name)} › ${esc(s.name)}</p><p>${esc(s.audience)} · ${esc(budgetText(s)||budgetText(s._c))}</p><p>Budget, dates, audience and placements come from this ad set. Change them in My ads. The new ad starts paused.</p><button id="use-new-campaign">Create a new campaign instead</button>`:"";
+  for(const card of document.querySelectorAll(".formcol > .card")){
+    const h=card.querySelector("h2"),n=h&&parseInt(h.textContent);
+    if([2,6,7,8,9].includes(n))card.hidden=!!s;
+  }
+  $("objectives").hidden=!!s;
+  $("objectives").previousElementSibling.hidden=!!s;
+  $("createhint").textContent=s?"Creates only a paused ad in the existing ad set.":"Nothing spends yet. You'll see a summary and a Go live button.";
+  if(s){setObjective("engagement");setLocation("messages");$("f-perf").value="CONVERSATIONS";
+    for(const d of document.querySelectorAll("#dests input"))d.checked=d.dataset.dest==="instagram";
+    setPlacements(s.placements);$("createout").innerHTML="";show("new");window.scrollTo(0,0);
+    $("use-new-campaign").onclick=()=>existingMode(null);
+  }
+}
 function collect(){
   const thumbs={};for(const m of MEDIA)if(m.job&&m.thumb)thumbs[m.job.id]=m.thumb;
-  return {name:$("f-name").value,objective:OBJ,location:LOC,perf:$("f-perf").value,cost_goal:$("f-costgoal").value,destinations:destinations(),page_id:$("f-page").value,
+  return {existing_adset_id:EXISTING?.id||null,name:$("f-name").value,objective:OBJ,location:LOC,perf:$("f-perf").value,cost_goal:$("f-costgoal").value,destinations:destinations(),page_id:$("f-page").value,
     media:MEDIA.filter(m=>m.job).map(m=>m.job.id),thumbs,carousel:$("f-carousel").checked&&MEDIA.length>1,
     caption:$("f-caption").value,headline:$("f-headline").value,button:LOC==="website"?$("f-button").value:"",link:$("f-link").value,phone:$("f-phone").value,
     budget_type:BTYPE,budget:$("f-budget").value,start:$("f-startnow").checked?null:$("f-start").value,end:$("f-noend").checked?null:$("f-end").value,
@@ -1377,7 +1397,7 @@ $("create").onclick=async()=>{
   const out=$("createout");
   if(MEDIA.some(m=>!m.err&&(!m.job||!["ready","error"].includes(m.job.phase)))){toast("Wait until every photo/video says Ready");return}
   if(MEDIA.some(m=>m.err||(m.job&&m.job.phase==="error"))){toast("Remove the files that failed first");return}
-  const pp=placeProblem();if(pp){toast(pp);$("placewarn").scrollIntoView({behavior:"smooth",block:"center"});return}
+  const pp=EXISTING?null:placeProblem();if(pp){toast(pp);$("placewarn").scrollIntoView({behavior:"smooth",block:"center"});return}
   if(VRB&&!await ask("Your new rule set isn't saved","The value rule set you started isn't saved in Meta, so this ad won't use it. Create the ad anyway?","Create anyway"))return;
   const btn=$("create");btn.disabled=true;
   out.innerHTML=`<div class="card"><h2>Creating your ad…</h2><ul class="steps" id="steps"><li><i class="ti ti-loader-2 spin"></i> Checking the details</li></ul></div>`;
@@ -1407,9 +1427,10 @@ function summary(r){
     <div class="okhead"><i class="ti ti-circle-check"></i><div><h2 style="margin:0;color:var(--text)">Created and paused</h2><span class="sub">Nothing is spending yet.</span></div></div>
     <div class="kv">
       <span>Name</span><span>${esc(r.name)}</span>
+      ${r.existing_adset_id?`<span>Existing ad set</span><span>${esc(r.existing_adset_name)}</span>`:""}
       <span>Goal</span><span>${esc(OBJ_NAMES[r.objective]||r.objective)} · ${esc((LOCS[r.location]||[])[1]||r.location)}${(r.destinations||[]).length?" ("+r.destinations.map(d=>DEST_NAMES[d]).join(" + ")+")":""} · ${esc(PERFS[r.perf]||r.perf)}${r.cost_goal?` · aiming for ${inr(r.cost_goal)} per result`:""}</span>
       <span>Shown as</span><span>${esc(r.page||"")}${r.ig?" · @"+esc(r.ig):""}</span>
-      <span>Budget</span><span>${per}${r.days?` · ${r.days} day${r.days===1?"":"s"}`:" · no end date"}${r.total?` · <b style="font-weight:500">≈ ${inr(r.total)} total</b>`:""}</span>
+      <span>Budget</span><span>${per}${r.days?` · ${r.days} day${r.days===1?"":"s"}`:r.end?"":" · no end date"}${r.total?` · <b style="font-weight:500">≈ ${inr(r.total)} total</b>`:""}</span>
       <span>Dates</span><span>${r.start?fmtD(r.start):"Starts when you go live"} → ${r.end?fmtD(r.end):"no end"}</span>
       <span>Audience</span><span>${esc(r.audience)}</span>
       <span>Value rules</span><span>${r.value_rules?esc(r.value_rules):"none"}</span>
@@ -1423,8 +1444,8 @@ function summary(r){
         <div class="prevs" id="prev-${a.id}"></div></div></div>`).join("")}
     ${NOFUNDS()?`<div class="warnbox">Your account has no money available or hit its spending limit, so even after Go live nothing runs until billing is fixed.</div>`:""}
     <div class="row" style="margin-top:14px">
-      <button class="main big" data-golive="${r.campaign_id}"><i class="ti ti-player-play"></i> Go live</button>
-      <button data-discard="${r.campaign_id}"><i class="ti ti-trash"></i> Delete this draft</button>
+      ${!r.existing_adset_id?`<button class="main big" data-golive="${r.campaign_id}"><i class="ti ti-player-play"></i> Go live</button>
+      <button data-discard="${r.campaign_id}"><i class="ti ti-trash"></i> Delete this draft</button>`:`<p>The new ad is paused. Turn it on in My ads, along with its campaign and ad set. Existing ads keep their current status.</p>`}
       <button class="lnk" data-tab-go="ads">See it in My ads</button>
     </div></div>`;
   $("summary")._r=r;
@@ -1648,6 +1669,7 @@ document.addEventListener("click",e=>{
     // clicking the name opens it, but a double click (or dragging across the text) selects the words instead
     if(e.detail>1||Math.hypot(e.clientX-DOWN[0],e.clientY-DOWN[1])>4)return;
     OPEN_T=setTimeout(()=>toggleOpen(o.dataset.open),320);return}
+  const add=t.closest("[data-add-existing]");if(add){const [s]=find(add.dataset.addExisting);if(s)existingMode(s);return}
   const ap=t.closest("[data-adprev]");if(ap){adPreview(ap.dataset.adprev);return}
   const s=t.closest("[data-sw]");if(s&&!s.disabled){toggle(s.dataset.sw);return}
   const ed=t.closest("[data-edit]");if(ed){EDIT=EDIT===ed.dataset.edit?null:ed.dataset.edit;renderAds();return}

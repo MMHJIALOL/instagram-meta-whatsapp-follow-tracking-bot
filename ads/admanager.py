@@ -1090,6 +1090,36 @@ def cleanup(made):
     return out
 
 
+def check_existing_spec(body):
+    """Create only an ad; all delivery settings belong to the existing ad set."""
+    sid = str(body.get("existing_adset_id") or "")
+    ours(sid)
+    source = next(((c, a) for c in call(tree, True)["campaigns"] for a in c["adsets"] if a["id"] == sid), None)
+    if not source:
+        raise HTTPException(400, {"message": "Choose an existing ad set from My ads."})
+    camp, adset = source
+    # This flow currently supports the Instagram DM setup shown by its button.
+    if (camp["objective"] != "OUTCOME_ENGAGEMENT" or adset["destination"] != "INSTAGRAM_DIRECT"
+            or adset["goal"] != "CONVERSATIONS"):
+        raise HTTPException(400, {"message": "Adding to an existing ad set currently supports Instagram DM conversation ads."})
+    c = check_creative({**body, "objective": "engagement", "location": "messages",
+                        "perf": "CONVERSATIONS", "destinations": ["instagram"]})
+    promoted = call(graph, "GET", sid, {"fields": "promoted_object"}).get("promoted_object") or {}
+    if promoted.get("page_id") != c["page_id"]:
+        raise HTTPException(400, {"message": "Choose the Facebook Page used by this ad set."})
+    name = str(body.get("name") or "").strip()[:200]
+    if not name:
+        raise HTTPException(400, {"message": "Give the ad a name."})
+    daily = adset.get("daily_budget") or camp.get("daily_budget")
+    budget = daily or adset.get("lifetime_budget") or camp.get("lifetime_budget")
+    return {**c, "name": name, "existing_adset_id": sid, "existing_campaign_id": camp["id"],
+            "existing_adset_name": adset["name"], "existing_audience": adset["audience"],
+            "placements": adset["placements"], "budget": budget, "lifetime": not bool(daily),
+            "days": None, "start": ist(adset["start"]) if adset.get("start") else None,
+            "end": ist(adset["end"]) if adset.get("end") else None, "cost_goal": None,
+            "value_rule_name": adset.get("value_rule_set")}
+
+
 def run_create(job, s):
     made = []
     steps = job["steps"]
@@ -1100,28 +1130,32 @@ def run_create(job, s):
         steps.append({"text": text, "state": "running"})
 
     try:
-        step("Creating the campaign")
-        camp = graph("POST", f"{ACT}/campaigns", retries=1, data=form({
-            "name": s["name"], "objective": OBJECTIVES[s["objective"]], "status": "PAUSED", "buying_type": "AUCTION",
-            "special_ad_categories": [], "is_adset_budget_sharing_enabled": False}))["id"]
-        made.append(("campaign", camp))
+        if s.get("existing_adset_id"):
+            camp, adset = s["existing_campaign_id"], s["existing_adset_id"]
+            step("Using the existing ad set (delivery settings unchanged)")
+        else:
+            step("Creating the campaign")
+            camp = graph("POST", f"{ACT}/campaigns", retries=1, data=form({
+                "name": s["name"], "objective": OBJECTIVES[s["objective"]], "status": "PAUSED", "buying_type": "AUCTION",
+                "special_ad_categories": [], "is_adset_budget_sharing_enabled": False}))["id"]
+            made.append(("campaign", camp))
 
-        step("Creating the ad set (budget, dates, audience, placements)")
-        budget = int(round(s["budget"] * 100))
-        website_traffic = s["objective"] == "traffic" and s["location"] == "website"
-        adset = graph("POST", f"{ACT}/adsets", retries=1, data=form(prune({
-            "name": f"{s['name']} · audience", "campaign_id": camp, "status": "PAUSED",
-            "billing_event": "IMPRESSIONS", "optimization_goal": s["perf"], "destination_type": destination_type(s),
-            "bid_strategy": "COST_CAP" if s["cost_goal"] else "LOWEST_COST_WITHOUT_CAP",
-            "bid_amount": int(round(s["cost_goal"] * 100)) if s["cost_goal"] else None,
-            "promoted_object": None if website_traffic else {"page_id": s["page_id"]},
-            "lifetime_budget" if s["lifetime"] else "daily_budget": budget,
-            "start_time": meta_time(s["start"]) if s["start"] else None,
-            "end_time": meta_time(s["end"]) if s["end"] else None,
-            "value_rule_set_id": s["value_rule_set_id"],
-            "value_rules_applied": True if s["value_rule_set_id"] else None,
-            "targeting": targeting(s)})))["id"]
-        made.append(("ad set", adset))
+            step("Creating the ad set (budget, dates, audience, placements)")
+            budget = int(round(s["budget"] * 100))
+            website_traffic = s["objective"] == "traffic" and s["location"] == "website"
+            adset = graph("POST", f"{ACT}/adsets", retries=1, data=form(prune({
+                "name": f"{s['name']} · audience", "campaign_id": camp, "status": "PAUSED",
+                "billing_event": "IMPRESSIONS", "optimization_goal": s["perf"], "destination_type": destination_type(s),
+                "bid_strategy": "COST_CAP" if s["cost_goal"] else "LOWEST_COST_WITHOUT_CAP",
+                "bid_amount": int(round(s["cost_goal"] * 100)) if s["cost_goal"] else None,
+                "promoted_object": None if website_traffic else {"page_id": s["page_id"]},
+                "lifetime_budget" if s["lifetime"] else "daily_budget": budget,
+                "start_time": meta_time(s["start"]) if s["start"] else None,
+                "end_time": meta_time(s["end"]) if s["end"] else None,
+                "value_rule_set_id": s["value_rule_set_id"],
+                "value_rules_applied": True if s["value_rule_set_id"] else None,
+                "targeting": targeting(s)})))["id"]
+            made.append(("ad set", adset))
 
         groups = [s["media"]] if s["carousel"] else [[m] for m in s["media"]]
         many = len(groups) > 1
@@ -1154,7 +1188,9 @@ def run_create(job, s):
             "budget": s["budget"], "lifetime": s["lifetime"], "daily": daily, "days": s["days"],
             "total": s["budget"] if s["lifetime"] else (s["budget"] * s["days"] if s["days"] else None),
             "start": s["start"].isoformat() if s["start"] else None, "end": s["end"].isoformat() if s["end"] else None,
-            "audience": audience_text(shown_targeting(s)), "carousel": s["carousel"]})
+            "audience": s.get("existing_audience") or audience_text(shown_targeting(s)),
+            "existing_adset_id": s.get("existing_adset_id"),
+            "existing_adset_name": s.get("existing_adset_name"), "carousel": s["carousel"]})
         log.info("created PAUSED campaign %s (ad set %s, ads %s)", camp, adset, [a["id"] for a in ads])
     except MetaError as e:
         steps[-1]["state"] = "failed"
@@ -1491,7 +1527,7 @@ def api_job(jid: str, request: Request):
 @app.post("/api/create")
 def api_create(request: Request, body: dict = Body(...)):
     local_only(request)
-    s = check_spec(body)
+    s = check_existing_spec(body) if body.get("existing_adset_id") else check_spec(body)
     job = new_job("create", state="running", steps=[])
     threading.Thread(target=run_create, args=(job, s), daemon=True).start()
     return job

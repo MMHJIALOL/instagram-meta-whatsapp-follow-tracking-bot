@@ -186,6 +186,17 @@ function sendHistory(chatId, id, t) {
     if (!p) return { result: 'wait', why: 'not_a_member_yet' };
     const own = E.getParticipantPostJoinEligibility(p, t);
     if (!own.eligible) return { result: own.reason === 'no_join_time' ? 'wait' : 'skip', why: own.reason };
+    // After reconnect, only notifications may be loaded. Fetch stored messages
+    // before WhatsApp counts the history available to share.
+    if (!chat.__historyLoaded || Date.now() - chat.__historyLoaded > 60000) {
+      for (let batch = 0; batch < 10; batch++) {
+        const messages = chat.msgs.getModelsArray().filter(m => !m.isNotification && m.type !== 'gp2' && m.t <= t);
+        if (messages.length >= 100) break;
+        const loaded = await window.require('WAWebChatLoadMessages').loadEarlierMsgs({ chat });
+        if (!loaded || !loaded.length) break;
+      }
+      chat.__historyLoaded = Date.now();
+    }
     const full = await EF.isEligibleForPostJoinHistoryFull({ groupMetadata: meta, groupWid: gid, joinTimeFallback: t, participant: p });
     if (!full.eligible) return { result: 'skip', why: full.reason };
     const { historyReceivers, nonHistoryReceivers } = X.filterParticipants([p.contact.id]);
@@ -204,13 +215,26 @@ const WHY = {
   bot: 'a bot', ineligible: 'WhatsApp says not eligible', not_accepted: "WhatsApp didn't accept it",
 };
 const { HistoryQueue } = require('./history_queue');
+let historyEnabled = false;
+let historyRetry = 0;
 const historyQueue = new HistoryQueue(path.join(__dirname, 'history-jobs.json'),
   (job) => sendHistory(job.chatId, job.id, job.t),
   async (job, r) => {
     const why = WHY[r.why] || r.why;
     log(`history ${r.result}:`, job.who, `"${job.chat}"`, r.result === 'sent' ? `${r.count} messages` : why);
     if (r.why !== 'already_received') await post('/api/wa/history', { who: job.who, chat: job.chat, ...r, why });
-  });
+  }, () => Date.now(), () => historyEnabled);
+async function refreshHistorySettings() {
+  const r = await fetch(DASHBOARD + '/api/wa/history/settings', { headers: { 'x-local': '1' }, signal: AbortSignal.timeout(5000) });
+  if (!r.ok) throw new Error('Could not load history settings');
+  const settings = await r.json();
+  historyEnabled = settings.enabled === true;
+  if (settings.retry && settings.retry !== historyRetry) {
+    for (const job of Object.values(historyQueue.jobs)) if (!job.done) job.next = 0;
+    historyQueue.save();
+  }
+  historyRetry = settings.retry;
+}
 function shareHistory(chatId, chat, id, who, t, catchUp) {
   if (catchUp && Date.now() / 1000 - t > 2 * 3600) return;
   historyQueue.add({ chatId, chat, id, who, t: Number(t) });
@@ -224,10 +248,16 @@ async function reconcileHistory() {
   if (scanning || status.state !== 'ready') return;
   scanning = true;
   try {
-    const members = await client.pupPage.evaluate((main) => {
+    const members = await client.pupPage.evaluate(async (main) => {
       const C = window.require('WAWebCollections');
-      return C.Chat.getModelsArray().filter(c => main && (c.formattedTitle || c.name || '').toLowerCase().includes(main))
-        .flatMap(c => (c.groupMetadata?.participants?.getModelsArray() || []).map(p => ({
+      const chats = C.Chat.getModelsArray().filter(c => main && (c.formattedTitle || c.name || '').toLowerCase().includes(main));
+      for (const c of chats) {
+        if (!c.__historyRefreshed || Date.now() - c.__historyRefreshed > 60000) {
+          await window.require('WAWebGroupQueryJob').queryAndUpdateGroupMetadataById({ id: c.id._serialized });
+          c.__historyRefreshed = Date.now();
+        }
+      }
+      return chats.flatMap(c => (c.groupMetadata?.participants?.getModelsArray() || []).map(p => ({
           chatId: c.id._serialized, chat: c.formattedTitle || c.name,
           id: p.id?._serialized, t: Number(p.joinTime),
         })));
@@ -242,8 +272,15 @@ async function reconcileHistory() {
   finally { scanning = false; }
 }
 setInterval(reconcileHistory, 15000);
-setInterval(() => {
-  if (status.state === 'ready') historyQueue.run().catch(e => log('history queue:', e.message));
+let historySettingsBusy = false;
+setInterval(async () => {
+  if (historySettingsBusy) return;
+  historySettingsBusy = true;
+  try {
+    await refreshHistorySettings();
+    if (status.state === 'ready') historyQueue.run().catch(e => log('history queue:', e.message));
+  } catch (e) { log('history settings:', e.message); }
+  finally { historySettingsBusy = false; }
 }, 5000);
 
 // WhatsApp profile names of group members, for the dashboard's name check. WhatsApp Web only knows them for

@@ -2,14 +2,25 @@ const fs = require('fs');
 const TERMINAL = new Set(['already_received', 'window_expired', 'bot']);
 
 class HistoryQueue {
-  constructor(file, send, onResult, now = () => Date.now()) {
+  constructor(file, send, onResult, now = () => Date.now(), canRun = () => true) {
     this.file = file; this.send = send; this.onResult = onResult; this.now = now;
     this.busy = false;
+    this.canRun = canRun;
     this.jobs = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : {};
   }
   save() {
     fs.writeFileSync(this.file + '.tmp', JSON.stringify(this.jobs));
-    fs.renameSync(this.file + '.tmp', this.file);
+    // Windows readers (including the dashboard) can briefly lock the destination.
+    // Keep the atomic replacement, but allow those readers time to close it.
+    for (let attempt = 0; ; attempt++) {
+      try {
+        fs.renameSync(this.file + '.tmp', this.file);
+        break;
+      } catch (e) {
+        if (!['EPERM', 'EACCES', 'EBUSY'].includes(e.code) || attempt >= 5) throw e;
+        Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 25 * (attempt + 1));
+      }
+    }
   }
   add(job) {
     if (!job.id || !Number.isFinite(job.t) || job.t <= 0) return;
@@ -23,11 +34,13 @@ class HistoryQueue {
     this.busy = true;
     try {
       for (const job of Object.values(this.jobs)) {
+        if (!this.canRun()) break;
         if (job.done || job.next > this.now()) continue;
         let result;
         try { result = await this.send(job); }
         catch (e) { result = { result: 'failed', why: e.message }; }
         job.attempts++;
+        job.updated = this.now();
         job.done = result.result === 'sent' || TERMINAL.has(result.why);
         job.next = this.now() + Math.min(300000, 5000 * 2 ** Math.min(job.attempts - 1, 6));
         const changed = job.last !== JSON.stringify(result);
